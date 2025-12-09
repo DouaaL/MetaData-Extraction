@@ -1,8 +1,11 @@
-from typing import Dict, Optional, List
+from typing import Dict, Optional
 from pathlib import Path
 from urllib.parse import quote
 import os
 import requests
+import re
+import time
+import webbrowser  # pour ouvrir la recherche Google
 
 from library.models.audio_file import AudioFile
 from library.core.lyricsresolver import LyricsResolver
@@ -19,18 +22,12 @@ except ImportError:
 
 class MetadataFetcher:
     """
-    Gère :
-    - Métadonnées enrichies via Spotify (en mémoire uniquement)
+    - Métadonnées enrichies via Spotify (optionnel)
     - Paroles via LyricsResolver
-    - Récupération / téléchargement / sauvegarde de la cover d'album (par fichier)
+    - Cover via MusicBrainz / Cover Art Archive (par fichier)
     """
 
     def __init__(self):
-
-        # --- DEBUG LYRICS (désactivé par défaut) ---
-        self.debug_force_lyrics = False
-        self.debug_artist = "Coldplay"
-        self.debug_title = "Yellow"
 
         # Spotify Credentials
         CLIENT_ID = "446cb6cddd38445fb33fa44babbab96f"
@@ -52,233 +49,273 @@ class MetadataFetcher:
                 )
                 self.sp = spotipy.Spotify(client_credentials_manager=mgr)
                 print("Connexion à l’API Spotify OK.")
-            except Exception as e:
-                print(f"Erreur de connexion Spotify : {e}")
+            except Exception:
                 self.sp = None
+                print("Spotify désactivé (erreur connexion).")
         else:
-            print("'spotipy' non installé : Spotify désactivé.")
+            print("Spotify non installé.")
 
-        # Toujours créer le LyricsResolver
         self.lyrics_resolver = LyricsResolver(spotify_client=self.sp)
 
+        # Pour respecter le rate-limit MusicBrainz (1 req/s)
+        self._last_mb_request_ts: float = 0.0
+
     # ----------------------------------------------------------
-    # COVER – par fichier via MusicBrainz + Cover Art Archive
+    # 🔧 Rate limit MusicBrainz
+    # ----------------------------------------------------------
+    def _rate_limit(self, min_interval: float = 1.1):
+        """
+        MusicBrainz demande ~1 requête/s max par client.
+        On ajoute un petit sleep si on enchaîne trop vite.
+        """
+        now = time.time()
+        elapsed = now - self._last_mb_request_ts
+        if elapsed < min_interval:
+            time.sleep(min_interval - elapsed)
+        self._last_mb_request_ts = time.time()
+
+    # ----------------------------------------------------------
+    # 🔧 1. Split intelligent artiste/titre
+    # ----------------------------------------------------------
+    def smart_split_filename(self, stem: str):
+        """
+        Exemples :
+        - "Artist - Title" → ("Artist", "Title")
+        - "Kevin MacLeod - Movement Proposition" → ("Kevin MacLeod", "Movement Proposition")
+        - "UnknownTrack" → ("", "UnknownTrack")
+        """
+        parts = stem.split(" - ", 1)
+        if len(parts) == 2:
+            return parts[0].strip(), parts[1].strip()
+        return "", stem.strip()
+
+    # ----------------------------------------------------------
+    # Helper nettoyage texte
+    # ----------------------------------------------------------
+    def clean_text(self, s: str) -> str:
+        s = s.replace("_", " ")
+        s = re.sub(r"\.[a-zA-Z0-9]{2,4}$", "", s)   # enlève extension
+        s = re.sub(r"\([^)]*\)", "", s)             # enlève (....)
+        s = re.sub(r"\s+", " ", s)
+        return s.strip()
+
+    # ----------------------------------------------------------
+    # 🎨 2. Cover par fichier (MusicBrainz + fallback Google)
     # ----------------------------------------------------------
     def ensure_cover_image(self, audio_file: AudioFile) -> Optional[Path]:
         """
-        S'assure qu'une cover spécifique existe pour CE fichier :
-        - cherche <stem>_cover.jpg dans le dossier du fichier
-        - sinon la télécharge via MusicBrainz + Cover Art Archive
-        - NE PAS réutiliser la cover d'un autre morceau
+        Récupère une cover spécifique pour CE fichier :
+        1) <stem>_cover.jpg déjà présent
+        2) MusicBrainz + Cover Art Archive
+        3) Si rien trouvé → ouvre Google Images pour que l’utilisateur choisisse
         """
-        audio_path = Path(audio_file.filepath)
-        album_dir = audio_path.parent
-        stem = audio_path.stem
-
-        # 1) Chercher une cover spécifique à ce fichier
-        specific_cover = album_dir / f"{stem}_cover.jpg"
-        if specific_cover.exists():
-            print("[ensure_cover_image] Cover spécifique déjà présente :", specific_cover)
-            return specific_cover
-
-        # 2) Récupérer les métadonnées existantes
         try:
-            md = getattr(audio_file, "metadata", None) or audio_file.extract_metadata() or {}
-        except Exception:
-            md = {}
+            audio_path = Path(audio_file.filepath)
+            if not audio_path.exists():
+                print("[cover] fichier introuvable:", audio_path)
+                return None
 
-        artist = (md.get("artist") or "").strip()
-        title = (md.get("title") or "").strip()
-        album = (md.get("album") or "").strip()
+            dest_dir = audio_path.parent
+            stem = audio_path.stem
 
-        import re
+            # 1) Cover déjà existante à côté du fichier
+            specific_cover = dest_dir / f"{stem}_cover.jpg"
+            if specific_cover.exists():
+                print("[cover] cover déjà existante:", specific_cover)
+                return specific_cover
 
-        def clean_text(s: str) -> str:
-            s = s.replace("_", " ")
-            s = re.sub(r"\.[a-zA-Z0-9]{2,4}$", "", s)      # enlève extension
-            s = re.sub(r"\([^)]*\)", "", s)               # enlève (....)
-            s = re.sub(r"\s+", " ", s)
-            return s.strip()
+            # 2) Métadonnées brutes du fichier (incluant éventuellement ce qui vient de Spotify)
+            try:
+                md = audio_file.metadata or audio_file.extract_metadata() or {}
+            except Exception:
+                md = {}
 
-        # Si tags vides, deviner depuis le nom de fichier
-        if not artist or not title:
-            stem_name = clean_text(audio_path.stem)
-            parts = [p.strip() for p in stem_name.split("-") if p.strip()]
-            if len(parts) >= 2:
-                if not artist:
-                    artist = parts[0]
-                if not title:
-                    title = parts[1]
-            else:
-                if not title:
-                    title = stem_name
+            raw_artist = (md.get("artist") or "").strip()
+            raw_title  = (md.get("title")  or "").strip()
+            raw_album  = (md.get("album")  or "").strip()
 
-        artist = clean_text(artist)
-        title = clean_text(title)
-        album = clean_text(album) if album else ""
+            # Infos déduites du nom du fichier
+            filename_clean = self.clean_text(stem)
+            fn_artist, fn_title = self.smart_split_filename(filename_clean)
 
-        print("[ensure_cover_image] Artist deviné  :", repr(artist))
-        print("[ensure_cover_image] Title deviné   :", repr(title))
-        print("[ensure_cover_image] Album deviné   :", repr(album))
+            # Nettoyage artistes "bidon"
+            bad_artists = {"artiste inconnu", "unknown artist", "unknown", "inconnu"}
+            if raw_artist.lower() in bad_artists:
+                raw_artist = ""
 
-        if not artist or not title:
-            print("[ensure_cover_image] Impossible de deviner artist/title → abandon.")
-            return None
+            raw_title_clean = self.clean_text(raw_title)
 
-        # 3) Tenter MusicBrainz pour CE fichier uniquement
-        try:
+            # Essayer de splitter le titre taggé s'il contient " - "
+            t_artist, t_title = "", ""
+            if " - " in raw_title_clean:
+                t_artist, t_title = self.smart_split_filename(raw_title_clean)
+
+            raw_artist_clean = self.clean_text(raw_artist)
+
+            # Choix final
+            artist = raw_artist_clean or t_artist or fn_artist
+            title  = t_title or fn_title or raw_title_clean or filename_clean
+            album  = raw_album
+
+            artist = self.clean_text(artist)
+            title  = self.clean_text(title)
+            album  = self.clean_text(album)
+
+            print(f"[cover] raw_artist={raw_artist!r}, raw_title={raw_title!r}")
+            print(f"[cover] filename_artist={fn_artist!r}, filename_title={fn_title!r}")
+            print(f"[cover] final artist={artist!r}, title={title!r}, album={album!r}")
+
+            if not artist and not title:
+                print("[cover] impossible de deviner artist ET title → abandon")
+                return None
+
+            # 3) Tenter MusicBrainz
             cover_path = self._search_musicbrainz_and_download_cover(
                 artist=artist,
                 title=title,
                 album=album,
-                dest_dir=album_dir,
+                dest_dir=dest_dir,
                 filename_stem=stem,
             )
+
             if cover_path:
-                print("[ensure_cover_image] Cover téléchargée pour ce fichier :", cover_path)
-            else:
-                print("[ensure_cover_image] Aucune cover trouvée via MusicBrainz pour ce fichier.")
-            return cover_path
+                print("[ensure_cover_image] Cover téléchargée via MusicBrainz:", cover_path)
+                return cover_path
+
+            print("[ensure_cover_image] Aucune cover trouvée via MusicBrainz pour ce fichier.")
+
+            # 4) Fallback : ouvrir Google Images pour aider l'utilisateur
+            try:
+                query = f"{artist} {title} cover"
+                url = f"https://www.google.com/search?tbm=isch&q={quote(query)}"
+                print("[cover] ouverture Google Images :", url)
+                webbrowser.open(url)
+            except Exception as e:
+                print("[cover] impossible d’ouvrir Google Images :", e)
+
+            # À ce stade, l'utilisateur peut sauvegarder manuellement une image
+            # sous le nom <stem>_cover.jpg dans le même dossier. Au prochain
+            # appel, ensure_cover_image la détectera automatiquement.
+            return None
+
         except Exception as e:
-            print("[ensure_cover_image] Erreur MusicBrainz cover:", e)
+            print("[cover] Exception inattendue:", e)
             return None
-
-    def _search_musicbrainz_and_download_cover(
-        self,
-        artist: str,
-        title: str,
-        album: str,
-        dest_dir: Path,
-        filename_stem: str,
-    ) -> Optional[Path]:
-        """
-        Utilise MusicBrainz + Cover Art Archive pour récupérer une pochette
-        et l'enregistre sous dest_dir / '<stem>_cover.jpg'.
-        """
-        headers = {
-            "User-Agent": "PyMetaPlay/1.0 (contact@example.com)"
-        }
-
-        # 1) Requête recording artist + title
-        query = f'recording:"{title}" AND artist:"{artist}"'
-        url = (
-            "https://musicbrainz.org/ws/2/recording/"
-            f"?query={quote(query)}&fmt=json&limit=1&inc=releases"
-        )
-        print("[MB] Requête 1 :", url)
-
-        try:
-            resp = requests.get(url, headers=headers, timeout=8)
-        except Exception as e:
-            print("[MB] Erreur requête :", e)
-            return None
-
-        if resp.status_code != 200:
-            print("[MB] Erreur HTTP :", resp.status_code)
-            return None
-
-        data = resp.json()
-        recordings = data.get("recordings") or []
-        if not recordings:
-            print("[MB] Aucun recording trouvé pour", artist, "/", title)
-            return None
-
-        rec = recordings[0]
-        releases = rec.get("releases") or []
-        if not releases:
-            print("[MB] Recording trouvé mais pas de release.")
-            return None
-
-        release_id = releases[0].get("id")
-        print("[MB] Release choisie :", release_id)
-        if not release_id:
-            return None
-
-        # 2) Cover Art Archive
-        caa_url = f"https://coverartarchive.org/release/{release_id}/front"
-        print("[CAA] URL cover :", caa_url)
-        try:
-            caa_resp = requests.get(caa_url, headers=headers, timeout=8)
-        except Exception as e:
-            print("[CAA] Erreur requête cover:", e)
-            return None
-
-        if caa_resp.status_code != 200:
-            print("[CAA] Pas de cover pour release", release_id, "status=", caa_resp.status_code)
-            return None
-
-        dest_dir.mkdir(parents=True, exist_ok=True)
-        dest_path = dest_dir / f"{filename_stem}_cover.jpg"
-        try:
-            with open(dest_path, "wb") as f:
-                f.write(caa_resp.content)
-        except Exception as e:
-            print("[CAA] Erreur écriture fichier cover :", e)
-            return None
-
-        print("[CAA] Cover enregistrée dans :", dest_path)
-        return dest_path
 
     # ----------------------------------------------------------
-    # SPOTIFY – Recherche metadata
+    # 🎨 3. Appel MusicBrainz + CoverArt
+    # ----------------------------------------------------------
+    def _search_musicbrainz_and_download_cover(
+        self, artist: str, title: str, album: str, dest_dir: Path, filename_stem: str
+    ) -> Optional[Path]:
+
+        headers = {
+            "User-Agent": "PyMetaPlay/1.0 (https://example.com; contact@example.com)"
+        }
+
+        try:
+            if artist and title:
+                query = f'recording:"{title}" AND artist:"{artist}"'
+            elif title:
+                query = f'recording:"{title}"'
+            else:
+                query = title or artist
+
+            url = (
+                "https://musicbrainz.org/ws/2/recording/"
+                f"?query={quote(query)}&fmt=json&limit=1&inc=releases"
+            )
+
+            print("[MB] URL:", url)
+
+            self._rate_limit()
+            # verify=False pour éviter tes erreurs SSL locales
+            resp = requests.get(url, headers=headers, timeout=8, verify=False)
+            print("[MB] status:", resp.status_code)
+
+            if resp.status_code != 200:
+                print("[MB] body (début):", resp.text[:400])
+                return None
+
+            data = resp.json()
+            recordings = data.get("recordings") or []
+            if not recordings:
+                print("[MB] Aucun recording trouvé")
+                return None
+
+            releases = recordings[0].get("releases") or []
+            if not releases:
+                print("[MB] Aucun release avec cette recording")
+                return None
+
+            release_id = releases[0]["id"]
+            print("[MB] release choisi:", release_id)
+
+            caa_url = f"https://coverartarchive.org/release/{release_id}/front"
+            print("[CAA] URL:", caa_url)
+
+            self._rate_limit()
+            img = requests.get(caa_url, headers=headers, timeout=8, verify=False)
+            print("[CAA] status:", img.status_code)
+
+            if img.status_code != 200:
+                print("[CAA] Pas de cover pour ce release")
+                return None
+
+            dest_dir.mkdir(parents=True, exist_ok=True)
+            dest_path = dest_dir / f"{filename_stem}_cover.jpg"
+
+            with open(dest_path, "wb") as f:
+                f.write(img.content)
+
+            print("[cover] Cover téléchargée:", dest_path)
+            return dest_path
+
+        except Exception as e:
+            print("[MB] Exception:", e)
+            return None
+
+    # ----------------------------------------------------------
+    # 🎧 4. Spotify → récupération metadata (texte uniquement)
     # ----------------------------------------------------------
     def search_metadata(self, artist: str, title: str) -> Optional[Dict[str, str]]:
         if not self.sp:
             return None
-        if not title:
-            return None
 
-        artist = artist or ""
         query = f"track:{title}"
         if artist:
             query += f" artist:{artist}"
-
-        print(f"🔍 Spotify search : {query}")
 
         try:
             results = self.sp.search(q=query, limit=1, type="track")
             items = results.get("tracks", {}).get("items", [])
 
             if not items:
-                print("Spotify : aucun résultat.")
                 return None
 
             track = items[0]
             album = track.get("album", {})
             release_date = album.get("release_date", "")
             year = release_date.split("-")[0] if release_date else ""
-            images = album.get("images", [])
-            cover_url = images[0]["url"] if images else ""
 
-            metadata = {
+            return {
                 "title": track.get("name", title),
                 "artist": ", ".join(a["name"] for a in track.get("artists", [])),
                 "album": album.get("name", ""),
                 "year": year if len(year) == 4 else "",
                 "genre": "",
                 "track_number": str(track.get("track_number", "")),
-                "cover_url": cover_url,
+                # ⚠️ plus de cover_url utilisée ici pour le téléchargement
             }
 
-            print("Spotify → OK :", metadata["title"])
-            return metadata
-
-        except Exception as e:
-            print("Erreur Spotify :", e)
+        except Exception:
             return None
 
     # ----------------------------------------------------------
-    # SPOTIFY – Update file metadata (EN MÉMOIRE UNIQUEMENT)
+    # 🎧 5. Mise à jour metadata audio_file (mémoire ONLY)
     # ----------------------------------------------------------
     def update_audio_file_metadata(self, audio_file: AudioFile) -> bool:
-        """
-        Met à jour audio_file.metadata avec les infos Spotify,
-        mais NE TOUCHE PAS au fichier sur le disque.
-        L'écriture réelle doit être faite par la GUI qui sait
-        gérer pygame / les locks système.
-        """
         if not self.sp:
-            print("Spotify désactivé → update_metadata False.")
             return False
 
         try:
@@ -286,83 +323,28 @@ class MetadataFetcher:
         except Exception:
             current = {}
 
-        title = current.get("title") or audio_file.filepath.stem
-        artist = current.get("artist") or ""
+        enriched = self.search_metadata(
+            current.get("artist") or "",
+            current.get("title") or audio_file.filepath.stem,
+        )
 
-        enriched = self.search_metadata(artist, title)
         if not enriched:
             return False
 
-        new_md = dict(current)
-        for k, v in enriched.items():
-            if v:
-                new_md[k] = v
-
-        keys = ["title", "artist", "album", "year", "genre", "track_number", "cover_url"]
-        changed = any(new_md.get(k) != current.get(k) for k in keys)
-
-        if not changed:
-            print("Spotify : rien à mettre à jour.")
-            return False
-
-        if not hasattr(audio_file, "metadata") or audio_file.metadata is None:
+        if not audio_file.metadata:
             audio_file.metadata = dict(current)
 
-        audio_file.metadata.update(new_md)
+        audio_file.metadata.update(enriched)
 
-        # ⛔ IMPORTANT : on NE SAUVE PAS ici, on laisse la GUI le faire
-        print("Tags mis à jour en mémoire (pas encore écrits dans le fichier).")
         return True
 
     # ----------------------------------------------------------
-    # SPOTIFY – Search tracks (GUI)
-    # ----------------------------------------------------------
-    def search_tracks(self, query: str, limit: int = 10) -> List[Dict[str, object]]:
-        if not self.sp:
-            return []
-        if not query.strip():
-            return []
-
-        try:
-            results = self.sp.search(q=query, type="track", limit=limit)
-        except Exception as e:
-            print("Erreur search_tracks :", e)
-            return []
-
-        items = results.get("tracks", {}).get("items", [])
-        tracks = []
-
-        for t in items:
-            album = t.get("album", {})
-            year = (album.get("release_date", "") or "").split("-")[0]
-            images = album.get("images", [])
-            cover = images[0]["url"] if images else ""
-
-            tracks.append({
-                "spotify_id": t.get("id"),
-                "title": t.get("name", ""),
-                "artist": ", ".join(a["name"] for a in t.get("artists", [])),
-                "album": album.get("name", ""),
-                "year": year,
-                "duration": (t.get("duration_ms") or 0) / 1000,
-                "preview_url": t.get("preview_url") or "",
-                "cover_url": cover,
-            })
-
-        return tracks
-
-    # ----------------------------------------------------------
-    # LYRICS – via LyricsResolver
+    # 🎤 6. Paroles
     # ----------------------------------------------------------
     def fetch_lyrics_for_audio(self, audio_file: AudioFile) -> Optional[str]:
-        md = getattr(audio_file, "metadata", {}) or {}
-
-        artist = md.get("artist") or ""
-        title = md.get("title") or ""
-        filename = audio_file.filepath.name
-
+        md = audio_file.metadata or {}
         return self.lyrics_resolver.get_lyrics(
-            artist=artist,
-            title=title,
-            filename=filename
+            artist=md.get("artist") or "",
+            title=md.get("title") or "",
+            filename=audio_file.filepath.name,
         )
