@@ -549,6 +549,16 @@ class MusicLibraryGUI(tk.Tk):
             style="Custom.TButton",
         ).pack(side=tk.LEFT, padx=(0, 10))
 
+        # Bouton pour modif manuelle des métadonnées
+
+        ttk.Button(
+            action_frame,
+            text="✏️ Éditer manuellement",
+            command=self.edit_metadata_current,
+            style="Custom.TButton",
+        ).pack(side=tk.LEFT, padx=(0, 10))
+
+
         ttk.Button(
             action_frame,
             text="💾 Sauvegarder tags",
@@ -1093,32 +1103,293 @@ class MusicLibraryGUI(tk.Tk):
         self.is_paused = False
         self.btn_play.config(text="⏸")
 
+        # Modif Soumy ==>
+
     def fetch_api_current(self):
+        """Récupère les métadonnées via API et les charge dans l'interface"""
         if self.current_index is None:
+            messagebox.showwarning("Attention", "Aucune piste sélectionnée")
             return
+        
         audio = self.index_to_audio.get(self.current_index)
         if not audio:
             return
+        
+        self.var_status.set("Récupération des métadonnées via API...")
+        
         try:
+            # Mettre à jour les métadonnées via API
             res = self.metadata_fetcher.update_audio_file_metadata(audio)
-            self.play_from_index(self.current_index)
+            
+            if not res:
+                messagebox.showinfo("API", "Aucune nouvelle donnée trouvée")
+                return
+            
+            # IMPORTANT : Recharger les métadonnées depuis l'objet audio
+            md = audio.metadata or {}
+            
+            # Mettre à jour l'interface avec les nouvelles données
+            title = md.get("title") or audio.filepath.stem
+            artist = md.get("artist") or "Artiste inconnu"
+            album = md.get("album") or ""
+            year = str(md.get("year") or "")
+            
+            self.var_title.set(title)
+            self.var_artist.set(artist)
+            self.var_album_internal = album
+            self.var_year_internal = year
+            
+            details = []
+            if album:
+                details.append(album)
+            if year:
+                details.append(year)
+            self.var_details.set(" • ".join(details) if details else "")
+            
+            # Mettre à jour la cover
+            self._update_cover(audio)
+            
+            # Récupérer les paroles
+            self.var_status.set("Chargement des paroles...")
             l = self.metadata_fetcher.fetch_lyrics_for_audio(audio)
             if l:
                 self._set_lyrics_text(l)
-            messagebox.showinfo("API", "Données mises à jour" if res else "Pas de nouveauté")
+                self.var_status.set("Métadonnées et paroles mises à jour")
+            else:
+                self._set_lyrics_text("")
+                self.var_status.set("Métadonnées mises à jour (pas de paroles)")
+            
+            # Rafraîchir la listbox pour afficher les nouveaux titres
+            self._refresh_listbox()
+            
+            messagebox.showinfo("API", "Métadonnées mises à jour avec succès")
+            
         except Exception as e:
-            messagebox.showerror("API Error", str(e))
+            messagebox.showerror("API Error", f"Erreur lors de la récupération : {str(e)}")
+            self.var_status.set("Erreur API")
 
+    
     def save_metadata_current(self):
+        """Sauvegarde les métadonnées affichées dans le fichier audio"""
         if self.current_index is None:
+            messagebox.showwarning("Attention", "Aucune piste sélectionnée")
             return
+        
         audio = self.index_to_audio.get(self.current_index)
+        if not audio:
+            return
+        
+        # CRITIQUE : Sauvegarder l'état de lecture actuel
+        was_playing = self.is_playing
+        was_paused = self.is_paused
+        current_pos = 0.0
+        
+        # Si le fichier est en cours de lecture, calculer la position actuelle
+        if self.audio_player_enabled and was_playing:
+            try:
+                current_ms = pygame.mixer.music.get_pos()
+                if current_ms >= 0:
+                    current_pos = self.current_offset + (current_ms / 1000.0)
+            except:
+                pass
+        
         try:
+            # ÉTAPE 1 : Arrêter complètement la lecture pour libérer le fichier
+            if self.audio_player_enabled and self.is_playing:
+                pygame.mixer.music.stop()
+                self.is_playing = False
+                self.is_paused = False
+            
+            # ÉTAPE 2 : Synchroniser les valeurs affichées avec l'objet audio
+            if not hasattr(audio, 'metadata') or audio.metadata is None:
+                audio.metadata = {}
+            
+            # Récupérer les valeurs actuelles de l'interface
+            audio.metadata['title'] = self.var_title.get()
+            audio.metadata['artist'] = self.var_artist.get()
+            audio.metadata['album'] = self.var_album_internal
+            
+            if self.var_year_internal and self.var_year_internal.isdigit():
+                audio.metadata['year'] = int(self.var_year_internal)
+            
+            # ÉTAPE 3 : Sauvegarder dans le fichier (maintenant déverrouillé)
             audio.save_metadata()
-            messagebox.showinfo("Succès", "Tags sauvegardés")
+            
+            # ÉTAPE 4 : Rafraîchir la listbox
+            self._refresh_listbox()
+            
+            self.var_status.set(f"Tags sauvegardés : {audio.filepath.name}")
+            messagebox.showinfo("Succès", "Métadonnées sauvegardées dans le fichier")
+            
+            # ÉTAPE 5 : Reprendre la lecture si elle était en cours
+            if was_playing and self.audio_player_enabled:
+                try:
+                    pygame.mixer.music.load(str(audio.filepath))
+                    pygame.mixer.music.play(start=current_pos)
+                    self.is_playing = True
+                    self.is_paused = was_paused
+                    if was_paused:
+                        pygame.mixer.music.pause()
+                    self.btn_play.config(text="⏸" if not was_paused else "▶")
+                except Exception as e:
+                    print(f"Erreur reprise lecture : {e}")
+            
         except Exception as e:
-            messagebox.showerror("Erreur", str(e))
+            messagebox.showerror("Erreur", f"Impossible de sauvegarder : {str(e)}")
+            self.var_status.set("Erreur lors de la sauvegarde")
+            
+            # Tenter de reprendre la lecture même en cas d'erreur
+            if was_playing and self.audio_player_enabled:
+                try:
+                    pygame.mixer.music.load(str(audio.filepath))
+                    pygame.mixer.music.play(start=current_pos)
+                    self.is_playing = True
+                except:
+                    pass
 
+    
+    # Ajout Soumy ==> 
+    # Modifier les metadata manuellement
+    
+    def edit_metadata_current(self):
+        """Ouvre une fenêtre de dialogue pour éditer manuellement les métadonnées"""
+        if self.current_index is None:
+            messagebox.showwarning("Attention", "Aucune piste sélectionnée")
+            return
+        
+        audio = self.index_to_audio.get(self.current_index)
+        if not audio:
+            return
+        
+        # Créer une fenêtre modale
+        dialog = tk.Toplevel(self)
+        dialog.title("Éditer les métadonnées")
+        dialog.geometry("500x400")
+        dialog.transient(self)
+        dialog.grab_set()
+        
+        c = self.colors
+        dialog.configure(bg=c["bg"])
+        
+        # Récupérer les valeurs actuelles
+        current_title = self.var_title.get()
+        current_artist = self.var_artist.get()
+        current_album = self.var_album_internal
+        current_year = self.var_year_internal
+        
+        # Frame principal
+        main_frame = tk.Frame(dialog, bg=c["bg"], padx=20, pady=20)
+        main_frame.pack(fill=tk.BOTH, expand=True)
+        
+        # Titre
+        tk.Label(
+            main_frame, 
+            text="Titre :", 
+            bg=c["bg"], 
+            fg=c["text"],
+            font=("Segoe UI", 10, "bold")
+        ).grid(row=0, column=0, sticky="w", pady=(0, 5))
+        
+        entry_title = tk.Entry(main_frame, font=("Segoe UI", 10), width=40)
+        entry_title.insert(0, current_title)
+        entry_title.grid(row=1, column=0, sticky="ew", pady=(0, 15))
+        
+        # Artiste
+        tk.Label(
+            main_frame, 
+            text="Artiste :", 
+            bg=c["bg"], 
+            fg=c["text"],
+            font=("Segoe UI", 10, "bold")
+        ).grid(row=2, column=0, sticky="w", pady=(0, 5))
+        
+        entry_artist = tk.Entry(main_frame, font=("Segoe UI", 10), width=40)
+        entry_artist.insert(0, current_artist)
+        entry_artist.grid(row=3, column=0, sticky="ew", pady=(0, 15))
+        
+        # Album
+        tk.Label(
+            main_frame, 
+            text="Album :", 
+            bg=c["bg"], 
+            fg=c["text"],
+            font=("Segoe UI", 10, "bold")
+        ).grid(row=4, column=0, sticky="w", pady=(0, 5))
+        
+        entry_album = tk.Entry(main_frame, font=("Segoe UI", 10), width=40)
+        entry_album.insert(0, current_album)
+        entry_album.grid(row=5, column=0, sticky="ew", pady=(0, 15))
+        
+        # Année
+        tk.Label(
+            main_frame, 
+            text="Année :", 
+            bg=c["bg"], 
+            fg=c["text"],
+            font=("Segoe UI", 10, "bold")
+        ).grid(row=6, column=0, sticky="w", pady=(0, 5))
+        
+        entry_year = tk.Entry(main_frame, font=("Segoe UI", 10), width=40)
+        entry_year.insert(0, current_year)
+        entry_year.grid(row=7, column=0, sticky="ew", pady=(0, 20))
+        
+        main_frame.columnconfigure(0, weight=1)
+        
+        # Boutons
+        btn_frame = tk.Frame(main_frame, bg=c["bg"])
+        btn_frame.grid(row=8, column=0, sticky="ew")
+
+        def save_and_close():
+            # Mettre à jour les variables
+            self.var_title.set(entry_title.get())
+            self.var_artist.set(entry_artist.get())
+            self.var_album_internal = entry_album.get()
+            self.var_year_internal = entry_year.get()
+            
+            # Mettre à jour l'affichage des détails
+            details = []
+            if self.var_album_internal:
+                details.append(self.var_album_internal)
+            if self.var_year_internal:
+                details.append(self.var_year_internal)
+            self.var_details.set(" • ".join(details) if details else "")
+            
+            # Fermer la fenêtre
+            dialog.destroy()
+            
+            # Proposer de sauvegarder
+            if messagebox.askyesno("Sauvegarder ?", "Voulez-vous sauvegarder ces modifications dans le fichier ?"):
+                self.save_metadata_current()
+        
+        tk.Button(
+        btn_frame,
+        text="Annuler",
+        command=dialog.destroy,
+        bg=c["input_bg"],
+        fg=c["text"],
+        font=("Segoe UI", 10),
+        padx=20,
+        pady=8,
+        cursor="hand2"
+        ).pack(side=tk.LEFT, padx=(0, 10))
+        
+        tk.Button(
+            btn_frame,
+            text="Appliquer",
+            command=save_and_close,
+            bg=c["accent"],
+            fg="white",
+            font=("Segoe UI", 10, "bold"),
+            padx=20,
+            pady=8,
+            cursor="hand2"
+        ).pack(side=tk.LEFT)
+
+    
+
+
+    # ---------------------- FIN MODIFS SOUMY ----------------------------------------
+    #  
     def open_playlist(self):
         messagebox.showinfo("Info", "À implémenter")
 
@@ -1156,8 +1427,8 @@ class MusicLibraryGUI(tk.Tk):
         Affiche la pochette du morceau :
         1. via tags (get_cover_art)
         2. via cover téléchargée pour CE fichier (ensure_cover_image)
-           → affichage + validation utilisateur
-        3. sinon placeholder ♪
+           -> affichage + validation utilisateur
+        3. sinon placeholder icone : ♪
         """
         if not HAS_PIL:
             return

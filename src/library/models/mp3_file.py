@@ -1,6 +1,10 @@
 from typing import Dict, Optional
 from pathlib import Path
-
+import mutagen
+from mutagen.easyid3 import EasyID3
+from mutagen.mp3 import MP3
+from mutagen.flac import FLAC
+from mutagen.mp4 import MP4
 from mutagen.mp3 import MP3
 from mutagen.id3 import ID3, TIT2, TPE1, TALB, TDRC, TCON, TRCK, APIC, ID3NoHeaderError
 
@@ -23,43 +27,112 @@ class MP3File(AudioFile):
         except Exception as e:
             raise ValueError(f"Erreur lors du chargement du MP3: {e}")
 
-    def save_metadata(self) -> None:
-        """
-        Sauvegarde les métadonnées dans les tags ID3.
-        """
+    def save_metadata(self):
+        """Version avec validation stricte des données"""
+
+        if not self.metadata:
+            raise ValueError("Aucune métadonnée à sauvegarder")
+
+        # Validation et nettoyage des données
+        def clean_string(value):
+            """Nettoie une valeur pour mutagen"""
+            if value is None:
+                return None
+            if isinstance(value, (list, tuple)):
+                value = value[0] if value else None
+            if value is None:
+                return None
+            s = str(value).strip()
+            return s if s else None
+
+        def clean_year(value):
+            """Nettoie une année"""
+            if value is None:
+                return None
+            s = clean_string(value)
+            if not s:
+                return None
+            # Extraire les 4 premiers chiffres
+            import re
+            match = re.search(r'\d{4}', s)
+            return match.group(0) if match else None
+
+        # Nettoyer toutes les valeurs
+        title = clean_string(self.metadata.get('title'))
+        artist = clean_string(self.metadata.get('artist'))
+        album = clean_string(self.metadata.get('album'))
+        year = clean_year(self.metadata.get('year'))
+        albumartist = clean_string(self.metadata.get('albumartist'))
+        genre = clean_string(self.metadata.get('genre'))
+
+        ext = self.filepath.suffix.lower()
+
         try:
-            audio = ID3(str(self.filepath))
-        except ID3NoHeaderError:
-            audio = ID3()
+            if ext == '.mp3':
+                try:
+                    audio = EasyID3(str(self.filepath))
+                except ID3NoHeaderError:
+                    audio = mutagen.File(str(self.filepath), easy=True)
+                    audio.add_tags()
+                
+                # Écrire uniquement les valeurs valides
+                if title:
+                    audio['title'] = [title]
+                if artist:
+                    audio['artist'] = [artist]
+                if album:
+                    audio['album'] = [album]
+                if year:
+                    audio['date'] = [year]
+                if albumartist:
+                    audio['albumartist'] = [albumartist]
+                if genre:
+                    audio['genre'] = [genre]
+                
+                audio.save()
+                print(f"✓ Tags MP3 sauvegardés : {self.filepath.name}")
+            
+            elif ext == '.flac':
+                audio = FLAC(str(self.filepath))
+                
+                if title:
+                    audio['title'] = title
+                if artist:
+                    audio['artist'] = artist
+                if album:
+                    audio['album'] = album
+                if year:
+                    audio['date'] = year
+                if albumartist:
+                    audio['albumartist'] = albumartist
+                if genre:
+                    audio['genre'] = genre
+                
+                audio.save()
+                print(f"✓ Tags FLAC sauvegardés : {self.filepath.name}")
+            
+            elif ext in ['.m4a', '.mp4']:
+                audio = MP4(str(self.filepath))
+                
+                if title:
+                    audio['\xa9nam'] = [title]
+                if artist:
+                    audio['\xa9ART'] = [artist]
+                if album:
+                    audio['\xa9alb'] = [album]
+                if year:
+                    audio['\xa9day'] = [year]
+                if genre:
+                    audio['\xa9gen'] = [genre]
+                
+                audio.save()
+                print(f"✓ Tags M4A sauvegardés : {self.filepath.name}")
+            
+            else:
+                raise ValueError(f"Format {ext} non supporté")
 
-        # On nettoie les frames existantes pour éviter les doublons
-        for frame_id in ("TIT2", "TPE1", "TALB", "TDRC", "TCON", "TRCK"):
-            if frame_id in audio:
-                del audio[frame_id]
-
-        title = self.metadata.get("title", "")
-        artist = self.metadata.get("artist", "")
-        album = self.metadata.get("album", "")
-        year = self.metadata.get("year", "")
-        genre = self.metadata.get("genre", "")
-        track_number = self.metadata.get("track_number", "")
-
-        if title:
-            audio.add(TIT2(encoding=3, text=title))
-        if artist:
-            audio.add(TPE1(encoding=3, text=artist))
-        if album:
-            audio.add(TALB(encoding=3, text=album))
-        if year:
-            audio.add(TDRC(encoding=3, text=year))
-        if genre:
-            audio.add(TCON(encoding=3, text=genre))
-        if track_number:
-            audio.add(TRCK(encoding=3, text=track_number))
-
-        audio.save(str(self.filepath))
-        # Recharger l'objet mutagen MP3
-        self._audio_object = MP3(str(self.filepath))
+        except Exception as e:
+            raise Exception(f"Erreur sauvegarde : {e}")
 
     def extract_metadata(self) -> Dict[str, any]:
         """
