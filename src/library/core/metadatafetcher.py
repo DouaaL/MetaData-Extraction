@@ -20,7 +20,7 @@ except ImportError:
 class MetadataFetcher:
     """
     Gère :
-    - Métadonnées enrichies via Spotify
+    - Métadonnées enrichies via Spotify (en mémoire uniquement)
     - Paroles via LyricsResolver
     - Récupération / téléchargement / sauvegarde de la cover d'album (par fichier)
     """
@@ -268,9 +268,15 @@ class MetadataFetcher:
             return None
 
     # ----------------------------------------------------------
-    # SPOTIFY – Update file metadata
+    # SPOTIFY – Update file metadata (EN MÉMOIRE UNIQUEMENT)
     # ----------------------------------------------------------
     def update_audio_file_metadata(self, audio_file: AudioFile) -> bool:
+        """
+        Met à jour audio_file.metadata avec les infos Spotify,
+        mais NE TOUCHE PAS au fichier sur le disque.
+        L'écriture réelle doit être faite par la GUI qui sait
+        gérer pygame / les locks système.
+        """
         if not self.sp:
             print("Spotify désactivé → update_metadata False.")
             return False
@@ -304,12 +310,8 @@ class MetadataFetcher:
 
         audio_file.metadata.update(new_md)
 
-        try:
-            audio_file.save_metadata()
-            print("Tags mis à jour ✔️")
-        except Exception as e:
-            print("Erreur sauvegarde tags :", e)
-
+        # ⛔ IMPORTANT : on NE SAUVE PAS ici, on laisse la GUI le faire
+        print("Tags mis à jour en mémoire (pas encore écrits dans le fichier).")
         return True
 
     # ----------------------------------------------------------
