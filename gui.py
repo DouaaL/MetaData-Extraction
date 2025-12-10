@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import List, Dict, Optional
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
+import time
 
 # Pour afficher les covers
 try:
@@ -1106,68 +1107,133 @@ class MusicLibraryGUI(tk.Tk):
         # Modif Soumy ==>
 
     def fetch_api_current(self):
-        """Récupère les métadonnées via API et les charge dans l'interface"""
+        """Version Priorité Utilisateur : Force l'utilisation du texte de l'écran pour la recherche"""
         if self.current_index is None:
             messagebox.showwarning("Attention", "Aucune piste sélectionnée")
             return
         
         audio = self.index_to_audio.get(self.current_index)
-        if not audio:
-            return
+        if not audio: return
+
+        # 1. INPUTS UI (Ce que vous avez tapé)
+        screen_title = self.var_title.get()
+        screen_artist = self.var_artist.get()
         
-        self.var_status.set("Récupération des métadonnées via API...")
+        # On prépare l'objet
+        if not audio.metadata: audio.metadata = {}
+        audio.metadata['title'] = screen_title
+        audio.metadata['artist'] = screen_artist if screen_artist != "--" else ""
+
+        self.var_status.set(f"Préparation : {screen_title}...")
+
+        # 2. ARRÊT & DÉVERROUILLAGE
+        was_playing = self.is_playing
+        was_paused = self.is_paused
+        current_pos = 0.0
+        
+        if self.audio_player_enabled and (self.is_playing or self.is_paused):
+            try:
+                current_ms = pygame.mixer.music.get_pos()
+                if current_ms >= 0:
+                    current_pos = self.current_offset + (current_ms / 1000.0)
+            except: pass
+            pygame.mixer.music.stop()
+            try: pygame.mixer.music.unload()
+            except AttributeError: pass
+            self.is_playing = False; self.is_paused = False
         
         try:
-            # Mettre à jour les métadonnées via API
+            # 3. PRE-SAUVEGARDE (On tente d'écrire sur le disque)
+            audio.save_metadata()
+            time.sleep(0.5)
+            
+            # 4. RELOAD (Lecture technique)
+            # On relit pour avoir la durée, le bitrate, etc.
+            refreshed_tags = audio.extract_metadata()
+            if refreshed_tags:
+                # ATTENTION : On ne laisse pas le reload écraser le titre si le reload est vide !
+                # On garde les autres infos (album, année existante...)
+                old_title = audio.metadata.get('title') # Votre input "malvil"
+                old_artist = audio.metadata.get('artist')
+                
+                audio.metadata = refreshed_tags
+                
+                # === FIX CRITIQUE ICI ===
+                # Si le reload du disque renvoie un titre vide ou nul, on remet VOTRE input
+                # C'est ça qui manquait : on force l'API à chercher "malvil" et pas ""
+                if screen_title and (not audio.metadata.get('title') or audio.metadata.get('title') == ""):
+                    audio.metadata['title'] = screen_title
+                else:
+                    # Même si le disque renvoie quelque chose, pour la recherche API, 
+                    # on préfère généralement ce que l'utilisateur vient de corriger manuellement
+                    audio.metadata['title'] = screen_title
+                    
+                if screen_artist and screen_artist != "--":
+                    audio.metadata['artist'] = screen_artist
+
+            # Log pour vérifier que "malvil" est bien là avant l'envoi
+            print(f"DEBUG: Titre envoyé à l'API : '{audio.metadata.get('title')}'")
+
+            # 5. APPEL API
+            self.var_status.set(f"Recherche API pour : {audio.metadata.get('title')}...")
             res = self.metadata_fetcher.update_audio_file_metadata(audio)
             
+            time.sleep(0.5)
+
+            # 6. REFRESH FINAL (Pour afficher le résultat Spotify)
+            final_tags = audio.extract_metadata()
+            if final_tags:
+                audio.metadata = final_tags
+
+            # 7. REPRISE LECTURE
+            if self.audio_player_enabled and was_playing:
+                try:
+                    pygame.mixer.music.load(str(audio.filepath))
+                    pygame.mixer.music.play(start=current_pos)
+                    self.is_playing = True
+                    self.is_paused = was_paused
+                    if was_paused: pygame.mixer.music.pause()
+                    self.btn_play.config(text="⏸" if not was_paused else "▶")
+                except Exception: pass
+            
+            # GESTION RESULTAT
             if not res:
-                messagebox.showinfo("API", "Aucune nouvelle donnée trouvée")
-                return
-            
-            # IMPORTANT : Recharger les métadonnées depuis l'objet audio
+                self.var_status.set("API : Aucun résultat.")
+                messagebox.showinfo("Info", "Pas de résultat Spotify.")
+            else:
+                messagebox.showinfo("Succès", "Tags mis à jour !")
+
+            # MISE A JOUR UI
             md = audio.metadata or {}
-            
-            # Mettre à jour l'interface avec les nouvelles données
-            title = md.get("title") or audio.filepath.stem
-            artist = md.get("artist") or "Artiste inconnu"
-            album = md.get("album") or ""
-            year = str(md.get("year") or "")
-            
-            self.var_title.set(title)
-            self.var_artist.set(artist)
-            self.var_album_internal = album
-            self.var_year_internal = year
+            self.var_title.set(md.get("title", screen_title))
+            self.var_artist.set(md.get("artist", screen_artist))
+            self.var_album_internal = md.get("album", "")
+            self.var_year_internal = str(md.get("year", ""))
             
             details = []
-            if album:
-                details.append(album)
-            if year:
-                details.append(year)
-            self.var_details.set(" • ".join(details) if details else "")
+            if self.var_album_internal: details.append(self.var_album_internal)
+            if self.var_year_internal: details.append(self.var_year_internal)
+            self.var_details.set(" • ".join(details))
             
-            # Mettre à jour la cover
             self._update_cover(audio)
-            
-            # Récupérer les paroles
-            self.var_status.set("Chargement des paroles...")
-            l = self.metadata_fetcher.fetch_lyrics_for_audio(audio)
-            if l:
-                self._set_lyrics_text(l)
-                self.var_status.set("Métadonnées et paroles mises à jour")
-            else:
-                self._set_lyrics_text("")
-                self.var_status.set("Métadonnées mises à jour (pas de paroles)")
-            
-            # Rafraîchir la listbox pour afficher les nouveaux titres
             self._refresh_listbox()
             
-            messagebox.showinfo("API", "Métadonnées mises à jour avec succès")
+            def _bg_lyrics():
+                l = self.metadata_fetcher.fetch_lyrics_for_audio(audio)
+                if l: self._set_lyrics_text(l)
+            threading.Thread(target=_bg_lyrics, daemon=True).start()
             
         except Exception as e:
-            messagebox.showerror("API Error", f"Erreur lors de la récupération : {str(e)}")
-            self.var_status.set("Erreur API")
+            if self.audio_player_enabled and was_playing:
+                try:
+                    pygame.mixer.music.load(str(audio.filepath))
+                    pygame.mixer.music.play(start=current_pos)
+                    self.is_playing = True
+                except: pass
+            print(f"Erreur critique: {e}")
+            messagebox.showerror("Erreur", str(e))
 
+            
     
     def save_metadata_current(self):
         """Sauvegarde les métadonnées affichées dans le fichier audio"""
@@ -1195,8 +1261,17 @@ class MusicLibraryGUI(tk.Tk):
         
         try:
             # ÉTAPE 1 : Arrêter complètement la lecture pour libérer le fichier
-            if self.audio_player_enabled and self.is_playing:
-                pygame.mixer.music.stop()
+            if self.audio_player_enabled:
+                if self.is_playing or self.is_paused: # Tenter l'arrêt même si l'état est confus
+                    pygame.mixer.music.stop()
+                
+                # AJOUT : Décharger explicitement le fichier pour s'assurer que le verrou est levé
+                try:
+                    pygame.mixer.music.unload()
+                except:
+                    # Gérer les versions où unload() n'existe pas ou échoue
+                    pass
+
                 self.is_playing = False
                 self.is_paused = False
             
