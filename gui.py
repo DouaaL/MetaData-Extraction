@@ -111,7 +111,7 @@ class MusicLibraryGUI(tk.Tk):
                 "accent_dark": "#a393eb",
                 "text": "#F2F2F7",
                 "text_dim": "#A7A7B2",
-                "text_barre": "#F2F2F7",   # couleur barre (temps + statut + titres)
+                "text_barre": "#F2F2F7",
                 "border": "#1E1E2A",
                 "list_bg": "#10101A",
                 "list_fg": "#F2F2F7",
@@ -121,16 +121,16 @@ class MusicLibraryGUI(tk.Tk):
                 "input_fg": "#F2F2F7",
             },
             "light": {
-                "bg": "#E8ECF7",          # Fond global glacé
-                "sidebar": "#F4F7FF",     # Panneau clair
-                "card": "#F4F7FF",        # Cartes + blocs
-                "player": "#2D51B3",      # Barre du player
-                "accent": "#1936B7",      # Bleu brillant (boutons)
-                "accent_dark": "#1936B7", # Bleu foncé (active/hover)
-                "text": "#1A1F36",        # Texte principal
-                "text_barre": "#1A1F36",  # le son, temps et bienvenue
-                "text_dim": "#505560",    # Texte secondaire
-                "border": "#C7D1E6",      # Bordure froide très légère
+                "bg": "#E8ECF7",
+                "sidebar": "#F4F7FF",
+                "card": "#F4F7FF",
+                "player": "#2D51B3",
+                "accent": "#1936B7",
+                "accent_dark": "#1936B7",
+                "text": "#1A1F36",
+                "text_barre": "#1A1F36",
+                "text_dim": "#505560",
+                "border": "#C7D1E6",
                 "list_bg": "#C9CED8",
                 "list_fg": "#1A1F36",
                 "list_sel_bg": "#E0E6FB",
@@ -166,7 +166,7 @@ class MusicLibraryGUI(tk.Tk):
         self.lbl_details = None
         
         # En-têtes fixes (Contenu principal)
-        self.lbl_header_pochette = None   # plus utilisé mais on laisse pour éviter d'erreurs
+        self.lbl_header_pochette = None
         self.lbl_header_lecture = None
         self.lbl_header_paroles = None
 
@@ -242,7 +242,6 @@ class MusicLibraryGUI(tk.Tk):
         style = ttk.Style(self)
         c = self.colors
 
-        # sv_ttk suit clair/sombre si dispo
         if HAS_SV_TTK:
             if self.current_theme == "dark":
                 sv_ttk.use_dark_theme()
@@ -254,7 +253,6 @@ class MusicLibraryGUI(tk.Tk):
         style.configure("Main.TFrame", background=c["bg"])
         style.configure("Card.TFrame", background=c["card"])
 
-        # Boutons accent
         style.configure(
             "Accent.TButton",
             font=("Segoe UI", 10, "bold"),
@@ -274,7 +272,6 @@ class MusicLibraryGUI(tk.Tk):
             ],
         )
         
-        # LOGIQUE COULEUR BOUTONS GRIS (API / sauvegarde)
         if self.current_theme == "dark":
             btn_bg = "#576574"
             btn_fg = "#ffffff"
@@ -304,17 +301,14 @@ class MusicLibraryGUI(tk.Tk):
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=0)
 
-        # SIDEBAR
         sidebar = ttk.Frame(self, style="Sidebar.TFrame", padding=(15, 15))
         sidebar.grid(row=0, column=0, sticky="nsew")
         self._build_sidebar(sidebar)
 
-        # CONTENU PRINCIPAL
         main_content = ttk.Frame(self, style="Main.TFrame", padding=(20, 20))
         main_content.grid(row=0, column=1, sticky="nsew")
         self._build_main_content(main_content)
 
-        # BARRE LECTEUR
         player_bar = ttk.Frame(self, style="Player.TFrame")
         player_bar.grid(row=1, column=0, columnspan=2, sticky="ew")
         player_bar.columnconfigure(0, weight=1)
@@ -325,7 +319,6 @@ class MusicLibraryGUI(tk.Tk):
         c = self.colors
         parent.rowconfigure(4, weight=1)
 
-        # Logo / Titre
         self.lbl_header_logo = tk.Label(
             parent,
             text="🎵 PyMetaPlay",
@@ -335,7 +328,6 @@ class MusicLibraryGUI(tk.Tk):
         )
         self.lbl_header_logo.grid(row=0, column=0, sticky="w", pady=(0, 20))
 
-        # Recherche
         self.lbl_header_search = tk.Label(
             parent, 
             text="RECHERCHE", 
@@ -355,7 +347,6 @@ class MusicLibraryGUI(tk.Tk):
         search_entry = ttk.Entry(search_frame, textvariable=self.var_search)
         search_entry.grid(row=0, column=0, sticky="ew")
 
-        # Menu
         self.lbl_header_lib = tk.Label(
             parent, 
             text="BIBLIOTHÈQUE", 
@@ -398,7 +389,6 @@ class MusicLibraryGUI(tk.Tk):
             **btn_style,
         ).grid(row=2, column=0, sticky="ew", pady=1)
 
-        # Liste
         self.lbl_header_tracks = tk.Label(
             parent, 
             text="PISTES", 
@@ -438,7 +428,6 @@ class MusicLibraryGUI(tk.Tk):
         parent.columnconfigure(1, weight=2)
         parent.rowconfigure(0, weight=1)
 
-        # 1. Colonne gauche = cover
         left_frame = ttk.Frame(parent, style="Main.TFrame") 
         left_frame.grid(row=0, column=0, sticky="n", padx=(0, 20))
 
@@ -452,13 +441,11 @@ class MusicLibraryGUI(tk.Tk):
         )
         self.cover_label.pack(anchor="center")
         
-        # 2. Colonne droite
         right_frame = ttk.Frame(parent, style="Main.TFrame")
         right_frame.grid(row=0, column=1, sticky="nsew")
         right_frame.rowconfigure(2, weight=1)
         right_frame.columnconfigure(0, weight=1)
 
-        # Bloc "Lecture en cours"
         now_playing = ttk.Frame(right_frame, style="Main.TFrame")
         now_playing.grid(row=0, column=0, sticky="ew", pady=(0, 10))
 
@@ -501,7 +488,6 @@ class MusicLibraryGUI(tk.Tk):
         )
         self.lbl_details.pack(anchor="w", pady=(2, 0), fill=tk.X)
 
-        # Bloc Paroles
         lyrics_frame = ttk.Frame(right_frame, style="Main.TFrame")
         lyrics_frame.grid(row=1, column=0, sticky="nsew", pady=(5, 10))
         right_frame.rowconfigure(1, weight=3)
@@ -539,7 +525,6 @@ class MusicLibraryGUI(tk.Tk):
         self.lyrics_text.pack(fill=tk.BOTH, expand=True)
         scroll_lyrics.config(command=self.lyrics_text.yview)
 
-        # Actions
         action_frame = ttk.Frame(right_frame, style="Main.TFrame")
         action_frame.grid(row=2, column=0, sticky="ew", pady=(10, 0))
 
@@ -550,15 +535,12 @@ class MusicLibraryGUI(tk.Tk):
             style="Custom.TButton",
         ).pack(side=tk.LEFT, padx=(0, 10))
 
-        # Bouton pour modif manuelle des métadonnées
-
         ttk.Button(
             action_frame,
             text="✏️ Éditer manuellement",
             command=self.edit_metadata_current,
             style="Custom.TButton",
         ).pack(side=tk.LEFT, padx=(0, 10))
-
 
         ttk.Button(
             action_frame,
@@ -592,7 +574,6 @@ class MusicLibraryGUI(tk.Tk):
             "relief": "flat",
         }
 
-        # Boutons player
         self.btn_repeat = tk.Button(
             controls, text="🔁", command=self.toggle_repeat, **btn_sec_style
         )
@@ -622,7 +603,7 @@ class MusicLibraryGUI(tk.Tk):
             controls,
             text="🌙" if self.current_theme == "dark" else "☀️",
             bg=c["player"],
-            fg=c["text_dim"] if self.current_theme == "dark" else c["text"],  # <<< ici
+            fg=c["text_dim"] if self.current_theme == "dark" else c["text"],
             bd=0,
             font=("Segoe UI", 12),
             cursor="hand2",
@@ -632,7 +613,6 @@ class MusicLibraryGUI(tk.Tk):
         )
         self.theme_toggle_btn.pack(side=tk.LEFT, padx=10)
 
-        # Tooltips IHM
         self._add_tooltip(self.btn_repeat, "Répéter la piste")
         self._add_tooltip(self.btn_prev, "Piste précédente")
         self._add_tooltip(self.btn_play, "Lecture / pause")
@@ -640,12 +620,10 @@ class MusicLibraryGUI(tk.Tk):
         self._add_tooltip(self.btn_vol, "Activer / couper le son")
         self._add_tooltip(self.theme_toggle_btn, "Changer de thème clair / sombre")
 
-        # Hover (affordance)
         for b in [self.btn_repeat, self.btn_prev, self.btn_next, self.btn_vol, self.theme_toggle_btn]:
             b.bind("<Enter>", self._on_player_btn_enter)
             b.bind("<Leave>", self._on_player_btn_leave)
 
-        # Progression
         progress_frame = tk.Frame(center_frame, bg=c["player"])
         progress_frame.pack(side=tk.TOP, fill=tk.X, pady=(2, 6))
         self.player_progress_frame = progress_frame
@@ -676,7 +654,6 @@ class MusicLibraryGUI(tk.Tk):
         )
         self.lbl_total_time.pack(side=tk.RIGHT, padx=10)
 
-        # Status
         status_bar = tk.Frame(parent, bg=c["player"])
         status_bar.grid(row=1, column=0, sticky="ew")
         self.player_status_bar = status_bar
@@ -694,7 +671,6 @@ class MusicLibraryGUI(tk.Tk):
         status_label.pack(fill=tk.X)
         self.status_label = status_label
 
-    # Hover handlers pour les boutons player
     def _on_player_btn_enter(self, event):
         c = self.colors
         event.widget.config(bg=c["accent_dark"])
@@ -729,7 +705,6 @@ class MusicLibraryGUI(tk.Tk):
 
         self._setup_styles()
 
-        # Listbox
         if hasattr(self, "listbox"):
             try:
                 self.listbox.config(
@@ -741,7 +716,6 @@ class MusicLibraryGUI(tk.Tk):
             except Exception:
                 pass
 
-        # Sidebar buttons
         if self.sidebar_button_frame is not None:
             try:
                 self.sidebar_button_frame.config(bg=c["sidebar"])
@@ -756,7 +730,6 @@ class MusicLibraryGUI(tk.Tk):
             except Exception:
                 pass
 
-        # Player frames
         for frame in [
             self.player_center_frame,
             self.player_controls_frame,
@@ -769,7 +742,6 @@ class MusicLibraryGUI(tk.Tk):
                 except Exception:
                     pass
 
-        # Temps + statut = text_barre
         if hasattr(self, "lbl_current_time"):
             self.lbl_current_time.config(
                 bg=c["player"],
@@ -786,7 +758,6 @@ class MusicLibraryGUI(tk.Tk):
                 fg=c.get("text_barre", c["text_dim"])
             )
 
-        # Boutons player (couleurs adaptées au thème)
         for b in [self.btn_repeat, self.btn_prev, self.btn_next, self.btn_vol]:
             if b is not None:
                 b.config(
@@ -804,7 +775,6 @@ class MusicLibraryGUI(tk.Tk):
                 activeforeground=c["accent"],
             )
 
-        # Titre / artiste / détails
         if self.lbl_title is not None:
             self.lbl_title.config(bg=c["bg"], fg=c["text"])
         if self.lbl_artist is not None:
@@ -812,7 +782,6 @@ class MusicLibraryGUI(tk.Tk):
         if self.lbl_details is not None:
             self.lbl_details.config(bg=c["bg"], fg=c["text_dim"])
             
-        # En-têtes contenu
         header_lecture = getattr(self, 'lbl_header_lecture', None)
         if header_lecture:
             header_lecture.config(bg=c["bg"], fg=c["text_dim"])
@@ -821,7 +790,6 @@ class MusicLibraryGUI(tk.Tk):
         if header_paroles:
             header_paroles.config(bg=c["bg"], fg=c["text_dim"])
 
-        # En-têtes Sidebar
         header_logo = getattr(self, 'lbl_header_logo', None)
         if header_logo:
             header_logo.config(bg=c["sidebar"], fg=c["accent"])
@@ -838,7 +806,6 @@ class MusicLibraryGUI(tk.Tk):
         if header_tracks:
             header_tracks.config(bg=c["sidebar"], fg=c["text_barre"])
 
-        # Paroles et cover
         if hasattr(self, "lyrics_text"):
             self.lyrics_text.config(bg=c["bg"], fg=c["text"])
 
@@ -896,18 +863,15 @@ class MusicLibraryGUI(tk.Tk):
         self._refresh_listbox()
 
     def _refresh_listbox(self):
-        # Guidage utilisateur (IHM) : message clair selon le contexte
         self.listbox.delete(0, tk.END)
         self.index_to_audio.clear()
 
         if not self.audio_files:
-            # Aucun fichier encore chargé
             self.listbox.insert(tk.END, "Aucun fichier chargé.")
             self.listbox.insert(tk.END, "Utilisez « Ouvrir un dossier » pour commencer.")
             return
 
         if not self.displayed_files:
-            # Fichiers chargés mais recherche vide
             self.listbox.insert(tk.END, "Aucun résultat pour cette recherche.")
             self.listbox.insert(tk.END, "Essayez un autre mot-clé.")
             return
@@ -1104,8 +1068,7 @@ class MusicLibraryGUI(tk.Tk):
         self.is_paused = False
         self.btn_play.config(text="⏸")
 
-        # Modif Soumy ==>
-
+    # --------- API & METADATA ----------
     def fetch_api_current(self):
         """Version Priorité Utilisateur : Force l'utilisation du texte de l'écran pour la recherche"""
         if self.current_index is None:
@@ -1245,12 +1208,10 @@ class MusicLibraryGUI(tk.Tk):
         if not audio:
             return
         
-        # CRITIQUE : Sauvegarder l'état de lecture actuel
         was_playing = self.is_playing
         was_paused = self.is_paused
         current_pos = 0.0
         
-        # Si le fichier est en cours de lecture, calculer la position actuelle
         if self.audio_player_enabled and was_playing:
             try:
                 current_ms = pygame.mixer.music.get_pos()
@@ -1275,11 +1236,9 @@ class MusicLibraryGUI(tk.Tk):
                 self.is_playing = False
                 self.is_paused = False
             
-            # ÉTAPE 2 : Synchroniser les valeurs affichées avec l'objet audio
             if not hasattr(audio, 'metadata') or audio.metadata is None:
                 audio.metadata = {}
             
-            # Récupérer les valeurs actuelles de l'interface
             audio.metadata['title'] = self.var_title.get()
             audio.metadata['artist'] = self.var_artist.get()
             audio.metadata['album'] = self.var_album_internal
@@ -1287,16 +1246,13 @@ class MusicLibraryGUI(tk.Tk):
             if self.var_year_internal and self.var_year_internal.isdigit():
                 audio.metadata['year'] = int(self.var_year_internal)
             
-            # ÉTAPE 3 : Sauvegarder dans le fichier (maintenant déverrouillé)
             audio.save_metadata()
             
-            # ÉTAPE 4 : Rafraîchir la listbox
             self._refresh_listbox()
             
             self.var_status.set(f"Tags sauvegardés : {audio.filepath.name}")
             messagebox.showinfo("Succès", "Métadonnées sauvegardées dans le fichier")
             
-            # ÉTAPE 5 : Reprendre la lecture si elle était en cours
             if was_playing and self.audio_player_enabled:
                 try:
                     pygame.mixer.music.load(str(audio.filepath))
@@ -1313,7 +1269,6 @@ class MusicLibraryGUI(tk.Tk):
             messagebox.showerror("Erreur", f"Impossible de sauvegarder : {str(e)}")
             self.var_status.set("Erreur lors de la sauvegarde")
             
-            # Tenter de reprendre la lecture même en cas d'erreur
             if was_playing and self.audio_player_enabled:
                 try:
                     pygame.mixer.music.load(str(audio.filepath))
@@ -1322,10 +1277,6 @@ class MusicLibraryGUI(tk.Tk):
                 except:
                     pass
 
-    
-    # Ajout Soumy ==> 
-    # Modifier les metadata manuellement
-    
     def edit_metadata_current(self):
         """Ouvre une fenêtre de dialogue pour éditer manuellement les métadonnées"""
         if self.current_index is None:
@@ -1336,7 +1287,6 @@ class MusicLibraryGUI(tk.Tk):
         if not audio:
             return
         
-        # Créer une fenêtre modale
         dialog = tk.Toplevel(self)
         dialog.title("Éditer les métadonnées")
         dialog.geometry("500x400")
@@ -1346,17 +1296,14 @@ class MusicLibraryGUI(tk.Tk):
         c = self.colors
         dialog.configure(bg=c["bg"])
         
-        # Récupérer les valeurs actuelles
         current_title = self.var_title.get()
         current_artist = self.var_artist.get()
         current_album = self.var_album_internal
         current_year = self.var_year_internal
         
-        # Frame principal
         main_frame = tk.Frame(dialog, bg=c["bg"], padx=20, pady=20)
         main_frame.pack(fill=tk.BOTH, expand=True)
         
-        # Titre
         tk.Label(
             main_frame, 
             text="Titre :", 
@@ -1369,7 +1316,6 @@ class MusicLibraryGUI(tk.Tk):
         entry_title.insert(0, current_title)
         entry_title.grid(row=1, column=0, sticky="ew", pady=(0, 15))
         
-        # Artiste
         tk.Label(
             main_frame, 
             text="Artiste :", 
@@ -1382,7 +1328,6 @@ class MusicLibraryGUI(tk.Tk):
         entry_artist.insert(0, current_artist)
         entry_artist.grid(row=3, column=0, sticky="ew", pady=(0, 15))
         
-        # Album
         tk.Label(
             main_frame, 
             text="Album :", 
@@ -1395,7 +1340,6 @@ class MusicLibraryGUI(tk.Tk):
         entry_album.insert(0, current_album)
         entry_album.grid(row=5, column=0, sticky="ew", pady=(0, 15))
         
-        # Année
         tk.Label(
             main_frame, 
             text="Année :", 
@@ -1410,18 +1354,15 @@ class MusicLibraryGUI(tk.Tk):
         
         main_frame.columnconfigure(0, weight=1)
         
-        # Boutons
         btn_frame = tk.Frame(main_frame, bg=c["bg"])
         btn_frame.grid(row=8, column=0, sticky="ew")
 
         def save_and_close():
-            # Mettre à jour les variables
             self.var_title.set(entry_title.get())
             self.var_artist.set(entry_artist.get())
             self.var_album_internal = entry_album.get()
             self.var_year_internal = entry_year.get()
             
-            # Mettre à jour l'affichage des détails
             details = []
             if self.var_album_internal:
                 details.append(self.var_album_internal)
@@ -1429,23 +1370,21 @@ class MusicLibraryGUI(tk.Tk):
                 details.append(self.var_year_internal)
             self.var_details.set(" • ".join(details) if details else "")
             
-            # Fermer la fenêtre
             dialog.destroy()
             
-            # Proposer de sauvegarder
             if messagebox.askyesno("Sauvegarder ?", "Voulez-vous sauvegarder ces modifications dans le fichier ?"):
                 self.save_metadata_current()
         
         tk.Button(
-        btn_frame,
-        text="Annuler",
-        command=dialog.destroy,
-        bg=c["input_bg"],
-        fg=c["text"],
-        font=("Segoe UI", 10),
-        padx=20,
-        pady=8,
-        cursor="hand2"
+            btn_frame,
+            text="Annuler",
+            command=dialog.destroy,
+            bg=c["input_bg"],
+            fg=c["text"],
+            font=("Segoe UI", 10),
+            padx=20,
+            pady=8,
+            cursor="hand2"
         ).pack(side=tk.LEFT, padx=(0, 10))
         
         tk.Button(
@@ -1460,17 +1399,18 @@ class MusicLibraryGUI(tk.Tk):
             cursor="hand2"
         ).pack(side=tk.LEFT)
 
-    
-
-
-    # ---------------------- FIN MODIFS SOUMY ----------------------------------------
-    #  
+    # --------- Playlist placeholders ----------
     def open_playlist(self):
-        messagebox.showinfo("Info", "À implémenter")
+        filedialog.askopenfilename(
+            title="Ouvrir une playlist XSPF",
+            filetypes=[("Playlists XSPF", "*.xspf"), ("Tous les fichiers", "*.*")]
+        )
+        messagebox.showinfo("Info", "Ouverture de playlist XSPF : fonctionnalité à implémenter.")
 
     def generate_playlist_selection(self):
-        messagebox.showinfo("Info", "À implémenter")
+        messagebox.showinfo("Info", "Sauvegarde de la sélection : fonctionnalité à implémenter.")
 
+    # --------- Cover & lyrics ----------
     def _create_placeholder_cover(self, size=320):
         if not HAS_PIL:
             return None
@@ -1498,17 +1438,9 @@ class MusicLibraryGUI(tk.Tk):
             self.cover_image_ref = self.placeholder_image
 
     def _update_cover(self, audio: AudioFile):
-        """
-        Affiche la pochette du morceau :
-        1. via tags (get_cover_art)
-        2. via cover téléchargée pour CE fichier (ensure_cover_image)
-           -> affichage + validation utilisateur
-        3. sinon placeholder icone : ♪
-        """
         if not HAS_PIL:
             return
 
-        # 1) COVER intégrée dans les tags (ID3, etc.)
         data = audio.get_cover_art()
         if data:
             try:
@@ -1519,9 +1451,8 @@ class MusicLibraryGUI(tk.Tk):
                 self.cover_image_ref = photo
                 return
             except Exception:
-                pass  # on tente l'étape suivante
+                pass
 
-        # 2) COVER téléchargée via MetadataFetcher.ensure_cover_image (MusicBrainz)
         cover_path = None
         try:
             if hasattr(self.metadata_fetcher, "ensure_cover_image"):
@@ -1532,16 +1463,13 @@ class MusicLibraryGUI(tk.Tk):
 
         if cover_path and cover_path.exists():
             try:
-                # On charge l'image trouvée
                 img = Image.open(cover_path)
                 img.thumbnail((320, 320))
                 photo = ImageTk.PhotoImage(img)
 
-                # On l'affiche d'abord à l'écran
                 self.cover_label.config(image=photo)
                 self.cover_image_ref = photo
 
-                # Puis on demande à l'utilisateur s'il valide cette pochette
                 titre = self.var_title.get() or audio.filepath.stem
                 ok = messagebox.askyesno(
                     "Valider la pochette",
@@ -1549,7 +1477,6 @@ class MusicLibraryGUI(tk.Tk):
                 )
 
                 if not ok:
-                    # L'utilisateur refuse → on supprime le fichier et on revient au placeholder
                     try:
                         cover_path.unlink()
                         print("[cover] Cover refusée, fichier supprimé :", cover_path)
@@ -1559,12 +1486,10 @@ class MusicLibraryGUI(tk.Tk):
                 else:
                     print("[cover] Cover validée par l’utilisateur :", cover_path)
 
-                return  # dans tous les cas, on arrête ici
+                return
             except Exception as e:
                 print("Erreur chargement cover téléchargée :", e)
-                # on retombera sur le placeholder
 
-        # 3) Rien trouvé ou échec → placeholder ♪
         self._clear_cover()
 
     def _set_lyrics_text(self, text: str):
