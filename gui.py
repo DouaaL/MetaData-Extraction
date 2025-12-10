@@ -30,6 +30,14 @@ try:
 except ImportError:
     HAS_SV_TTK = False
 
+# Bibliothèque drag and drop depuis OS
+try:
+    from tkinterdnd2 import DND_FILES, TkinterDnD
+    HAS_DND = True
+except ImportError:
+    HAS_DND = False
+    print("tkinterdnd2 non installé. Drag & Drop désactivé.")
+    
 # Accès à src/
 BASE_DIR = Path(__file__).resolve().parent
 SRC_DIR = BASE_DIR / "src"
@@ -93,7 +101,7 @@ class Tooltip:
             self.tipwindow = None
 
 
-class MusicLibraryGUI(tk.Tk):
+class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("PyMetaPlay")
@@ -204,6 +212,15 @@ class MusicLibraryGUI(tk.Tk):
                 self.audio_player_enabled = True
             except Exception as e:
                 print("Erreur audio:", e)
+
+        # Drag and Drop
+        if HAS_DND:
+            try:
+                # On accepte le drop de fichiers partout sur la fenêtre
+                self.drop_target_register(DND_FILES)
+                self.dnd_bind('<<Drop>>', self.on_drop_files)
+            except Exception as e:
+                print(f"Erreur init DND: {e}")
 
         # Images (cover / placeholder ♪)
         self.cover_image_ref = None
@@ -1497,6 +1514,51 @@ class MusicLibraryGUI(tk.Tk):
         self.lyrics_text.delete("1.0", tk.END)
         self.lyrics_text.insert(tk.END, text if text else "Paroles non disponibles.")
         self.lyrics_text.config(state=tk.DISABLED)
+
+
+    def on_drop_files(self, event):
+        """Gère les fichiers dropés dans la fenêtre"""
+        raw_data = event.data
+        print(f"Fichiers reçus (raw): {raw_data}")
+
+        # S'assurer que le chemin est bien parsé:
+        paths = []
+        if raw_data.startswith("{") and raw_data.endswith('}:'):
+            # regex (cherche entre accolades )
+            import re
+            parts = re.findall(r'\{.*?\}|\S+', raw_data)
+            for p in parts:
+                path_str = p.strip('{}')
+                paths.append(Path(path_str))
+        else:
+            # Cas simple (un seul fichier sans espace ou liste simple)
+            paths.append(Path(raw_data))
+
+        count_added = 0
+        new_files = []
+
+        for p in paths:
+            if p.is_dir():
+                # Si c'est un dossier, on utilise la méthode existante de lib
+                # Idéalement, il faudrait une méthode "add_directory" dans MusicLibrary ( si on a le temps bien sur)
+                temp_lib = MusicLibrary()
+                temp_lib.load_directory(p)
+                new_files.extend(temp_lib.files)
+            elif p.is_file() and p.suffix.lower() in ['.mp3', '.wav', '.ogg', '.flac']:
+                # Création manuelle d'un AudioFile si c'est un fichier seul
+                af = AudioFile(p)
+                new_files.append(af)
+
+        if new_files:
+            # On ajoute à la liste existante
+            self.audio_files.extend(new_files)
+            self.displayed_files = list(self.audio_files) # Reset filtre recherche
+            
+            # Mise à jour IHM
+            self._refresh_listbox()
+            self.var_status.set(f"{len(new_files)} fichier(s) ajouté(s) par glisser-déposer.")
+        else:
+            self.var_status.set("Aucun fichier audio valide détecté.")
 
 
 if __name__ == "__main__":
