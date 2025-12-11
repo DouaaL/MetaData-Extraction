@@ -116,40 +116,40 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         # --- THEMES JOUR / NUIT ---
         self.themes = {
             "dark": {
-                "bg": "#0A0A12",            
-                "sidebar": "#0F0F1C",       
-                "player": "#0A0A12",        
-                "card": "#0A0A12",          
-                "accent": "#1936B7",
-                "accent_dark": "#a393eb",
-                "text": "#F2F2F7",
-                "text_dim": "#A7A7B2",
-                "text_barre": "#F2F2F7",
-                "border": "#1E1E2A",
-                "list_bg": "#10101A",
-                "list_fg": "#F2F2F7",
-                "list_sel_bg": "#D4A017",
-                "list_sel_fg": "#0A0A12",
-                "input_bg": "#1A1A28",
-                "input_fg": "#F2F2F7",
+                "bg": "#121212",             
+                "sidebar": "#1E1E1E",        
+                "player": "#252525",         
+                "card": "#1E1E1E",
+                "accent": "#82AAFF",                         
+                "accent_dark": "#6889CC",    
+                "text": "#E0E0E0",                           
+                "text_dim": "#A0A0A0",        
+                "text_barre": "#CCCCCC",
+                "border": "#333333",
+                "list_bg": "#1E1E1E",
+                "list_fg": "#E0E0E0",
+                "list_sel_bg": "#82AAFF",     
+                "list_sel_fg": "#121212",    
+                "input_bg": "#2C2C2C",
+                "input_fg": "#FFFFFF",
             },
             "light": {
-                "bg": "#E8ECF7",
-                "sidebar": "#F4F7FF",
-                "card": "#F4F7FF",
-                "player": "#2D51B3",
-                "accent": "#1936B7",
-                "accent_dark": "#1936B7",
-                "text": "#1A1F36",
-                "text_barre": "#1A1F36",
-                "text_dim": "#505560",
-                "border": "#C7D1E6",
-                "list_bg": "#C9CED8",
-                "list_fg": "#1A1F36",
-                "list_sel_bg": "#E0E6FB",
-                "list_sel_fg": "#1A1F36",
+                "bg": "#E8ECF7",             
+                "sidebar": "#F4F7FF",        
+                "player": "#FFFFFF",         
+                "card": "#FFFFFF",
+                "accent": "#2962FF",         
+                "accent_dark": "#0039CB",
+                "text": "#212121",           
+                "text_dim": "#757575",
+                "text_barre": "#424242",
+                "border": "#E0E0E0",
+                "list_bg": "#FFFFFF",
+                "list_fg": "#212121",
+                "list_sel_bg": "#E3F2FD",    
+                "list_sel_fg": "#2962FF",    
                 "input_bg": "#FFFFFF",
-                "input_fg": "#1A1F36",
+                "input_fg": "#212121",
             },
         }
 
@@ -165,6 +165,10 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         self.player_status_bar = None
         self.status_label = None
         self.theme_toggle_btn = None
+        self.shuffle_mode: bool = False
+
+        #  Mini cover pour la playbar
+        self.mini_cover_ref = None
 
         # Boutons player (pour le hover + thème)
         self.btn_repeat = None
@@ -264,58 +268,84 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         style = ttk.Style(self)
         c = self.colors
 
+        # Si sv_ttk est présent, on l'active, mais on écrase ensuite avec nos couleurs
         if HAS_SV_TTK:
             if self.current_theme == "dark":
                 sv_ttk.use_dark_theme()
             else:
                 sv_ttk.use_light_theme()
 
+        # --- Configuration Générale ---
         style.configure("Sidebar.TFrame", background=c["sidebar"])
         style.configure("Player.TFrame", background=c["player"])
         style.configure("Main.TFrame", background=c["bg"])
         style.configure("Card.TFrame", background=c["card"])
 
+        # --- Treeview (La Liste) ---
+        # On force les couleurs du Treeview pour qu'elles correspondent au thème
+        style.configure(
+            "Treeview",
+            background=c["list_bg"],
+            foreground=c["list_fg"],
+            fieldbackground=c["list_bg"],
+            borderwidth=0,
+            font=("Segoe UI", 10)
+        )
+        style.configure("Treeview.Heading", font=("Segoe UI", 9, "bold"))
+        
+        # Couleur de sélection (map)
+        style.map(
+            "Treeview",
+            background=[("selected", c["list_sel_bg"])],
+            foreground=[("selected", c["list_sel_fg"])]
+        )
+
+        # --- Barre de progression ---
+        style.configure(
+            "Player.Horizontal.TScale",
+            background=c["player"],      
+            troughcolor=c["border"],     
+            bordercolor=c["player"],
+            lightcolor=c["accent"],      
+            darkcolor=c["accent"],
+        )
+
+        # --- Boutons Accent (Gros boutons bleus) ---
         style.configure(
             "Accent.TButton",
             font=("Segoe UI", 10, "bold"),
             padding=8,
             background=c["accent"],
-            foreground=c["text"],
+            foreground="#FFFFFF" if self.current_theme == "dark" else "#FFFFFF", # Toujours blanc sur l'accent bleu
         )
         style.map(
             "Accent.TButton",
-            background=[
-                ("active", c["accent_dark"]),
-                ("pressed", c["accent_dark"]),
-            ],
-            foreground=[
-                ("active", c["bg"]),
-                ("pressed", c["bg"]),
-            ],
+            background=[("active", c["accent_dark"]), ("pressed", c["accent_dark"])],
         )
         
+        # --- Boutons Custom (Gris/Neutre) ---
         if self.current_theme == "dark":
-            btn_bg = "#576574"
-            btn_fg = "#ffffff"
-            btn_active = "#222f3e"
+            btn_bg = "#3A3A3A"
+            btn_fg = "#FFFFFF"
+            btn_active = "#505050"
         else:
-            btn_bg = "#b2bec3" 
+            btn_bg = "#E0E0E0" 
             btn_fg = "#000000"
-            btn_active = "#636e72"
+            btn_active = "#D6D6D6"
 
         style.configure(
             "Custom.TButton",
-            font=("Segoe UI", 10, "bold"),
-            padding=8,
+            font=("Segoe UI", 9),
+            padding=6,
             background=btn_bg,   
             foreground=btn_fg,   
         )
         style.map(
             "Custom.TButton",
-            background=[("active", btn_active), ("pressed", btn_active)],
-            foreground=[("active", btn_fg), ("pressed", btn_fg)],
+            background=[("active", btn_active)],
         )
 
+    
     # ---------- Layout général ----------
     def _build_layout(self):
         self.columnconfigure(0, weight=0)
@@ -365,23 +395,27 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
     # ---------- Sidebar ----------
     def _build_sidebar(self, parent):
         c = self.colors
-        parent.rowconfigure(0, weight=0)
-        parent.rowconfigure(1, weight=0)
-        parent.rowconfigure(2, weight=0)
-        parent.rowconfigure(3, weight=0)
-        parent.rowconfigure(4, weight=0) # C'était 1 avant, on met 0 pour figer la hauteur
-        parent.rowconfigure(5, weight=0)
-        parent.rowconfigure(6, weight=1)
+        
+        # Configuration de la grille (Layout)
+        parent.rowconfigure(0, weight=0) # Logo
+        parent.rowconfigure(1, weight=0) # Header Recherche
+        parent.rowconfigure(2, weight=0) # Barre Recherche
+        parent.rowconfigure(3, weight=0) # Header Bibliotheque
+        parent.rowconfigure(4, weight=0) # Boutons (TAILLE FIXE POUR PETITE RES)
+        parent.rowconfigure(5, weight=0) # Header Pistes
+        parent.rowconfigure(6, weight=1) # Liste 
 
+        # 1. LOGO
         self.lbl_header_logo = tk.Label(
             parent,
-            text="🎵 PyMetaPlay",
+            text="PyMetaPlay",
             font=("Segoe UI", 16, "bold"),
             bg=c["sidebar"], 
-            fg=c["accent"],
+            fg=c["text"],
         )
         self.lbl_header_logo.grid(row=0, column=0, sticky="w", pady=(0, 20))
 
+        # 2. HEADER RECHERCHE
         self.lbl_header_search = tk.Label(
             parent, 
             text="RECHERCHE", 
@@ -391,6 +425,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         )
         self.lbl_header_search.grid(row=1, column=0, sticky="w")
 
+        # 3. BARRE RECHERCHE
         search_frame = ttk.Frame(parent, style="Sidebar.TFrame")
         search_frame.grid(row=2, column=0, sticky="ew", pady=(5, 15))
         search_frame.columnconfigure(0, weight=1)
@@ -401,6 +436,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         search_entry = ttk.Entry(search_frame, textvariable=self.var_search)
         search_entry.grid(row=0, column=0, sticky="ew")
 
+        # 4. HEADER BIBLIOTHEQUE
         self.lbl_header_lib = tk.Label(
             parent, 
             text="BIBLIOTHÈQUE", 
@@ -410,6 +446,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         )
         self.lbl_header_lib.grid(row=3, column=0, sticky="w", pady=(5, 5))
 
+        # 5. BOUTONS
         btn_style = {
             "bg": c["sidebar"],
             "fg": c["text"],
@@ -443,6 +480,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             **btn_style,
         ).grid(row=2, column=0, sticky="ew", pady=1)
 
+        # 6. HEADER PISTES
         self.lbl_header_tracks = tk.Label(
             parent, 
             text="PISTES", 
@@ -452,28 +490,20 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         )
         self.lbl_header_tracks.grid(row=5, column=0, sticky="w", pady=(15, 5))
 
+        # 7. TREEVIEW (LISTE) - C'est ici qu'il y avait l'erreur de duplication
         list_container = ttk.Frame(parent)
         list_container.grid(row=6, column=0, sticky="nsew")
-        parent.rowconfigure(6, weight=1)
-
-        scrollbar = ttk.Scrollbar(list_container)
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-
-       # --- REMPLACEMENT DE LA LISTBOX PAR UN TREEVIEW PAR SOUMY---
-        list_container = ttk.Frame(parent)
-        list_container.grid(row=6, column=0, sticky="nsew")
-        parent.rowconfigure(6, weight=1)
-
+        
         # Définition des colonnes
         columns = ("titre", "artiste", "duree")
         self.tree = ttk.Treeview(
             list_container, 
             columns=columns, 
-            show="headings", 
+            show="headings", # Mettre "tree headings" si tu veux l'icône dans la colonne #0
             selectmode="browse"
         )
 
-        # Configuration des en-têtes
+        # En-têtes cliquables pour le tri
         for col in columns:
             self.tree.heading(
                 col, 
@@ -481,7 +511,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
                 command=lambda c=col: self._sort_treeview(c, False)
             )
 
-        # Configuration des largeurs de colonnes
+        # Configuration des largeurs
         self.tree.column("titre", width=150, minwidth=100)
         self.tree.column("artiste", width=100, minwidth=80)
         self.tree.column("duree", width=50, minwidth=40, anchor="e")
@@ -493,7 +523,6 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
-        # Binding du clic (avec <<TreeviewSelect>>)
         self.tree.bind("<<TreeviewSelect>>", self.on_selection_change)
         
         self.listbox = None
@@ -560,7 +589,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             textvariable=self.var_details,
             font=("Segoe UI", 11),
             bg=c["bg"],          
-            fg=c["text_dim"],
+            fg=c["text"],
             anchor="w"
         )
         self.lbl_details.pack(anchor="w", pady=(2, 0), fill=tk.X)
@@ -629,15 +658,53 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
     # ---------- Player bar ----------
     def _build_player_bar(self, parent):
         c = self.colors
+        
+        # On configure 3 colonnes : Gauche (Info), Centre (Player), Droite (Volume/Outils)
+        parent.columnconfigure(0, weight=1) # Gauche
+        parent.columnconfigure(1, weight=2) # Centre (plus large)
+        parent.columnconfigure(2, weight=1) # Droite
         parent.rowconfigure(0, weight=1)
-        parent.columnconfigure(0, weight=1)
 
+        # --- ZONE 1 : GAUCHE (Mini Cover + Titre) ---
+        self.left_frame = tk.Frame(parent, bg=c["player"])
+        self.left_frame.grid(row=0, column=0, sticky="w", padx=10)
+
+        # La petite image cd cover (60x60)
+        cover_frame = tk.Frame(self.left_frame, bg=c["player"], width=60, height=60)
+        cover_frame.pack_propagate(False) # Empêche la frame de rétrécir si le label est vide
+        cover_frame.pack(side=tk.LEFT, padx=(0, 10))
+
+        self.lbl_mini_cover = tk.Label(cover_frame, bg=c["player"])
+        self.lbl_mini_cover.pack(fill=tk.BOTH, expand=True)
+        
+        # Un petit rappel du titre (optionnel mais classe)
+        info_frame = tk.Frame(self.left_frame, bg=c["player"])
+        info_frame.pack(side=tk.LEFT)
+        
+        self.lbl_mini_title = tk.Label(
+            info_frame, 
+            textvariable=self.var_title, 
+            font=("Segoe UI", 16, "bold"),
+            bg=c["player"], fg="white", anchor="w"
+        )
+        self.lbl_mini_title.pack(anchor="w")
+        
+        self.lbl_mini_artist = tk.Label(
+            info_frame, 
+            textvariable=self.var_artist, 
+            font=("Segoe UI", 12),
+            bg=c["player"], fg="white", anchor="w"
+        )
+        self.lbl_mini_artist.pack(anchor="w")
+
+
+        # --- ZONE 2 : CENTRE (Contrôles + Barre de progression) ---
         center_frame = tk.Frame(parent, bg=c["player"])
-        center_frame.grid(row=0, column=0, sticky="ew", padx=30, pady=(8, 0))
+        center_frame.grid(row=0, column=1, sticky="ew")
         self.player_center_frame = center_frame
 
         controls = tk.Frame(center_frame, bg=c["player"])
-        controls.pack(side=tk.TOP, pady=(8, 4))
+        controls.pack(side=tk.TOP, pady=(5, 0))
         self.player_controls_frame = controls
 
         btn_sec_style = {
@@ -646,108 +713,82 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             "activebackground": c["player"],
             "activeforeground": c["accent"],
             "bd": 0,
-            "font": ("Segoe UI Symbol", 14),
+            "font": ("Segoe UI Symbol", 12),
             "cursor": "hand2",
             "relief": "flat",
         }
 
-        self.btn_repeat = tk.Button(
-            controls, text="🔁", command=self.toggle_repeat, **btn_sec_style
+        # Bouton shuffle (Aléatoire)
+        self.btn_shuffle = tk.Button(
+            controls, text="🔀", command=self.toggle_shuffle, **btn_sec_style
         )
-        self.btn_repeat.pack(side=tk.LEFT, padx=10)
+        self.btn_shuffle.pack(side=tk.LEFT, padx=8)
 
+        # Bouton précédent
         self.btn_prev = tk.Button(
             controls, text="⏮", command=self.play_prev, **btn_sec_style
         )
-        self.btn_prev.pack(side=tk.LEFT, padx=10)
+        self.btn_prev.pack(side=tk.LEFT, padx=8)
 
+        # Bouton play (plus gros que les autres)
         self.btn_play = ttk.Button(
             controls, text="▶", command=self.toggle_play_pause, width=5
         )
-        self.btn_play.pack(side=tk.LEFT, padx=16)
+        self.btn_play.pack(side=tk.LEFT, padx=15)
 
+        # Bouton suivant
         self.btn_next = tk.Button(
             controls, text="⏭", command=self.play_next, **btn_sec_style
         )
-        self.btn_next.pack(side=tk.LEFT, padx=10)
+        self.btn_next.pack(side=tk.LEFT, padx=8)
 
-        self.btn_vol = tk.Button(
-            controls, text="🔊", command=self.toggle_mute, **btn_sec_style
+        # Bouton répéter
+        self.btn_repeat = tk.Button(
+            controls, text="🔁", command=self.toggle_repeat, **btn_sec_style
         )
-        self.btn_vol.pack(side=tk.LEFT, padx=10)
+        self.btn_repeat.pack(side=tk.LEFT, padx=8)
 
-        self.theme_toggle_btn = tk.Button(
-            controls,
-            text="🌙" if self.current_theme == "dark" else "☀️",
-            bg=c["player"],
-            fg=c["text_dim"] if self.current_theme == "dark" else c["text"],
-            bd=0,
-            font=("Segoe UI", 12),
-            cursor="hand2",
-            activebackground=c["player"],
-            activeforeground=c["accent"],
-            command=self._toggle_theme,
-        )
-        self.theme_toggle_btn.pack(side=tk.LEFT, padx=10)
-
-        self._add_tooltip(self.btn_repeat, "Répéter la piste")
-        self._add_tooltip(self.btn_prev, "Piste précédente")
-        self._add_tooltip(self.btn_play, "Lecture / pause")
-        self._add_tooltip(self.btn_next, "Piste suivante")
-        self._add_tooltip(self.btn_vol, "Activer / couper le son")
-        self._add_tooltip(self.theme_toggle_btn, "Changer de thème clair / sombre")
-
-        for b in [self.btn_repeat, self.btn_prev, self.btn_next, self.btn_vol, self.theme_toggle_btn]:
-            b.bind("<Enter>", self._on_player_btn_enter)
-            b.bind("<Leave>", self._on_player_btn_leave)
-
-        progress_frame = tk.Frame(center_frame, bg=c["player"])
-        progress_frame.pack(side=tk.TOP, fill=tk.X, pady=(2, 6))
+        # Barre de progression
+        progress_frame = tk.Frame(center_frame, bg=c["accent"])
+        progress_frame.pack(side=tk.TOP, fill=tk.X, pady=(2, 5), padx=20)
         self.player_progress_frame = progress_frame
 
         self.lbl_current_time = tk.Label(
-            progress_frame,
-            text="0:00",
-            bg=c["player"],
-            fg=c.get("text_barre", c["text_dim"]),
-            font=("Segoe UI", 10)
+            progress_frame, text="0:00", bg=c["player"], fg=c["text_dim"], font=("Segoe UI", 8)
         )
-        self.lbl_current_time.pack(side=tk.LEFT, padx=10)
+        self.lbl_current_time.pack(side=tk.LEFT)
 
         self.progress_var = tk.DoubleVar()
         self.progress_scale = ttk.Scale(
-            progress_frame, variable=self.progress_var, from_=0, to=100
+            progress_frame, variable=self.progress_var, from_=0, to=100, style="Player.Horizontal.TScale"
         )
-        self.progress_scale.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        self.progress_scale.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
+        # Bindings pour cliquer sur la barre
         self.progress_scale.bind("<Button-1>", self._on_progress_press)
         self.progress_scale.bind("<ButtonRelease-1>", self._on_progress_release)
 
         self.lbl_total_time = tk.Label(
-            progress_frame,
-            text="0:00",
-            bg=c["player"],
-            fg=c.get("text_barre", c["text_dim"]),
-            font=("Segoe UI", 10)
+            progress_frame, text="0:00", bg=c["player"], fg=c["text_dim"], font=("Segoe UI", 8)
         )
-        self.lbl_total_time.pack(side=tk.RIGHT, padx=10)
+        self.lbl_total_time.pack(side=tk.RIGHT)
 
-        status_bar = tk.Frame(parent, bg=c["player"])
-        status_bar.grid(row=1, column=0, sticky="ew")
-        self.player_status_bar = status_bar
 
-        status_label = tk.Label(
-            status_bar,
-            textvariable=self.var_status,
-            anchor="w",
-            bg=c["player"],
-            fg=c.get("text_barre", c["text_dim"]),
-            font=("Segoe UI", 10),
-            padx=15,
-            pady=3,
+        # --- ZONE 3 : DROITE (Volume + Theme) ---
+        right_frame = tk.Frame(parent, bg=c["player"])
+        right_frame.grid(row=0, column=2, sticky="e", padx=10)
+
+        self.btn_vol = tk.Button(
+            right_frame, text="🔊", command=self.toggle_mute, **btn_sec_style
         )
-        status_label.pack(fill=tk.X)
-        self.status_label = status_label
+        self.btn_vol.pack(side=tk.LEFT, padx=5)
 
+        self.theme_toggle_btn = tk.Button(
+            right_frame,
+            text="🌙",
+            bg=c["player"], fg=c["text"], bd=0,
+            command=self._toggle_theme, cursor="hand2"
+        )
+        self.theme_toggle_btn.pack(side=tk.LEFT, padx=5)
     def _on_player_btn_enter(self, event):
         c = self.colors
         event.widget.config(bg=c["accent_dark"])
@@ -778,122 +819,117 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         self.current_theme = theme_name
         self.colors = self.themes[theme_name]
         c = self.colors
+        
+        # Application du fond général
         self.configure(bg=c["bg"])
 
+        # Mise à jour des styles TTK
         self._setup_styles()
 
-        if hasattr(self, "listbox"):
-            try:
-                self.listbox.config(
-                    bg=c["list_bg"],
-                    fg=c["list_fg"],
-                    selectbackground=c["list_sel_bg"],
-                    selectforeground=c["list_sel_fg"],
-                )
-            except Exception:
-                pass
+        # --- 1. Sidebar ---
+        if hasattr(self, 'lbl_header_logo'):
+            self.lbl_header_logo.config(bg=c["sidebar"], fg=c["accent"])
+            
+        labels_sidebar = [
+            getattr(self, 'lbl_header_search', None),
+            getattr(self, 'lbl_header_lib', None),
+            getattr(self, 'lbl_header_tracks', None)
+        ]
+        for lbl in labels_sidebar:
+            if lbl: lbl.config(bg=c["sidebar"], fg=c["text_barre"])
 
         if self.sidebar_button_frame is not None:
-            try:
-                self.sidebar_button_frame.config(bg=c["sidebar"])
-                for child in self.sidebar_button_frame.winfo_children():
-                    if isinstance(child, tk.Button):
-                        child.config(
-                            bg=c["sidebar"],
-                            fg=c["text"],
-                            activebackground=c["input_bg"],
-                            activeforeground=c["accent"],
-                        )
-            except Exception:
-                pass
+            self.sidebar_button_frame.config(bg=c["sidebar"])
+            for child in self.sidebar_button_frame.winfo_children():
+                if isinstance(child, tk.Button):
+                    child.config(
+                        bg=c["sidebar"],
+                        fg=c["text"],
+                        activebackground=c["input_bg"],
+                        activeforeground=c["accent"],
+                    )
 
-        for frame in [
-            self.player_center_frame,
-            self.player_controls_frame,
-            self.player_progress_frame,
-            self.player_status_bar,
-        ]:
-            if frame is not None:
-                try:
-                    frame.config(bg=c["player"])
-                except Exception:
-                    pass
-
-        if hasattr(self, "lbl_current_time"):
-            self.lbl_current_time.config(
-                bg=c["player"],
-                fg=c.get("text_barre", c["text_dim"])
-            )
-        if hasattr(self, "lbl_total_time"):
-            self.lbl_total_time.config(
-                bg=c["player"],
-                fg=c.get("text_barre", c["text_dim"])
-            )
-        if self.status_label is not None:
-            self.status_label.config(
-                bg=c["player"],
-                fg=c.get("text_barre", c["text_dim"])
-            )
-
-        for b in [self.btn_repeat, self.btn_prev, self.btn_next, self.btn_vol]:
-            if b is not None:
-                b.config(
-                    bg=c["player"],
-                    fg="white",
-                    activebackground=c["player"],
-                    activeforeground=c["accent"],
-                )
-        if self.theme_toggle_btn is not None:
-            self.theme_toggle_btn.config(
-                text="🌙" if self.current_theme == "dark" else "☀️",
-                bg=c["player"],
-                fg=c["text_dim"] if self.current_theme == "dark" else c["text"],
-                activebackground=c["player"],
-                activeforeground=c["accent"],
-            )
-
-        if self.lbl_title is not None:
-            self.lbl_title.config(bg=c["bg"], fg=c["text"])
-        if self.lbl_artist is not None:
-            self.lbl_artist.config(bg=c["bg"], fg=c["text"])
-        if self.lbl_details is not None:
-            self.lbl_details.config(bg=c["bg"], fg=c["text_dim"])
+        # --- 2. Main Content ---
+        if hasattr(self, "cover_label"):
+            self.cover_label.config(bg=c["bg"])
             
-        header_lecture = getattr(self, 'lbl_header_lecture', None)
-        if header_lecture:
-            header_lecture.config(bg=c["bg"], fg=c["text_dim"])
-            
-        header_paroles = getattr(self, 'lbl_header_paroles', None)
-        if header_paroles:
-            header_paroles.config(bg=c["bg"], fg=c["text_dim"])
-
-        header_logo = getattr(self, 'lbl_header_logo', None)
-        if header_logo:
-            header_logo.config(bg=c["sidebar"], fg=c["accent"])
-
-        header_search = getattr(self, 'lbl_header_search', None)
-        if header_search:
-            header_search.config(bg=c["sidebar"], fg=c["text_barre"])
-
-        header_lib = getattr(self, 'lbl_header_lib', None)
-        if header_lib:
-            header_lib.config(bg=c["sidebar"], fg=c["text_barre"])
-
-        header_tracks = getattr(self, 'lbl_header_tracks', None)
-        if header_tracks:
-            header_tracks.config(bg=c["sidebar"], fg=c["text_barre"])
-
         if hasattr(self, "lyrics_text"):
             self.lyrics_text.config(bg=c["bg"], fg=c["text"])
 
-        if hasattr(self, "cover_label"):
-            self.cover_label.config(bg=c["bg"])
+        # Labels de la zone principale
+        main_labels = [
+            self.lbl_title, self.lbl_artist, self.lbl_details, 
+            getattr(self, 'lbl_header_lecture', None),
+            getattr(self, 'lbl_header_paroles', None)
+        ]
+        for lbl in main_labels:
+            if lbl:
+                if lbl == self.lbl_title: # Le titre reste en couleur texte principale
+                    lbl.config(bg=c["bg"], fg=c["text"])
+                elif lbl == self.lbl_artist:
+                     lbl.config(bg=c["bg"], fg=c["accent"]) # Artiste en accent c'est joli
+                else:
+                    lbl.config(bg=c["bg"], fg=c["text_dim"])
 
+        # --- 3. Player Bar ---
+        # Détermine la couleur des icônes du lecteur
+        # Si le fond du lecteur est sombre (theme dark), icones blanches
+        # Si le fond du lecteur est blanc (theme light), icones gris foncé ou noires
+        player_icon_fg = "#FFFFFF" if self.current_theme == "dark" else "#424242"
+        player_icon_active = c["accent"]
+
+        # Frames du lecteur
+        player_frames = [
+            self.left_frame,
+            self.player_center_frame,
+            self.player_controls_frame,
+            self.player_status_bar if hasattr(self, 'player_status_bar') else None
+        ]
+        # Ajout du parent des boutons de droite
+        if hasattr(self, 'btn_vol'):
+            player_frames.append(self.btn_vol.master)
+
+        for frame in player_frames:
+            if frame: frame.config(bg=c["player"])
+
+        # Mini Cover & Info
+        if hasattr(self, 'lbl_mini_title'):
+            self.lbl_mini_title.config(bg=c["player"], fg=c["text"])
+        if hasattr(self, 'lbl_mini_artist'):
+            self.lbl_mini_artist.config(bg=c["player"], fg=c["text_dim"])
+        if hasattr(self, 'lbl_mini_cover'):
+            # Le parent du mini cover
+            self.lbl_mini_cover.master.config(bg=c["player"])
+
+        # Timers
+        if hasattr(self, "lbl_current_time"):
+            self.lbl_current_time.config(bg=c["player"], fg=c["text_dim"])
+        if hasattr(self, "lbl_total_time"):
+            self.lbl_total_time.config(bg=c["player"], fg=c["text_dim"])
+
+        # Boutons Player (tk.Button)
+        player_buttons = [self.btn_repeat, self.btn_prev, self.btn_next, self.btn_vol, self.btn_shuffle, self.theme_toggle_btn]
+        for b in player_buttons:
+            if b is not None:
+                b.config(
+                    bg=c["player"],
+                    fg=player_icon_fg,
+                    activebackground=c["player"],
+                    activeforeground=player_icon_active
+                )
+        
+        # Cas spécial pour le Shuffle s'il est actif
+        if self.shuffle_mode and hasattr(self, 'btn_shuffle'):
+            self.btn_shuffle.config(fg=c["accent"])
+
+        # Bouton Play (ttk)
+        # Il est géré par le style "TButton", pas besoin de modif manuelle ici sauf si style custom appliqué
+
+        # --- 4. Mise à jour de l'image Placeholder ---
         if HAS_PIL:
             self.placeholder_image = self._create_placeholder_cover(size=320)
             if self.cover_image_ref is None:
                 self._clear_cover()
-
     def _toggle_theme(self):
         new_theme = "light" if self.current_theme == "dark" else "dark"
         self._apply_theme(new_theme)
@@ -1108,10 +1144,26 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             if self.current_index is not None:
                 self.play_from_index(self.current_index)
 
+    def toggle_shuffle(self):
+        self.shuffle_mode = not self.shuffle_mode
+        # Change la couleur pour montrer que c'est actif
+        color = self.colors["accent"] if self.shuffle_mode else "white"
+        self.btn_shuffle.config(fg=color)
+    
     def play_next(self):
         if self.current_index is not None and self.displayed_files:
-            # 1. Calcul du nouvel index
-            idx = (self.current_index + 1) % len(self.displayed_files)
+            import random
+
+            if self.shuffle_mode:
+                # prendre un index au hasard
+                new_idx = self.current_index
+                if len(self.displayed_files) > 1:
+                    while new_idx == self.current_index:
+                        new_idx = random.randint(0, len(self.displayed_files) - 1)
+                idx = new_idx
+            else:
+                idx = (self.current_index + 1) % len(self.displayed_files)
+            
             
             # 2. Conversion en ID pour le Treeview (on a utilisé str(idx) comme identifiant)
             item_id = str(idx)
@@ -1174,7 +1226,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         self.is_paused = False
         self.btn_play.config(text="⏸")
 
-    # --------- API & METADATA ----------
+  # --------- API & METADATA ----------
     def fetch_api_current(self):
         """Version Priorité Utilisateur : Force l'utilisation du texte de l'écran pour la recherche"""
         if self.current_index is None:
@@ -1218,6 +1270,11 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             
             # 4. RELOAD (Lecture technique)
             # On relit pour avoir la durée, le bitrate, etc.
+            # AJOUT : Reload force pour éviter le cache mutagen
+            if hasattr(audio, 'reload'):
+                audio.reload()
+                time.sleep(0.3)
+            
             refreshed_tags = audio.extract_metadata()
             if refreshed_tags:
                 # ATTENTION : On ne laisse pas le reload écraser le titre si le reload est vide !
@@ -1250,6 +1307,10 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             time.sleep(0.5)
 
             # 6. REFRESH FINAL (Pour afficher le résultat Spotify)
+            # On reload avant d'extraire pour avoir les dernières données écrites
+            if hasattr(audio, 'reload'):
+                audio.reload()
+                time.sleep(0.3)
             final_tags = audio.extract_metadata()
             if final_tags:
                 audio.metadata = final_tags
@@ -1303,6 +1364,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             messagebox.showerror("Erreur", str(e))
 
             
+            
     
     def save_metadata_current(self):
         """Sauvegarde les métadonnées affichées dans le fichier audio"""
@@ -1352,8 +1414,35 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             if self.var_year_internal and self.var_year_internal.isdigit():
                 audio.metadata['year'] = int(self.var_year_internal)
             
+            # Étape 2 : Sauvegarder sur le disque
             audio.save_metadata()
+            time.sleep(0.3)
             
+            # === FIX CRITIQUE : RELOAD FORCE ===
+            # On recharge l'objet audio pour vidanger le cache mutagen
+            # Cela force une relecture RÉELLE depuis le fichier disque
+            if hasattr(audio, 'reload'):
+                audio.reload()
+                time.sleep(0.3)
+            
+            # Étape 3 : Relire les tags APRÈS le reload
+            updated_tags = audio.extract_metadata()
+            if updated_tags:
+                audio.metadata = updated_tags
+                # On met à jour les variables UI pour prouver que la sauvegarde a marché
+                self.var_title.set(updated_tags.get("title", ""))
+                self.var_artist.set(updated_tags.get("artist", ""))
+                self.var_album_internal = updated_tags.get("album", "")
+                self.var_year_internal = str(updated_tags.get("year", ""))
+                
+                details = []
+                if self.var_album_internal:
+                    details.append(self.var_album_internal)
+                if self.var_year_internal:
+                    details.append(self.var_year_internal)
+                self.var_details.set(" • ".join(details) if details else "")
+            # ============================================
+
             self._refresh_listbox()
             
             self.var_status.set(f"Tags sauvegardés : {audio.filepath.name}")
@@ -1645,79 +1734,80 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             self.cover_label.config(image=self.placeholder_image)
             self.cover_image_ref = self.placeholder_image
 
+        if hasattr(self, 'lbl_mini_cover'):
+            self.lbl_mini_cover.config(image="", width=0, bg=self.colors["player"])
+
     def _update_cover(self, audio: AudioFile, force_validation: bool = False):
-        """
-        Affiche la cover. 
-        PRIORITÉ : Image téléchargée (disque) > Image interne (tags).
-        """
         if not HAS_PIL:
             return
 
-        # --- ETAPE 1 : Vérifier si une image existe sur le disque (API / Cache) ---
-        # On fait cela EN PREMIER pour que la nouvelle image prime sur l'ancienne
+        pil_image = None
+        source_is_file = False
         cover_path = None
+
+        # --- 1. RECHERCHE DE L'IMAGE (Disque ou Tags) ---
+        
+        # A. Vérifier sur le disque (API/Cache)
         try:
             if hasattr(self.metadata_fetcher, "ensure_cover_image"):
                 cover_path = self.metadata_fetcher.ensure_cover_image(audio)
+                if cover_path and cover_path.exists():
+                    pil_image = Image.open(cover_path)
+                    source_is_file = True
         except Exception as e:
-            print("Erreur ensure_cover_image:", e)
-            cover_path = None
+            print(f"Erreur cover disque: {e}")
 
-        if cover_path and cover_path.exists():
+        # B. Si pas d'image disque, vérifier les tags internes (MP3/FLAC)
+        if pil_image is None:
+            data = audio.get_cover_art()
+            if data:
+                try:
+                    pil_image = Image.open(BytesIO(data))
+                except Exception as e:
+                    print(f"Erreur cover interne: {e}")
+
+        # --- 2. AFFICHAGE (Commun à tous les cas) ---
+        if pil_image:
             try:
-                img = Image.open(cover_path)
-                img.thumbnail((320, 320))
-                photo = ImageTk.PhotoImage(img)
+                # -- A. Grande Cover (320x320) --
+                # On fait une copie pour ne pas modifier l'original
+                img_big = pil_image.copy()
+                img_big.thumbnail((320, 320))
+                photo_big = ImageTk.PhotoImage(img_big)
+                
+                self.cover_label.config(image=photo_big)
+                self.cover_image_ref = photo_big  # Garder la ref pour éviter le garbage collector
 
-                # Affichage
-                self.cover_label.config(image=photo)
-                self.cover_image_ref = photo
-                self.cover_label.update_idletasks() # Force l'affichage avant la popup
+                # -- B. Mini Cover (60x60) --
+                img_mini = pil_image.copy()
+                img_mini.thumbnail((60, 60))
+                photo_mini = ImageTk.PhotoImage(img_mini)
+                
+                # Note: Si vous avez mis la Frame, le .config marche sur le label à l'intérieur
+                self.lbl_mini_cover.config(image=photo_mini, width=60, height=60)
+                self.mini_cover_ref = photo_mini
 
-                # --- VALIDATION (Uniquement si demandé) ---
-                if force_validation:
+                self.cover_label.update_idletasks()
+
+                # -- C. Validation (Seulement si nouvelle image disque) --
+                if source_is_file and force_validation:
                     titre = self.var_title.get() or audio.filepath.stem
                     ok = messagebox.askyesno(
                         "Nouvelle pochette trouvée",
                         f"Une image a été téléchargée pour :\n{titre}\n\nVoulez-vous utiliser cette image ?"
                     )
-
                     if not ok:
-                        # L'utilisateur refuse : on supprime le fichier téléchargé
+                        # Refus : on supprime et on recharge (ça retombera sur les tags internes ou rien)
                         try:
-                            cover_path.unlink()
-                            print("[cover] Image refusée et supprimée.")
-                        except Exception:
-                            pass
-                        
-                        # On relance l'update sans validation pour remettre l'ancienne cover (si elle existe)
+                            if cover_path: cover_path.unlink()
+                        except: pass
                         self._update_cover(audio, force_validation=False)
-                        return
-                    else:
-                        print("[cover] Image validée.")
-                        # Ici, l'image reste sur le disque dans le dossier de l'album
-                        # (Ce qui correspond à la consigne "enregistrer dans le dossier de l'album")
-
-                return # On a affiché l'image disque, on s'arrête là.
             except Exception as e:
-                print("Erreur chargement cover fichier :", e)
+                print(f"Erreur affichage images: {e}")
 
-        # --- ETAPE 2 : Si pas d'image disque, on regarde l'image interne (Tags ID3/FLAC) ---
-        # C'est le "fallback" si l'API n'a rien trouvé
-        data = audio.get_cover_art()
-        if data:
-            try:
-                img = Image.open(BytesIO(data))
-                img.thumbnail((320, 320))
-                photo = ImageTk.PhotoImage(img)
-                self.cover_label.config(image=photo)
-                self.cover_image_ref = photo
-                return
-            except Exception:
-                pass
-
-        # --- ETAPE 3 : Rien trouvé nulle part ---
-        self._clear_cover()
+        else:
+            # --- 3. RIEN TROUVÉ : On nettoie tout ---
+            self._clear_cover()
 
     def _set_lyrics_text(self, text: str):
         self.lyrics_text.config(state=tk.NORMAL)

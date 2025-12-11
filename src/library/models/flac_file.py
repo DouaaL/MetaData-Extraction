@@ -100,3 +100,14 @@ class FLACFile(AudioFile):
             # Prendre la première image
             return self._audio_object.pictures[0].data
         return None
+    
+    def reload(self) -> None:
+        """
+        Réinitialise l'objet audio pour forcer une relecture du fichier depuis le disque.
+        Cela vidange le cache de mutagen et garantit que extract_metadata() lira les nouveaux tags.
+        """
+        try:
+            self._audio_object = FLAC(str(self.filepath))
+            print(f"Reload effectué pour : {self.filepath.name}")
+        except Exception as e:
+            print(f"Erreur lors du reload : {e}")

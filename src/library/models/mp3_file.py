@@ -182,3 +182,24 @@ class MP3File(AudioFile):
             if getattr(tag, "FrameID", "") == "APIC":
                 return tag.data
         return None
+    
+
+    def reload(self) -> None:
+        """
+        Réinitialise l'objet audio pour forcer une relecture du fichier depuis le disque.
+        Cela vidange le cache de mutagen et garantit que extract_metadata() lira les nouveaux tags.
+        """
+        try:
+            ext = self.filepath.suffix.lower()
+            if ext == '.mp3':
+                self._audio_object = MP3(str(self.filepath))
+            elif ext == '.flac':
+                # Bien que nous utilisons MP3File, cela peut être appelé génériquement
+                # Mais pour un vrai reload FLAC, on regarderait FLACFile
+                self._audio_object = MP3(str(self.filepath))
+            else:
+                # Fallback pour M4A/MP4
+                self._audio_object = MP3(str(self.filepath))
+            print(f"Reload effectué pour : {self.filepath.name}")
+        except Exception as e:
+            print(f"Erreur lors du reload : {e}")

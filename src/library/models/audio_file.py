@@ -53,6 +53,14 @@ class AudioFile(ABC):
         ou None si aucune cover n’est trouvée.
         """
         raise NotImplementedError
+    
+    @abstractmethod
+    def reload(self) -> None:
+        """
+        Réinitialise l'objet audio pour forcer une relecture du fichier depuis le disque.
+        Utile après une sauvegarde pour éviter le cache de mutagen.
+        """
+        raise NotImplementedError
 
     def get_duration(self) -> float:
         """
@@ -77,6 +85,7 @@ class AudioFile(ABC):
             for chunk in iter(lambda: f.read(4096), b""):
                 hash_md5.update(chunk)
         return hash_md5.hexdigest()
+    
 
     def __str__(self) -> str:
         return f"{self.__class__.__name__}: {self.filepath.name}"
