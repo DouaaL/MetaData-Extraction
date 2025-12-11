@@ -5,6 +5,9 @@ from pathlib import Path
 from typing import List, Dict, Optional
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
+import xml.etree.ElementTree as ET
+from urllib.parse import unquote, urlparse
+import os
 import time
 
 # Pour afficher les covers
@@ -47,6 +50,8 @@ sys.path.append(str(SRC_DIR))
 try:
     from library.models.music_library import MusicLibrary
     from library.models.audio_file import AudioFile
+    from library.models.mp3_file import MP3File
+    from library.models.flac_file import FLACFile
     from library.core.playlist_generator import PlaylistGenerator
     from library.core.metadatafetcher import MetadataFetcher
 except ImportError:
@@ -422,21 +427,41 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         scrollbar = ttk.Scrollbar(list_container)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
-        self.listbox = tk.Listbox(
-            list_container,
-            bg=c["list_bg"],
-            fg=c["list_fg"],
-            bd=0,
-            highlightthickness=0,
-            selectbackground=c["list_sel_bg"],
-            selectforeground=c["list_sel_fg"],
-            font=("Segoe UI", 10),
-            yscrollcommand=scrollbar.set,
-            activestyle="none",
+       # --- REMPLACEMENT DE LA LISTBOX PAR UN TREEVIEW PAR SOUMY---
+        list_container = ttk.Frame(parent)
+        list_container.grid(row=6, column=0, sticky="nsew")
+        parent.rowconfigure(6, weight=1)
+
+        # Définition des colonnes
+        columns = ("titre", "artiste", "duree")
+        self.tree = ttk.Treeview(
+            list_container, 
+            columns=columns, 
+            show="headings", 
+            selectmode="browse"
         )
-        self.listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        scrollbar.config(command=self.listbox.yview)
-        self.listbox.bind("<<ListboxSelect>>", self.on_selection_change)
+
+        # Configuration des en-têtes
+        self.tree.heading("titre", text="Titre", anchor="w")
+        self.tree.heading("artiste", text="Artiste", anchor="w")
+        self.tree.heading("duree", text="Durée", anchor="e")
+
+        # Configuration des largeurs de colonnes
+        self.tree.column("titre", width=150, minwidth=100)
+        self.tree.column("artiste", width=100, minwidth=80)
+        self.tree.column("duree", width=50, minwidth=40, anchor="e")
+
+        # Scrollbar
+        scrollbar = ttk.Scrollbar(list_container, orient=tk.VERTICAL, command=self.tree.yview)
+        self.tree.configure(yscrollcommand=scrollbar.set)
+        
+        self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        # Binding du clic (avec <<TreeviewSelect>>)
+        self.tree.bind("<<TreeviewSelect>>", self.on_selection_change)
+        
+        self.listbox = None
 
     # ---------- Contenu principal ----------
     def _build_main_content(self, parent):
@@ -880,37 +905,54 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         self._refresh_listbox()
 
     def _refresh_listbox(self):
-        self.listbox.delete(0, tk.END)
+        # Nettoyage du tableau
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+            
         self.index_to_audio.clear()
 
         if not self.audio_files:
-            self.listbox.insert(tk.END, "Aucun fichier chargé.")
-            self.listbox.insert(tk.END, "Utilisez « Ouvrir un dossier » pour commencer.")
             return
 
-        if not self.displayed_files:
-            self.listbox.insert(tk.END, "Aucun résultat pour cette recherche.")
-            self.listbox.insert(tk.END, "Essayez un autre mot-clé.")
-            return
-
+        # Remplissage
         for idx, audio in enumerate(self.displayed_files):
-            name = audio.filepath.stem
+            # Extraction propre des données pour l'affichage
             md = getattr(audio, "metadata", {}) or {}
-            if md.get("title"):
-                name = md.get("title")
-                if md.get("artist"):
-                    name += f" - {md.get('artist')}"
-            self.listbox.insert(tk.END, f"{idx+1}. {name}")
+            
+            titre = md.get("title") or audio.filepath.stem
+            artiste = md.get("artist") or "--"
+            
+            # Formatage de la durée
+            try:
+                d = audio.get_duration()
+                duree = f"{int(d//60)}:{int(d%60):02d}"
+            except:
+                duree = "--:--"
+
+            # Insertion dans le Treeview (iid correspond à l'index pour retrouver le fichier facilement)
+            self.tree.insert(
+                "", 
+                tk.END, 
+                iid=str(idx), 
+                values=(titre, artiste, duree)
+            )
+            
             self.index_to_audio[idx] = audio
 
     def on_selection_change(self, event):
-        sel = self.listbox.curselection()
-        if not sel:
+        # Récupère l'ID de l'item sélectionné
+        selected_items = self.tree.selection()
+        if not selected_items:
             return
-        idx = sel[0]
-        if idx not in self.index_to_audio:
-            return
-        self.play_from_index(idx)
+            
+        # L'ID (iid) est l'index que nous avons défini dans _refresh_listbox (str(idx))
+        idx_str = selected_items[0]
+        try:
+            idx = int(idx_str)
+            if idx in self.index_to_audio:
+                self.play_from_index(idx)
+        except ValueError:
+            pass
 
     def play_from_index(self, idx: int):
         self.current_index = idx
@@ -939,7 +981,8 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             details.append(self.var_year_internal)
         self.var_details.set(" • ".join(details) if details else "")
 
-        self._update_cover(audio)
+        self._update_cover(audio, force_validation=False)
+
 
         try:
             dur = audio.get_duration()
@@ -1195,7 +1238,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             if self.var_year_internal: details.append(self.var_year_internal)
             self.var_details.set(" • ".join(details))
             
-            self._update_cover(audio)
+            self._update_cover(audio, force_validation=True)
             self._refresh_listbox()
             
             def _bg_lyrics():
@@ -1418,14 +1461,118 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
 
     # --------- Playlist placeholders ----------
     def open_playlist(self):
-        filedialog.askopenfilename(
+        filename = filedialog.askopenfilename(
             title="Ouvrir une playlist XSPF",
             filetypes=[("Playlists XSPF", "*.xspf"), ("Tous les fichiers", "*.*")]
         )
-        messagebox.showinfo("Info", "Ouverture de playlist XSPF : fonctionnalité à implémenter.")
+        if not filename:
+            return
+
+        try:
+            # --- LOGIQUE DE LECTURE XML (Directement dans le GUI) ---
+            tree = ET.parse(filename)
+            root = tree.getroot()
+            
+            # Namespace XSPF obligatoire pour trouver les balises
+            ns = {'ns': "http://xspf.org/ns/0/"}
+            
+            new_files = []
+            
+            # On cherche toutes les pistes <track> dans <trackList>
+            for track in root.findall(".//ns:track", ns):
+                location = track.find("ns:location", ns)
+                if location is not None and location.text:
+                    uri = location.text
+                    
+                    # Décodage de l'URI (ex: file:///...) vers un chemin système
+                    parsed = urlparse(uri)
+                    path_str = unquote(parsed.path)
+                    
+                    # Fix pour Windows : retirer le slash initial devant C:/ s'il existe
+                    if os.name == 'nt' and path_str.startswith('/') and ':' in path_str:
+                        path_str = path_str.lstrip('/')
+                    
+                    p = Path(path_str)
+                    
+                    # On vérifie si le fichier existe sur le disque
+                    if p.exists():
+                        # On instancie la BONNE classe selon l'extension
+                        suffix = p.suffix.lower()
+                        if suffix == '.mp3':
+                            new_files.append(MP3File(p))
+                        elif suffix == '.flac':
+                            new_files.append(FLACFile(p))
+                        else:
+                            print(f"Format ignoré (ni mp3 ni flac) : {p.name}")
+
+            if not new_files:
+                messagebox.showwarning("Attention", "Aucun fichier valide trouvé dans cette playlist.")
+                return
+
+            # --- MISE A JOUR DE L'INTERFACE ---
+            # On remplace la bibliothèque actuelle par le contenu de la playlist
+            self.library = MusicLibrary() 
+            self.audio_files = new_files
+            self.displayed_files = list(self.audio_files)
+            
+            self.current_index = None
+            self.is_playing = False
+            self.var_title.set("Playlist chargée")
+            self.var_artist.set(f"{len(new_files)} pistes")
+            self.var_path.set(filename)
+            
+            self._refresh_listbox()
+            self.var_status.set(f"Playlist chargée : {Path(filename).name}")
+
+        except Exception as e:
+            print(f"Erreur lecture XSPF: {e}")
+            messagebox.showerror("Erreur", f"Impossible de lire le fichier XSPF :\n{e}")
+
 
     def generate_playlist_selection(self):
-        messagebox.showinfo("Info", "Sauvegarde de la sélection : fonctionnalité à implémenter.")
+        # 1. Récupérer les fichiers (soit la sélection, soit tout)
+        selection_indices = self.listbox.curselection()
+        files_to_save = []
+        
+        if selection_indices:
+            for idx in selection_indices:
+                if idx in self.index_to_audio:
+                    files_to_save.append(self.index_to_audio[idx])
+        else:
+            files_to_save = self.displayed_files
+
+        if not files_to_save:
+            messagebox.showwarning("Attention", "Rien à sauvegarder.")
+            return
+
+        # 2. Demander où enregistrer
+        filename = filedialog.asksaveasfilename(
+            title="Sauvegarder la playlist",
+            defaultextension=".xspf",
+            filetypes=[("Playlists XSPF", "*.xspf")]
+        )
+        if not filename:
+            return
+
+        try:
+            # 3. Utiliser PlaylistGenerator 
+            # On passe un dossier parent bidon pour l'init, car on va override les fichiers juste après
+            pg = PlaylistGenerator(dossier=Path(filename).parent, fichier_sortie=filename)
+            
+            # C'est ici qu'on utilise la méthode existante pour forcer la liste de fichiers
+            pg.set_audio_files(files_to_save)
+            
+            # On construit les balises <track> en mémoire
+            pg.construire_piste()
+            
+            # On écrit le fichier sur le disque
+            pg.ecrire_xspf(titre=f"Playlist {Path(filename).stem}")
+            
+            self.var_status.set(f"Sauvegardé : {Path(filename).name}")
+            messagebox.showinfo("Succès", "Playlist exportée avec succès !")
+            
+        except Exception as e:
+            messagebox.showerror("Erreur", f"Erreur lors de la création XSPF :\n{e}")
 
     # --------- Cover & lyrics ----------
     def _create_placeholder_cover(self, size=320):
@@ -1454,22 +1601,16 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             self.cover_label.config(image=self.placeholder_image)
             self.cover_image_ref = self.placeholder_image
 
-    def _update_cover(self, audio: AudioFile):
+    def _update_cover(self, audio: AudioFile, force_validation: bool = False):
+        """
+        Affiche la cover. 
+        PRIORITÉ : Image téléchargée (disque) > Image interne (tags).
+        """
         if not HAS_PIL:
             return
 
-        data = audio.get_cover_art()
-        if data:
-            try:
-                img = Image.open(BytesIO(data))
-                img.thumbnail((320, 320))
-                photo = ImageTk.PhotoImage(img)
-                self.cover_label.config(image=photo)
-                self.cover_image_ref = photo
-                return
-            except Exception:
-                pass
-
+        # --- ETAPE 1 : Vérifier si une image existe sur le disque (API / Cache) ---
+        # On fait cela EN PREMIER pour que la nouvelle image prime sur l'ancienne
         cover_path = None
         try:
             if hasattr(self.metadata_fetcher, "ensure_cover_image"):
@@ -1484,29 +1625,54 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
                 img.thumbnail((320, 320))
                 photo = ImageTk.PhotoImage(img)
 
+                # Affichage
                 self.cover_label.config(image=photo)
                 self.cover_image_ref = photo
+                self.cover_label.update_idletasks() # Force l'affichage avant la popup
 
-                titre = self.var_title.get() or audio.filepath.stem
-                ok = messagebox.askyesno(
-                    "Valider la pochette",
-                    f"Utiliser cette image comme pochette pour :\n\n{titre} ?"
-                )
+                # --- VALIDATION (Uniquement si demandé) ---
+                if force_validation:
+                    titre = self.var_title.get() or audio.filepath.stem
+                    ok = messagebox.askyesno(
+                        "Nouvelle pochette trouvée",
+                        f"Une image a été téléchargée pour :\n{titre}\n\nVoulez-vous utiliser cette image ?"
+                    )
 
-                if not ok:
-                    try:
-                        cover_path.unlink()
-                        print("[cover] Cover refusée, fichier supprimé :", cover_path)
-                    except Exception as e:
-                        print("[cover] Erreur suppression cover refusée :", e)
-                    self._clear_cover()
-                else:
-                    print("[cover] Cover validée par l’utilisateur :", cover_path)
+                    if not ok:
+                        # L'utilisateur refuse : on supprime le fichier téléchargé
+                        try:
+                            cover_path.unlink()
+                            print("[cover] Image refusée et supprimée.")
+                        except Exception:
+                            pass
+                        
+                        # On relance l'update sans validation pour remettre l'ancienne cover (si elle existe)
+                        self._update_cover(audio, force_validation=False)
+                        return
+                    else:
+                        print("[cover] Image validée.")
+                        # Ici, l'image reste sur le disque dans le dossier de l'album
+                        # (Ce qui correspond à la consigne "enregistrer dans le dossier de l'album")
 
-                return
+                return # On a affiché l'image disque, on s'arrête là.
             except Exception as e:
-                print("Erreur chargement cover téléchargée :", e)
+                print("Erreur chargement cover fichier :", e)
 
+        # --- ETAPE 2 : Si pas d'image disque, on regarde l'image interne (Tags ID3/FLAC) ---
+        # C'est le "fallback" si l'API n'a rien trouvé
+        data = audio.get_cover_art()
+        if data:
+            try:
+                img = Image.open(BytesIO(data))
+                img.thumbnail((320, 320))
+                photo = ImageTk.PhotoImage(img)
+                self.cover_label.config(image=photo)
+                self.cover_image_ref = photo
+                return
+            except Exception:
+                pass
+
+        # --- ETAPE 3 : Rien trouvé nulle part ---
         self._clear_cover()
 
     def _set_lyrics_text(self, text: str):
@@ -1546,8 +1712,11 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
                 new_files.extend(temp_lib.files)
             elif p.is_file() and p.suffix.lower() in ['.mp3', '.wav', '.ogg', '.flac']:
                 # Création manuelle d'un AudioFile si c'est un fichier seul
-                af = AudioFile(p)
-                new_files.append(af)
+                suffix = p.suffix.lower()
+                if suffix == '.mp3':
+                    new_files.append(MP3File(p))
+                elif suffix == '.flac':
+                    new_files.append(FLACFile(p))
 
         if new_files:
             # On ajoute à la liste existante

@@ -1,6 +1,8 @@
 from pathlib import Path
 from typing import List, Iterable
 import xml.etree.ElementTree as ET
+from urllib.parse import unquote, urlparse
+import os
 
 from library.core.file_explorer import FileExplorer
 from library.models.mp3_file import MP3File
