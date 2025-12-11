@@ -5,6 +5,10 @@ from pathlib import Path
 from typing import List, Dict, Optional
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
+import xml.etree.ElementTree as ET
+from urllib.parse import unquote, urlparse
+import os
+import time
 
 # Pour afficher les covers
 try:
@@ -29,6 +33,14 @@ try:
 except ImportError:
     HAS_SV_TTK = False
 
+# Bibliothèque drag and drop depuis OS
+try:
+    from tkinterdnd2 import DND_FILES, TkinterDnD
+    HAS_DND = True
+except ImportError:
+    HAS_DND = False
+    print("tkinterdnd2 non installé. Drag & Drop désactivé.")
+    
 # Accès à src/
 BASE_DIR = Path(__file__).resolve().parent
 SRC_DIR = BASE_DIR / "src"
@@ -38,6 +50,8 @@ sys.path.append(str(SRC_DIR))
 try:
     from library.models.music_library import MusicLibrary
     from library.models.audio_file import AudioFile
+    from library.models.mp3_file import MP3File
+    from library.models.flac_file import FLACFile
     from library.core.playlist_generator import PlaylistGenerator
     from library.core.metadatafetcher import MetadataFetcher
 except ImportError:
@@ -92,7 +106,7 @@ class Tooltip:
             self.tipwindow = None
 
 
-class MusicLibraryGUI(tk.Tk):
+class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("PyMetaPlay")
@@ -204,6 +218,15 @@ class MusicLibraryGUI(tk.Tk):
             except Exception as e:
                 print("Erreur audio:", e)
 
+        # Drag and Drop
+        if HAS_DND:
+            try:
+                # On accepte le drop de fichiers partout sur la fenêtre
+                self.drop_target_register(DND_FILES)
+                self.dnd_bind('<<Drop>>', self.on_drop_files)
+            except Exception as e:
+                print(f"Erreur init DND: {e}")
+
         # Images (cover / placeholder ♪)
         self.cover_image_ref = None
         self.placeholder_image = None
@@ -313,10 +336,42 @@ class MusicLibraryGUI(tk.Tk):
         player_bar.columnconfigure(0, weight=1)
         self._build_player_bar(player_bar)
 
+    # ---------- Trier liste audio ----------
+    def _sort_treeview(self, col, reverse):
+        # 1. On récupère la liste des objets (index, AudioFile)
+        l = []
+        for k, audio in self.index_to_audio.items():
+            # On détermine la valeur de tri selon la colonne
+            val = ""
+            if col == "titre":
+                val = audio.metadata.get("title", audio.filepath.stem).lower()
+            elif col == "artiste":
+                val = audio.metadata.get("artist", "").lower()
+            elif col == "duree":
+                val = audio.get_duration() 
+            
+            l.append((val, k, audio))
+
+        # 2. On trie la liste
+        l.sort(key=lambda x: x[0], reverse=reverse)
+
+        # 3. On met à jour displayed_files et l'interface
+        self.displayed_files = [x[2] for x in l]
+        self._refresh_listbox()
+
+        # 4. On inverse le sens pour le prochain clic (Ascendant <-> Descendant)
+        self.tree.heading(col, command=lambda: self._sort_treeview(col, not reverse))
+
     # ---------- Sidebar ----------
     def _build_sidebar(self, parent):
         c = self.colors
-        parent.rowconfigure(4, weight=1)
+        parent.rowconfigure(0, weight=0)
+        parent.rowconfigure(1, weight=0)
+        parent.rowconfigure(2, weight=0)
+        parent.rowconfigure(3, weight=0)
+        parent.rowconfigure(4, weight=0) # C'était 1 avant, on met 0 pour figer la hauteur
+        parent.rowconfigure(5, weight=0)
+        parent.rowconfigure(6, weight=1)
 
         self.lbl_header_logo = tk.Label(
             parent,
@@ -404,21 +459,44 @@ class MusicLibraryGUI(tk.Tk):
         scrollbar = ttk.Scrollbar(list_container)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
-        self.listbox = tk.Listbox(
-            list_container,
-            bg=c["list_bg"],
-            fg=c["list_fg"],
-            bd=0,
-            highlightthickness=0,
-            selectbackground=c["list_sel_bg"],
-            selectforeground=c["list_sel_fg"],
-            font=("Segoe UI", 10),
-            yscrollcommand=scrollbar.set,
-            activestyle="none",
+       # --- REMPLACEMENT DE LA LISTBOX PAR UN TREEVIEW PAR SOUMY---
+        list_container = ttk.Frame(parent)
+        list_container.grid(row=6, column=0, sticky="nsew")
+        parent.rowconfigure(6, weight=1)
+
+        # Définition des colonnes
+        columns = ("titre", "artiste", "duree")
+        self.tree = ttk.Treeview(
+            list_container, 
+            columns=columns, 
+            show="headings", 
+            selectmode="browse"
         )
-        self.listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        scrollbar.config(command=self.listbox.yview)
-        self.listbox.bind("<<ListboxSelect>>", self.on_selection_change)
+
+        # Configuration des en-têtes
+        for col in columns:
+            self.tree.heading(
+                col, 
+                text=col.capitalize(), 
+                command=lambda c=col: self._sort_treeview(c, False)
+            )
+
+        # Configuration des largeurs de colonnes
+        self.tree.column("titre", width=150, minwidth=100)
+        self.tree.column("artiste", width=100, minwidth=80)
+        self.tree.column("duree", width=50, minwidth=40, anchor="e")
+
+        # Scrollbar
+        scrollbar = ttk.Scrollbar(list_container, orient=tk.VERTICAL, command=self.tree.yview)
+        self.tree.configure(yscrollcommand=scrollbar.set)
+        
+        self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        # Binding du clic (avec <<TreeviewSelect>>)
+        self.tree.bind("<<TreeviewSelect>>", self.on_selection_change)
+        
+        self.listbox = None
 
     # ---------- Contenu principal ----------
     def _build_main_content(self, parent):
@@ -862,37 +940,54 @@ class MusicLibraryGUI(tk.Tk):
         self._refresh_listbox()
 
     def _refresh_listbox(self):
-        self.listbox.delete(0, tk.END)
+        # Nettoyage du tableau
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+            
         self.index_to_audio.clear()
 
         if not self.audio_files:
-            self.listbox.insert(tk.END, "Aucun fichier chargé.")
-            self.listbox.insert(tk.END, "Utilisez « Ouvrir un dossier » pour commencer.")
             return
 
-        if not self.displayed_files:
-            self.listbox.insert(tk.END, "Aucun résultat pour cette recherche.")
-            self.listbox.insert(tk.END, "Essayez un autre mot-clé.")
-            return
-
+        # Remplissage
         for idx, audio in enumerate(self.displayed_files):
-            name = audio.filepath.stem
+            # Extraction propre des données pour l'affichage
             md = getattr(audio, "metadata", {}) or {}
-            if md.get("title"):
-                name = md.get("title")
-                if md.get("artist"):
-                    name += f" - {md.get('artist')}"
-            self.listbox.insert(tk.END, f"{idx+1}. {name}")
+            
+            titre = md.get("title") or audio.filepath.stem
+            artiste = md.get("artist") or "--"
+            
+            # Formatage de la durée
+            try:
+                d = audio.get_duration()
+                duree = f"{int(d//60)}:{int(d%60):02d}"
+            except:
+                duree = "--:--"
+
+            # Insertion dans le Treeview (iid correspond à l'index pour retrouver le fichier facilement)
+            self.tree.insert(
+                "", 
+                tk.END, 
+                iid=str(idx), 
+                values=(titre, artiste, duree)
+            )
+            
             self.index_to_audio[idx] = audio
 
     def on_selection_change(self, event):
-        sel = self.listbox.curselection()
-        if not sel:
+        # Récupère l'ID de l'item sélectionné
+        selected_items = self.tree.selection()
+        if not selected_items:
             return
-        idx = sel[0]
-        if idx not in self.index_to_audio:
-            return
-        self.play_from_index(idx)
+            
+        # L'ID (iid) est l'index que nous avons défini dans _refresh_listbox (str(idx))
+        idx_str = selected_items[0]
+        try:
+            idx = int(idx_str)
+            if idx in self.index_to_audio:
+                self.play_from_index(idx)
+        except ValueError:
+            pass
 
     def play_from_index(self, idx: int):
         self.current_index = idx
@@ -921,7 +1016,8 @@ class MusicLibraryGUI(tk.Tk):
             details.append(self.var_year_internal)
         self.var_details.set(" • ".join(details) if details else "")
 
-        self._update_cover(audio)
+        self._update_cover(audio, force_validation=False)
+
 
         try:
             dur = audio.get_duration()
@@ -1014,20 +1110,31 @@ class MusicLibraryGUI(tk.Tk):
 
     def play_next(self):
         if self.current_index is not None and self.displayed_files:
+            # 1. Calcul du nouvel index
             idx = (self.current_index + 1) % len(self.displayed_files)
-            self.listbox.selection_clear(0, tk.END)
-            self.listbox.selection_set(idx)
-            self.listbox.see(idx)
+            
+            # 2. Conversion en ID pour le Treeview (on a utilisé str(idx) comme identifiant)
+            item_id = str(idx)
+            
+            # 3. Sélection visuelle dans le Treeview
+            if self.tree.exists(item_id):
+                self.tree.selection_set(item_id) # Sélectionne la ligne
+                self.tree.see(item_id)           # Scrolle pour la rendre visible
+                self.tree.focus(item_id)         
             self.play_from_index(idx)
 
     def play_prev(self):
         if self.current_index is not None and self.displayed_files:
-            idx = (self.current_index - 1) % len(self.displayed_files)
-            self.listbox.selection_clear(0, tk.END)
-            self.listbox.selection_set(idx)
-            self.listbox.see(idx)
-            self.play_from_index(idx)
+            # 1. Calcul du nouvel index (avec modulo pour revenir à la fin si on est au début)
+            idx = (self.current_index - 1) % len(self.displayed_files)            
+            # 2. Sélection visuelle dans le Treeview
+            item_id = str(idx)            
+            if self.tree.exists(item_id):
+                self.tree.selection_set(item_id)
+                self.tree.see(item_id)
+                self.tree.focus(item_id)
 
+            self.play_from_index(idx)
     def toggle_repeat(self):
         self.repeat = not self.repeat
         self.btn_repeat.config(fg=self.colors["accent"] if self.repeat else "white")
@@ -1069,62 +1176,134 @@ class MusicLibraryGUI(tk.Tk):
 
     # --------- API & METADATA ----------
     def fetch_api_current(self):
-        """Récupère les métadonnées via API et les charge dans l'interface"""
+        """Version Priorité Utilisateur : Force l'utilisation du texte de l'écran pour la recherche"""
         if self.current_index is None:
             messagebox.showwarning("Attention", "Aucune piste sélectionnée")
             return
         
         audio = self.index_to_audio.get(self.current_index)
-        if not audio:
-            return
+        if not audio: return
+
+        # 1. INPUTS UI (Ce que vous avez tapé)
+        screen_title = self.var_title.get()
+        screen_artist = self.var_artist.get()
         
-        self.var_status.set("Récupération des métadonnées via API...")
+        # On prépare l'objet
+        if not audio.metadata: audio.metadata = {}
+        audio.metadata['title'] = screen_title
+        audio.metadata['artist'] = screen_artist if screen_artist != "--" else ""
+
+        self.var_status.set(f"Préparation : {screen_title}...")
+
+        # 2. ARRÊT & DÉVERROUILLAGE
+        was_playing = self.is_playing
+        was_paused = self.is_paused
+        current_pos = 0.0
+        
+        if self.audio_player_enabled and (self.is_playing or self.is_paused):
+            try:
+                current_ms = pygame.mixer.music.get_pos()
+                if current_ms >= 0:
+                    current_pos = self.current_offset + (current_ms / 1000.0)
+            except: pass
+            pygame.mixer.music.stop()
+            try: pygame.mixer.music.unload()
+            except AttributeError: pass
+            self.is_playing = False; self.is_paused = False
         
         try:
+            # 3. PRE-SAUVEGARDE (On tente d'écrire sur le disque)
+            audio.save_metadata()
+            time.sleep(0.5)
+            
+            # 4. RELOAD (Lecture technique)
+            # On relit pour avoir la durée, le bitrate, etc.
+            refreshed_tags = audio.extract_metadata()
+            if refreshed_tags:
+                # ATTENTION : On ne laisse pas le reload écraser le titre si le reload est vide !
+                # On garde les autres infos (album, année existante...)
+                old_title = audio.metadata.get('title') # Votre input "malvil"
+                old_artist = audio.metadata.get('artist')
+                
+                audio.metadata = refreshed_tags
+                
+                # === FIX CRITIQUE ICI ===
+                # Si le reload du disque renvoie un titre vide ou nul, on remet VOTRE input
+                # C'est ça qui manquait : on force l'API à chercher "malvil" et pas ""
+                if screen_title and (not audio.metadata.get('title') or audio.metadata.get('title') == ""):
+                    audio.metadata['title'] = screen_title
+                else:
+                    # Même si le disque renvoie quelque chose, pour la recherche API, 
+                    # on préfère généralement ce que l'utilisateur vient de corriger manuellement
+                    audio.metadata['title'] = screen_title
+                    
+                if screen_artist and screen_artist != "--":
+                    audio.metadata['artist'] = screen_artist
+
+            # Log pour vérifier que "malvil" est bien là avant l'envoi
+            print(f"DEBUG: Titre envoyé à l'API : '{audio.metadata.get('title')}'")
+
+            # 5. APPEL API
+            self.var_status.set(f"Recherche API pour : {audio.metadata.get('title')}...")
             res = self.metadata_fetcher.update_audio_file_metadata(audio)
             
+            time.sleep(0.5)
+
+            # 6. REFRESH FINAL (Pour afficher le résultat Spotify)
+            final_tags = audio.extract_metadata()
+            if final_tags:
+                audio.metadata = final_tags
+
+            # 7. REPRISE LECTURE
+            if self.audio_player_enabled and was_playing:
+                try:
+                    pygame.mixer.music.load(str(audio.filepath))
+                    pygame.mixer.music.play(start=current_pos)
+                    self.is_playing = True
+                    self.is_paused = was_paused
+                    if was_paused: pygame.mixer.music.pause()
+                    self.btn_play.config(text="⏸" if not was_paused else "▶")
+                except Exception: pass
+            
+            # GESTION RESULTAT
             if not res:
-                messagebox.showinfo("API", "Aucune nouvelle donnée trouvée")
-                return
-            
+                self.var_status.set("API : Aucun résultat.")
+                messagebox.showinfo("Info", "Pas de résultat Spotify.")
+            else:
+                messagebox.showinfo("Succès", "Tags mis à jour !")
+
+            # MISE A JOUR UI
             md = audio.metadata or {}
-            
-            title = md.get("title") or audio.filepath.stem
-            artist = md.get("artist") or "Artiste inconnu"
-            album = md.get("album") or ""
-            year = str(md.get("year") or "")
-            
-            self.var_title.set(title)
-            self.var_artist.set(artist)
-            self.var_album_internal = album
-            self.var_year_internal = year
+            self.var_title.set(md.get("title", screen_title))
+            self.var_artist.set(md.get("artist", screen_artist))
+            self.var_album_internal = md.get("album", "")
+            self.var_year_internal = str(md.get("year", ""))
             
             details = []
-            if album:
-                details.append(album)
-            if year:
-                details.append(year)
-            self.var_details.set(" • ".join(details) if details else "")
+            if self.var_album_internal: details.append(self.var_album_internal)
+            if self.var_year_internal: details.append(self.var_year_internal)
+            self.var_details.set(" • ".join(details))
             
-            self._update_cover(audio)
-            
-            self.var_status.set("Chargement des paroles...")
-            l = self.metadata_fetcher.fetch_lyrics_for_audio(audio)
-            if l:
-                self._set_lyrics_text(l)
-                self.var_status.set("Métadonnées et paroles mises à jour")
-            else:
-                self._set_lyrics_text("")
-                self.var_status.set("Métadonnées mises à jour (pas de paroles)")
-            
+            self._update_cover(audio, force_validation=True)
             self._refresh_listbox()
             
-            messagebox.showinfo("API", "Métadonnées mises à jour avec succès")
+            def _bg_lyrics():
+                l = self.metadata_fetcher.fetch_lyrics_for_audio(audio)
+                if l: self._set_lyrics_text(l)
+            threading.Thread(target=_bg_lyrics, daemon=True).start()
             
         except Exception as e:
-            messagebox.showerror("API Error", f"Erreur lors de la récupération : {str(e)}")
-            self.var_status.set("Erreur API")
+            if self.audio_player_enabled and was_playing:
+                try:
+                    pygame.mixer.music.load(str(audio.filepath))
+                    pygame.mixer.music.play(start=current_pos)
+                    self.is_playing = True
+                except: pass
+            print(f"Erreur critique: {e}")
+            messagebox.showerror("Erreur", str(e))
 
+            
+    
     def save_metadata_current(self):
         """Sauvegarde les métadonnées affichées dans le fichier audio"""
         if self.current_index is None:
@@ -1148,13 +1327,18 @@ class MusicLibraryGUI(tk.Tk):
                 pass
         
         try:
-            # IMPORTANT : on stoppe ET on décharge le fichier pour libérer le lock
+            # ÉTAPE 1 : Arrêter complètement la lecture pour libérer le fichier
             if self.audio_player_enabled:
-                try:
+                if self.is_playing or self.is_paused: # Tenter l'arrêt même si l'état est confus
                     pygame.mixer.music.stop()
+                
+                # AJOUT : Décharger explicitement le fichier pour s'assurer que le verrou est levé
+                try:
                     pygame.mixer.music.unload()
-                except Exception as e:
-                    print("Erreur unload pygame:", e)
+                except:
+                    # Gérer les versions où unload() n'existe pas ou échoue
+                    pass
+
                 self.is_playing = False
                 self.is_paused = False
             
@@ -1323,14 +1507,116 @@ class MusicLibraryGUI(tk.Tk):
 
     # --------- Playlist placeholders ----------
     def open_playlist(self):
-        filedialog.askopenfilename(
+        filename = filedialog.askopenfilename(
             title="Ouvrir une playlist XSPF",
             filetypes=[("Playlists XSPF", "*.xspf"), ("Tous les fichiers", "*.*")]
         )
-        messagebox.showinfo("Info", "Ouverture de playlist XSPF : fonctionnalité à implémenter.")
+        if not filename:
+            return
+
+        try:
+            # --- LOGIQUE DE LECTURE XML ---
+            tree = ET.parse(filename)
+            root = tree.getroot()
+            
+            ns = {'ns': "http://xspf.org/ns/0/"}
+            
+            new_files = []
+            
+            for track in root.findall(".//ns:track", ns):
+                location = track.find("ns:location", ns)
+                if location is not None and location.text:
+                    uri = location.text
+                    
+                    parsed = urlparse(uri)
+                    path_str = unquote(parsed.path)
+                    
+                    if os.name == 'nt' and path_str.startswith('/') and ':' in path_str:
+                        path_str = path_str.lstrip('/')
+                    
+                    p = Path(path_str)
+                    
+                    if p.exists():
+                        # --- CORRECTION ICI ---
+                        # On crée l'objet, puis on LIT SES TAGS immédiatement
+                        audio_obj = None
+                        suffix = p.suffix.lower()
+                        
+                        if suffix == '.mp3':
+                            audio_obj = MP3File(p)
+                        elif suffix == '.flac':
+                            audio_obj = FLACFile(p)
+                        
+                        if audio_obj:
+                            audio_obj.extract_metadata() 
+                            new_files.append(audio_obj)
+
+            if not new_files:
+                messagebox.showwarning("Attention", "Aucun fichier valide trouvé dans cette playlist.")
+                return
+
+            # --- MISE A JOUR DE L'INTERFACE ---
+            self.library = MusicLibrary() 
+            self.audio_files = new_files
+            self.displayed_files = list(self.audio_files)
+            
+            self.current_index = None
+            self.is_playing = False
+            self.var_title.set("Playlist chargée")
+            self.var_artist.set(f"{len(new_files)} pistes")
+            self.var_path.set(filename)
+            
+            self._refresh_listbox()
+            self.var_status.set(f"Playlist chargée : {Path(filename).name}")
+
+        except Exception as e:
+            print(f"Erreur lecture XSPF: {e}")
+            messagebox.showerror("Erreur", f"Impossible de lire le fichier XSPF :\n{e}")
 
     def generate_playlist_selection(self):
-        messagebox.showinfo("Info", "Sauvegarde de la sélection : fonctionnalité à implémenter.")
+        # 1. Récupérer les fichiers (soit la sélection, soit tout)
+        selection_indices = self.tree.selection()
+        files_to_save = []
+        
+        if selection_indices:
+            for idx in selection_indices:
+                if idx in self.index_to_audio:
+                    files_to_save.append(self.index_to_audio[idx])
+        else:
+            files_to_save = self.displayed_files
+
+        if not files_to_save:
+            messagebox.showwarning("Attention", "Rien à sauvegarder.")
+            return
+
+        # 2. Demander où enregistrer
+        filename = filedialog.asksaveasfilename(
+            title="Sauvegarder la playlist",
+            defaultextension=".xspf",
+            filetypes=[("Playlists XSPF", "*.xspf")]
+        )
+        if not filename:
+            return
+
+        try:
+            # 3. Utiliser PlaylistGenerator 
+            # On passe un dossier parent bidon pour l'init, car on va override les fichiers juste après
+            pg = PlaylistGenerator(dossier=Path(filename).parent, fichier_sortie=filename)
+            
+            # C'est ici qu'on utilise la méthode existante pour forcer la liste de fichiers
+            pg.set_audio_files(files_to_save)
+            
+            # On construit les balises <track> en mémoire
+            pg.construire_piste()
+            
+            # On écrit le fichier sur le disque
+            pg.ecrire_xspf(titre=f"Playlist {Path(filename).stem}")
+            
+            self.var_status.set(f"Sauvegardé : {Path(filename).name}")
+            messagebox.showinfo("Succès", "Playlist exportée avec succès !")
+            
+        except Exception as e:
+            messagebox.showerror("Erreur", f"Erreur lors de la création XSPF :\n{e}")
 
     # --------- Cover & lyrics ----------
     def _create_placeholder_cover(self, size=320):
@@ -1359,22 +1645,16 @@ class MusicLibraryGUI(tk.Tk):
             self.cover_label.config(image=self.placeholder_image)
             self.cover_image_ref = self.placeholder_image
 
-    def _update_cover(self, audio: AudioFile):
+    def _update_cover(self, audio: AudioFile, force_validation: bool = False):
+        """
+        Affiche la cover. 
+        PRIORITÉ : Image téléchargée (disque) > Image interne (tags).
+        """
         if not HAS_PIL:
             return
 
-        data = audio.get_cover_art()
-        if data:
-            try:
-                img = Image.open(BytesIO(data))
-                img.thumbnail((320, 320))
-                photo = ImageTk.PhotoImage(img)
-                self.cover_label.config(image=photo)
-                self.cover_image_ref = photo
-                return
-            except Exception:
-                pass
-
+        # --- ETAPE 1 : Vérifier si une image existe sur le disque (API / Cache) ---
+        # On fait cela EN PREMIER pour que la nouvelle image prime sur l'ancienne
         cover_path = None
         try:
             if hasattr(self.metadata_fetcher, "ensure_cover_image"):
@@ -1389,29 +1669,54 @@ class MusicLibraryGUI(tk.Tk):
                 img.thumbnail((320, 320))
                 photo = ImageTk.PhotoImage(img)
 
+                # Affichage
                 self.cover_label.config(image=photo)
                 self.cover_image_ref = photo
+                self.cover_label.update_idletasks() # Force l'affichage avant la popup
 
-                titre = self.var_title.get() or audio.filepath.stem
-                ok = messagebox.askyesno(
-                    "Valider la pochette",
-                    f"Utiliser cette image comme pochette pour :\n\n{titre} ?"
-                )
+                # --- VALIDATION (Uniquement si demandé) ---
+                if force_validation:
+                    titre = self.var_title.get() or audio.filepath.stem
+                    ok = messagebox.askyesno(
+                        "Nouvelle pochette trouvée",
+                        f"Une image a été téléchargée pour :\n{titre}\n\nVoulez-vous utiliser cette image ?"
+                    )
 
-                if not ok:
-                    try:
-                        cover_path.unlink()
-                        print("[cover] Cover refusée, fichier supprimé :", cover_path)
-                    except Exception as e:
-                        print("[cover] Erreur suppression cover refusée :", e)
-                    self._clear_cover()
-                else:
-                    print("[cover] Cover validée par l’utilisateur :", cover_path)
+                    if not ok:
+                        # L'utilisateur refuse : on supprime le fichier téléchargé
+                        try:
+                            cover_path.unlink()
+                            print("[cover] Image refusée et supprimée.")
+                        except Exception:
+                            pass
+                        
+                        # On relance l'update sans validation pour remettre l'ancienne cover (si elle existe)
+                        self._update_cover(audio, force_validation=False)
+                        return
+                    else:
+                        print("[cover] Image validée.")
+                        # Ici, l'image reste sur le disque dans le dossier de l'album
+                        # (Ce qui correspond à la consigne "enregistrer dans le dossier de l'album")
 
-                return
+                return # On a affiché l'image disque, on s'arrête là.
             except Exception as e:
-                print("Erreur chargement cover téléchargée :", e)
+                print("Erreur chargement cover fichier :", e)
 
+        # --- ETAPE 2 : Si pas d'image disque, on regarde l'image interne (Tags ID3/FLAC) ---
+        # C'est le "fallback" si l'API n'a rien trouvé
+        data = audio.get_cover_art()
+        if data:
+            try:
+                img = Image.open(BytesIO(data))
+                img.thumbnail((320, 320))
+                photo = ImageTk.PhotoImage(img)
+                self.cover_label.config(image=photo)
+                self.cover_image_ref = photo
+                return
+            except Exception:
+                pass
+
+        # --- ETAPE 3 : Rien trouvé nulle part ---
         self._clear_cover()
 
     def _set_lyrics_text(self, text: str):
@@ -1419,6 +1724,54 @@ class MusicLibraryGUI(tk.Tk):
         self.lyrics_text.delete("1.0", tk.END)
         self.lyrics_text.insert(tk.END, text if text else "Paroles non disponibles.")
         self.lyrics_text.config(state=tk.DISABLED)
+
+
+    def on_drop_files(self, event):
+        """Gère les fichiers dropés dans la fenêtre"""
+        raw_data = event.data
+        print(f"Fichiers reçus (raw): {raw_data}")
+
+        # S'assurer que le chemin est bien parsé:
+        paths = []
+        if raw_data.startswith("{") and raw_data.endswith('}:'):
+            # regex (cherche entre accolades )
+            import re
+            parts = re.findall(r'\{.*?\}|\S+', raw_data)
+            for p in parts:
+                path_str = p.strip('{}')
+                paths.append(Path(path_str))
+        else:
+            # Cas simple (un seul fichier sans espace ou liste simple)
+            paths.append(Path(raw_data))
+
+        count_added = 0
+        new_files = []
+
+        for p in paths:
+            if p.is_dir():
+                # Si c'est un dossier, on utilise la méthode existante de lib
+                # Idéalement, il faudrait une méthode "add_directory" dans MusicLibrary ( si on a le temps bien sur)
+                temp_lib = MusicLibrary()
+                temp_lib.load_directory(p)
+                new_files.extend(temp_lib.files)
+            elif p.is_file() and p.suffix.lower() in ['.mp3', '.wav', '.ogg', '.flac']:
+                # Création manuelle d'un AudioFile si c'est un fichier seul
+                suffix = p.suffix.lower()
+                if suffix == '.mp3':
+                    new_files.append(MP3File(p))
+                elif suffix == '.flac':
+                    new_files.append(FLACFile(p))
+
+        if new_files:
+            # On ajoute à la liste existante
+            self.audio_files.extend(new_files)
+            self.displayed_files = list(self.audio_files) # Reset filtre recherche
+            
+            # Mise à jour IHM
+            self._refresh_listbox()
+            self.var_status.set(f"{len(new_files)} fichier(s) ajouté(s) par glisser-déposer.")
+        else:
+            self.var_status.set("Aucun fichier audio valide détecté.")
 
 
 if __name__ == "__main__":

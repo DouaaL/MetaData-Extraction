@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='utf-8'?>
+<playlist xmlns="http://xspf.org/ns/0/" version="1">
+  <title>Playlist test</title>
+  <creator>Moi</creator>
+  <trackList>
+    <track>
+      <location>file:///C:/Users/asus/Desktop/TestProject/Don%20Dada%20Mixtape/1%20mitsubishi.mp3</location>
+      <title>mitsubishi</title>
+      <artist>Alpha Wann</artist>
+      <album>don dada mixtape vol 1</album>
+      <duration>86560</duration>
+    </track><track>
+      <location>file:///C:/Users/asus/Desktop/TestProject/Don%20Dada%20Mixtape/10%20super%20switchstyle%202.mp3</location>
+      <title>super switchstyle 2</title>
+      <artist>Alpha Wann</artist>
+      <album>don dada mixtape vol 1 - [Www.33rapfr.com]</album>
+      <duration>106920</duration>
+    </track><track>
+      <location>file:///C:/Users/asus/Desktop/TestProject/Don%20Dada%20Mixtape/11%20aaa.mp3</location>
+      <title>aaa</title>
+      <artist>Alpha Wann, Nekfeu</artist>
+      <album>don dada mixtape vol 1</album>
+      <duration>164680</duration>
+    </track><track>
+      <location>file:///C:/Users/asus/Desktop/TestProject/Don%20Dada%20Mixtape/12%20dirty%20dancing.mp3</location>
+      <title>dirty dancing</title>
+      <artist>Alpha Wann</artist>
+      <album>don dada mixtape vol 1 - [Www.33rapfr.com]</album>
+      <duration>169573</duration>
+    </track><track>
+      <location>file:///C:/Users/asus/Desktop/TestProject/Don%20Dada%20Mixtape/13%20pistons%20vs%20peacers.mp3</location>
+      <title>pistons vs peacers</title>
+      <artist>Alpha Wann</artist>
+      <album>don dada mixtape vol 1 - [Www.33rapfr.com]</album>
+      <duration>201493</duration>
+    </track><track>
+      <location>file:///C:/Users/asus/Desktop/TestProject/Don%20Dada%20Mixtape/14%20malvil.mp3</location>
+      <title>14 malvil</title>
+      <artist>Alpha Wann</artist>
+      <album>don dada mixtape vol 1</album>
+      <duration>205413</duration>
+    </track><track>
+      <location>file:///C:/Users/asus/Desktop/TestProject/Don%20Dada%20Mixtape/15%20carrelage%20italien%20.mp3</location>
+      <title>carrelage italien</title>
+      <artist>Alpha Wann</artist>
+      <album>don dada mixtape vol 1</album>
+      <duration>179973</duration>
+    </track><track>
+      <location>file:///C:/Users/asus/Desktop/TestProject/Don%20Dada%20Mixtape/16%203095.mp3</location>
+      <title>3095</title>
+      <artist>Alpha wann</artist>
+      <album>don dada mixtape vol 1</album>
+      <duration>196893</duration>
+    </track><track>
+      <location>file:///C:/Users/asus/Desktop/TestProject/Don%20Dada%20Mixtape/17%20la%20lune%20attire%20la%20mer.mp3</location>
+      <title>la lune attire la mer</title>
+      <artist>Alpha Wann</artist>
+      <album>don dada mixtape vol 1</album>
+      <duration>187240</duration>
+    </track><track>
+      <location>file:///C:/Users/asus/Desktop/TestProject/Don%20Dada%20Mixtape/2%20Philly%20flingo.mp3</location>
+      <title>Philly flingo</title>
+      <artist>Alpha Wann</artist>
+      <album>don dada mixtape vol 1 - [Www.33rapfr.com]</album>
+      <duration>173760</duration>
+    </track><track>
+      <location>file:///C:/Users/asus/Desktop/TestProject/Don%20Dada%20Mixtape/3%20soldat%20tue%20soldat.mp3</location>
+      <title>soldat tue soldat</title>
+      <artist>Alpha Wann</artist>
+      <album>don dada mixtape vol 1 - [Www.33rapfr.com]</album>
+      <duration>184067</duration>
+    </track><track>
+      <location>file:///C:/Users/asus/Desktop/TestProject/Don%20Dada%20Mixtape/4%20ny%20a%20fond.mp3</location>
+      <title>ny à fond</title>
+      <artist>Alpha Wann, Freeze corleone</artist>
+      <album>don dada mixtape vol 1</album>
+      <duration>168187</duration>
+    </track><track>
+      <location>file:///C:/Users/asus/Desktop/TestProject/Don%20Dada%20Mixtape/5%20san%20andreas%20.mp3</location>
+      <title>San andreas</title>
+      <artist>Lesram</artist>
+      <album>don dada mixtape vol 1</album>
+      <duration>186880</duration>
+    </track><track>
+      <location>file:///C:/Users/asus/Desktop/TestProject/Don%20Dada%20Mixtape/6%20trapchat.mp3</location>
+      <title>trapchat</title>
+      <artist>Alpha Wann, Veust</artist>
+      <album>don dada mixtape vol 1</album>
+      <duration>169867</duration>
+    </track><track>
+      <location>file:///C:/Users/asus/Desktop/TestProject/Don%20Dada%20Mixtape/7%20velux.mp3</location>
+      <title>velux</title>
+      <artist>Alpha Wann</artist>
+      <album>don dada mixtape vol 1</album>
+      <duration>140360</duration>
+    </track><track>
+      <location>file:///C:/Users/asus/Desktop/TestProject/Don%20Dada%20Mixtape/8%20farenheit%20451.mp3</location>
+      <title>fahrenheit 451</title>
+      <artist>Alpha Wann</artist>
+      <album>don dada mixtape vol 1</album>
+      <duration>104893</duration>
+    </track><track>
+      <location>file:///C:/Users/asus/Desktop/TestProject/Don%20Dada%20Mixtape/9%20apdl.mp3</location>
+      <title>apdl</title>
+      <artist>Alpha Wann</artist>
+      <album>don dada mixtape vol 1</album>
+      <duration>162160</duration>
+    </track>
+  </trackList>
+</playlist>
