@@ -250,6 +250,9 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         self._build_layout()
         self._build_menu()
 
+        # Désactiver les contrôles audio si le backend audio n'est pas disponible
+        self._update_audio_controls_state()
+
         # Boucle d'update du temps de lecture
         self.after(500, self._progress_loop)
 
@@ -431,10 +434,44 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         search_frame.columnconfigure(0, weight=1)
 
         self.var_search = tk.StringVar()
-        self.var_search.trace("w", self.on_search_change)
+        # Use a lambda so the bound method keeps the correct `self` when called from Tcl
+        self.var_search.trace("w", lambda *a: self.on_search_change())
 
-        search_entry = ttk.Entry(search_frame, textvariable=self.var_search)
-        search_entry.grid(row=0, column=0, sticky="ew")
+        # Entry de recherche avec placeholder accessible
+        self.search_entry = ttk.Entry(search_frame, textvariable=self.var_search)
+        self.search_entry.grid(row=0, column=0, sticky="ew")
+
+        # Placeholder text (accessible hint)
+        self._search_placeholder = "nom auteur ou chanson"
+        # Helper pour afficher/masquer le placeholder
+        def _show_search_placeholder(event=None):
+            try:
+                if not self.var_search.get():
+                    self.var_search.set(self._search_placeholder)
+                    # ttk.Entry doesn't support fg directly; use tk.Entry if needed.
+                    try:
+                        self.search_entry.config(foreground=self.colors.get("text_dim", "#757575"))
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+
+        def _clear_search_placeholder(event=None):
+            try:
+                if self.var_search.get() == self._search_placeholder:
+                    self.var_search.set("")
+                    try:
+                        self.search_entry.config(foreground=self.colors.get("input_fg", "#212121"))
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+
+        # Bind focus events
+        self.search_entry.bind("<FocusIn>", _clear_search_placeholder)
+        self.search_entry.bind("<FocusOut>", _show_search_placeholder)
+        # Initial placeholder
+        _show_search_placeholder()
 
         # 4. HEADER BIBLIOTHEQUE
         self.lbl_header_lib = tk.Label(
@@ -521,6 +558,21 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         self.tree.configure(yscrollcommand=scrollbar.set)
         
         self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        # Création d'un overlay hint dans la zone blanche des pistes (sera affiché si la liste est vide)
+        try:
+            self.lbl_tracks_overlay = tk.Label(
+                list_container,
+                text="Ouvrez un dossier ou glissez-déposez un audio sur la piste",
+                font=("Segoe UI", 10),
+                bg=c["list_bg"], fg=c["text_dim"],
+                bd=0, justify=tk.LEFT, wraplength=300
+            )
+            # Position relative pour rester à l'intérieur de la zone blanche
+            # Lower a bit more so it doesn't overlap the Treeview headers
+            self.lbl_tracks_overlay.place(relx=0.03, rely=0.20, anchor="nw")
+        except Exception:
+            self.lbl_tracks_overlay = None
+
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
         self.tree.bind("<<TreeviewSelect>>", self.on_selection_change)
@@ -731,8 +783,16 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         self.btn_prev.pack(side=tk.LEFT, padx=8)
 
         # Bouton play (plus gros que les autres)
-        self.btn_play = ttk.Button(
-            controls, text="▶", command=self.toggle_play_pause, width=5
+        btn_play_style = dict(btn_sec_style)
+        btn_play_style.update({
+            "font": ("Segoe UI Symbol", 16),
+            "width": 5,
+            "relief": "flat",
+            "bd": 0,
+        })
+
+        self.btn_play = tk.Button(
+            controls, text="▶", command=self.toggle_play_pause, **btn_play_style
         )
         self.btn_play.pack(side=tk.LEFT, padx=15)
 
@@ -849,6 +909,27 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
                         activeforeground=c["accent"],
                     )
 
+        # Update search entry colors and placeholder state
+        if hasattr(self, 'search_entry'):
+            try:
+                # If placeholder active, keep dim color
+                if getattr(self, '_search_placeholder', None) and self.var_search.get() == self._search_placeholder:
+                    try:
+                        self.search_entry.config(foreground=c['text_dim'])
+                    except Exception:
+                        pass
+                else:
+                    try:
+                        self.search_entry.config(foreground=c['input_fg'])
+                    except Exception:
+                        pass
+                try:
+                    self.search_entry.config(background=c['input_bg'])
+                except Exception:
+                    pass
+            except Exception:
+                pass
+
         # --- 2. Main Content ---
         if hasattr(self, "cover_label"):
             self.cover_label.config(bg=c["bg"])
@@ -892,6 +973,29 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         for frame in player_frames:
             if frame: frame.config(bg=c["player"])
 
+        # Forcer le background des widgets enfants dans la zone du player
+        # Certains widgets tk peuvent garder un fond blanc par défaut; on les harmonise ici.
+        try:
+            for parent in [self.left_frame, self.player_center_frame, self.player_controls_frame]:
+                if not parent:
+                    continue
+                for child in parent.winfo_children():
+                    try:
+                        child.config(bg=c["player"])
+                    except Exception:
+                        pass
+                    # Et pour leurs enfants (labels/images à l'intérieur)
+                    try:
+                        for sub in child.winfo_children():
+                            try:
+                                sub.config(bg=c["player"])
+                            except Exception:
+                                pass
+                    except Exception:
+                        pass
+        except Exception:
+            pass
+
         # Mini Cover & Info
         if hasattr(self, 'lbl_mini_title'):
             self.lbl_mini_title.config(bg=c["player"], fg=c["text"])
@@ -907,8 +1011,15 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         if hasattr(self, "lbl_total_time"):
             self.lbl_total_time.config(bg=c["player"], fg=c["text_dim"])
 
+        # Hint overlay inside the tracks area
+        if hasattr(self, 'lbl_tracks_overlay') and self.lbl_tracks_overlay is not None:
+            try:
+                self.lbl_tracks_overlay.config(bg=c["list_bg"], fg=c["text_dim"], wraplength=300)
+            except Exception:
+                pass
+
         # Boutons Player (tk.Button)
-        player_buttons = [self.btn_repeat, self.btn_prev, self.btn_next, self.btn_vol, self.btn_shuffle, self.theme_toggle_btn]
+        player_buttons = [self.btn_repeat, self.btn_prev, self.btn_play, self.btn_next, self.btn_vol, self.btn_shuffle, self.theme_toggle_btn]
         for b in player_buttons:
             if b is not None:
                 b.config(
@@ -962,7 +1073,18 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             messagebox.showerror("Erreur", str(e))
 
     def on_search_change(self, *args):
-        query = self.var_search.get().lower().strip()
+        # During initialization the trace can fire before the Treeview exists.
+        # Guard early to avoid AttributeError when widgets are not yet built.
+        if not hasattr(self, 'tree') or self.tree is None:
+            return
+
+        raw = self.var_search.get()
+        # Ignore placeholder text as a real query
+        if getattr(self, '_search_placeholder', None) and raw == self._search_placeholder:
+            query = ""
+        else:
+            query = raw.lower().strip()
+
         if not query:
             self.displayed_files = list(self.audio_files)
         else:
@@ -982,8 +1104,23 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             
         self.index_to_audio.clear()
 
-        if not self.audio_files:
+        # Si aucune piste affichée, montrer l'overlay d'instruction
+        if not self.displayed_files:
+            if hasattr(self, 'lbl_tracks_overlay') and self.lbl_tracks_overlay is not None:
+                try:
+                    self.lbl_tracks_overlay.lift()
+                    # Place a bit lower so it doesn't hide column headers
+                    self.lbl_tracks_overlay.place(relx=0.03, rely=0.20, anchor="nw")
+                except Exception:
+                    pass
             return
+        else:
+            # Masquer l'overlay s'il existe
+            if hasattr(self, 'lbl_tracks_overlay') and self.lbl_tracks_overlay is not None:
+                try:
+                    self.lbl_tracks_overlay.place_forget()
+                except Exception:
+                    pass
 
         # Remplissage
         for idx, audio in enumerate(self.displayed_files):
@@ -1025,7 +1162,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         except ValueError:
             pass
 
-    def play_from_index(self, idx: int):
+    def play_from_index(self, idx: int, start_play: bool = True):
         self.current_index = idx
         self.current_offset = 0.0
         audio = self.index_to_audio.get(idx)
@@ -1069,11 +1206,35 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         if self.audio_player_enabled:
             try:
                 pygame.mixer.music.load(str(audio.filepath))
-                pygame.mixer.music.play()
-                self.is_playing = True
-                self.is_paused = False
-                self.btn_play.config(text="⏸")
-                self.var_status.set(f"Lecture : {title}")
+                # Si on doit démarrer la lecture immédiatement
+                if start_play:
+                    pygame.mixer.music.play()
+                    self.is_playing = True
+                    self.is_paused = False
+                    self.btn_play.config(text="⏸")
+                    self._update_play_button_color()
+                    self.var_status.set(f"Lecture : {title}")
+                else:
+                    # Si l'utilisateur est en pause, on charge et on met en pause
+                    # pour que le comportement du bouton Play/Pause reste cohérent
+                    if self.is_paused:
+                        try:
+                            pygame.mixer.music.play()
+                            pygame.mixer.music.pause()
+                        except Exception:
+                            pass
+                        self.is_playing = False
+                        # is_paused reste True pour indiquer l'état visuel
+                        self.btn_play.config(text="▶")
+                        self._update_play_button_color()
+                        self.var_status.set(f"En pause : {title}")
+                    else:
+                        # On charge sans démarrer
+                        self.is_playing = False
+                        self.is_paused = False
+                        self.btn_play.config(text="▶")
+                        self._update_play_button_color()
+                        self.var_status.set(f"Prêt : {title}")
             except Exception as e:
                 print("Erreur audio:", e)
                 self.var_status.set("Erreur lecture audio.")
@@ -1129,6 +1290,22 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
     def _fmt_time(self, s: float) -> str:
         return f"{int(s//60)}:{int(s%60):02d}"
 
+    def _update_play_button_color(self):
+        """Met à jour la couleur du bouton Play pour rester lisible et indiquer l'état.
+        Utilise `accent` quand on joue, sinon la couleur par défaut des icônes.
+        """
+        try:
+            player_icon_fg = "#FFFFFF" if self.current_theme == "dark" else "#424242"
+            accent = self.colors.get("accent", "#2962FF")
+            if self.is_playing and not self.is_paused:
+                fg = accent
+            else:
+                fg = player_icon_fg
+            if self.btn_play is not None:
+                self.btn_play.config(fg=fg)
+        except Exception:
+            pass
+
     def toggle_play_pause(self):
         if not self.audio_player_enabled:
             return
@@ -1136,10 +1313,12 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             pygame.mixer.music.unpause()
             self.is_paused = False
             self.btn_play.config(text="⏸")
+            self._update_play_button_color()
         elif self.is_playing:
             pygame.mixer.music.pause()
             self.is_paused = True
             self.btn_play.config(text="▶")
+            self._update_play_button_color()
         else:
             if self.current_index is not None:
                 self.play_from_index(self.current_index)
@@ -1173,7 +1352,8 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
                 self.tree.selection_set(item_id) # Sélectionne la ligne
                 self.tree.see(item_id)           # Scrolle pour la rendre visible
                 self.tree.focus(item_id)         
-            self.play_from_index(idx)
+            # Démarrer la lecture seulement si l'utilisateur n'est pas en pause
+            self.play_from_index(idx, start_play=(not self.is_paused))
 
     def play_prev(self):
         if self.current_index is not None and self.displayed_files:
@@ -1186,7 +1366,8 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
                 self.tree.see(item_id)
                 self.tree.focus(item_id)
 
-            self.play_from_index(idx)
+            # Respecter l'état de pause lors du changement de piste
+            self.play_from_index(idx, start_play=(not self.is_paused))
     def toggle_repeat(self):
         self.repeat = not self.repeat
         self.btn_repeat.config(fg=self.colors["accent"] if self.repeat else "white")
@@ -1197,6 +1378,35 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         self.muted = not self.muted
         pygame.mixer.music.set_volume(0.0 if self.muted else self.volume)
         self.btn_vol.config(text="🔈" if self.muted else "🔊")
+
+    def _update_audio_controls_state(self):
+        """Active ou désactive les contrôles audio selon `self.audio_player_enabled`.
+        Permet d'éviter des interactions silencieuses quand pygame manque.
+        """
+        enabled = self.audio_player_enabled
+        state = tk.NORMAL if enabled else tk.DISABLED
+
+        # Boutons principaux
+        try:
+            if self.btn_play is not None:
+                self.btn_play.config(state=state)
+            if self.btn_next is not None:
+                self.btn_next.config(state=state)
+            if self.btn_prev is not None:
+                self.btn_prev.config(state=state)
+            if self.btn_vol is not None:
+                self.btn_vol.config(state=state)
+            if getattr(self, 'progress_scale', None) is not None:
+                self.progress_scale.config(state=state)
+            if getattr(self, 'btn_shuffle', None) is not None:
+                self.btn_shuffle.config(state=state)
+            if getattr(self, 'btn_repeat', None) is not None:
+                self.btn_repeat.config(state=state)
+        except Exception:
+            pass
+
+        if not enabled:
+            self.var_status.set("Audio désactivé : installez 'pygame' ou vérifiez la sortie audio.")
 
     def _on_progress_press(self, event):
         self.user_dragging_progress = True
@@ -1225,6 +1435,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         self.is_playing = True
         self.is_paused = False
         self.btn_play.config(text="⏸")
+        self._update_play_button_color()
 
   # --------- API & METADATA ----------
     def fetch_api_current(self):
@@ -1322,9 +1533,12 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
                     pygame.mixer.music.play(start=current_pos)
                     self.is_playing = True
                     self.is_paused = was_paused
-                    if was_paused: pygame.mixer.music.pause()
+                    if was_paused:
+                        pygame.mixer.music.pause()
                     self.btn_play.config(text="⏸" if not was_paused else "▶")
-                except Exception: pass
+                    self._update_play_button_color()
+                except Exception:
+                    pass
             
             # GESTION RESULTAT
             if not res:
@@ -1359,7 +1573,10 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
                     pygame.mixer.music.load(str(audio.filepath))
                     pygame.mixer.music.play(start=current_pos)
                     self.is_playing = True
-                except: pass
+                    self.btn_play.config(text="⏸")
+                    self._update_play_button_color()
+                except:
+                    pass
             print(f"Erreur critique: {e}")
             messagebox.showerror("Erreur", str(e))
 
@@ -1457,6 +1674,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
                     if was_paused:
                         pygame.mixer.music.pause()
                     self.btn_play.config(text="⏸" if not was_paused else "▶")
+                    self._update_play_button_color()
                 except Exception as e:
                     print(f"Erreur reprise lecture : {e}")
             
