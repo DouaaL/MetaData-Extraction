@@ -339,7 +339,13 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
     # ---------- Sidebar ----------
     def _build_sidebar(self, parent):
         c = self.colors
-        parent.rowconfigure(4, weight=1)
+        parent.rowconfigure(0, weight=0)
+        parent.rowconfigure(1, weight=0)
+        parent.rowconfigure(2, weight=0)
+        parent.rowconfigure(3, weight=0)
+        parent.rowconfigure(4, weight=0) # C'était 1 avant, on met 0 pour figer la hauteur
+        parent.rowconfigure(5, weight=0)
+        parent.rowconfigure(6, weight=1)
 
         self.lbl_header_logo = tk.Label(
             parent,
@@ -1075,20 +1081,31 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
 
     def play_next(self):
         if self.current_index is not None and self.displayed_files:
+            # 1. Calcul du nouvel index
             idx = (self.current_index + 1) % len(self.displayed_files)
-            self.listbox.selection_clear(0, tk.END)
-            self.listbox.selection_set(idx)
-            self.listbox.see(idx)
+            
+            # 2. Conversion en ID pour le Treeview (on a utilisé str(idx) comme identifiant)
+            item_id = str(idx)
+            
+            # 3. Sélection visuelle dans le Treeview
+            if self.tree.exists(item_id):
+                self.tree.selection_set(item_id) # Sélectionne la ligne
+                self.tree.see(item_id)           # Scrolle pour la rendre visible
+                self.tree.focus(item_id)         
             self.play_from_index(idx)
 
     def play_prev(self):
         if self.current_index is not None and self.displayed_files:
-            idx = (self.current_index - 1) % len(self.displayed_files)
-            self.listbox.selection_clear(0, tk.END)
-            self.listbox.selection_set(idx)
-            self.listbox.see(idx)
-            self.play_from_index(idx)
+            # 1. Calcul du nouvel index (avec modulo pour revenir à la fin si on est au début)
+            idx = (self.current_index - 1) % len(self.displayed_files)            
+            # 2. Sélection visuelle dans le Treeview
+            item_id = str(idx)            
+            if self.tree.exists(item_id):
+                self.tree.selection_set(item_id)
+                self.tree.see(item_id)
+                self.tree.focus(item_id)
 
+            self.play_from_index(idx)
     def toggle_repeat(self):
         self.repeat = not self.repeat
         self.btn_repeat.config(fg=self.colors["accent"] if self.repeat else "white")
@@ -1469,48 +1486,47 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             return
 
         try:
-            # --- LOGIQUE DE LECTURE XML (Directement dans le GUI) ---
+            # --- LOGIQUE DE LECTURE XML ---
             tree = ET.parse(filename)
             root = tree.getroot()
             
-            # Namespace XSPF obligatoire pour trouver les balises
             ns = {'ns': "http://xspf.org/ns/0/"}
             
             new_files = []
             
-            # On cherche toutes les pistes <track> dans <trackList>
             for track in root.findall(".//ns:track", ns):
                 location = track.find("ns:location", ns)
                 if location is not None and location.text:
                     uri = location.text
                     
-                    # Décodage de l'URI (ex: file:///...) vers un chemin système
                     parsed = urlparse(uri)
                     path_str = unquote(parsed.path)
                     
-                    # Fix pour Windows : retirer le slash initial devant C:/ s'il existe
                     if os.name == 'nt' and path_str.startswith('/') and ':' in path_str:
                         path_str = path_str.lstrip('/')
                     
                     p = Path(path_str)
                     
-                    # On vérifie si le fichier existe sur le disque
                     if p.exists():
-                        # On instancie la BONNE classe selon l'extension
+                        # --- CORRECTION ICI ---
+                        # On crée l'objet, puis on LIT SES TAGS immédiatement
+                        audio_obj = None
                         suffix = p.suffix.lower()
+                        
                         if suffix == '.mp3':
-                            new_files.append(MP3File(p))
+                            audio_obj = MP3File(p)
                         elif suffix == '.flac':
-                            new_files.append(FLACFile(p))
-                        else:
-                            print(f"Format ignoré (ni mp3 ni flac) : {p.name}")
+                            audio_obj = FLACFile(p)
+                        
+                        if audio_obj:
+                            audio_obj.extract_metadata() 
+                            new_files.append(audio_obj)
 
             if not new_files:
                 messagebox.showwarning("Attention", "Aucun fichier valide trouvé dans cette playlist.")
                 return
 
             # --- MISE A JOUR DE L'INTERFACE ---
-            # On remplace la bibliothèque actuelle par le contenu de la playlist
             self.library = MusicLibrary() 
             self.audio_files = new_files
             self.displayed_files = list(self.audio_files)
@@ -1528,10 +1544,9 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             print(f"Erreur lecture XSPF: {e}")
             messagebox.showerror("Erreur", f"Impossible de lire le fichier XSPF :\n{e}")
 
-
     def generate_playlist_selection(self):
         # 1. Récupérer les fichiers (soit la sélection, soit tout)
-        selection_indices = self.listbox.curselection()
+        selection_indices = self.tree.selection()
         files_to_save = []
         
         if selection_indices:

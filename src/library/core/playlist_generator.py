@@ -79,7 +79,7 @@ class PlaylistGenerator:
             ET.SubElement(t, self.balise("title")).text = metadata.get(
                 "title", audio.filepath.stem
             )
-            ET.SubElement(t, self.balise("creator")).text = metadata.get("artist", "")
+            ET.SubElement(t, self.balise("artist")).text = metadata.get("artist", "")
             ET.SubElement(t, self.balise("album")).text = metadata.get("album", "")
             ET.SubElement(t, self.balise("duration")).text = str(
                 int(round(audio.get_duration() * 1000))
@@ -103,7 +103,7 @@ class PlaylistGenerator:
 
         racine = ET.Element(self.balise("playlist"), {"version": "1"})
         ET.SubElement(racine, self.balise("title")).text = titre
-        ET.SubElement(racine, self.balise("creator")).text = createur
+        ET.SubElement(racine, self.balise("artist")).text = createur
         if info:
             ET.SubElement(racine, self.balise("info")).text = str(info)
 
