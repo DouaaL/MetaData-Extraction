@@ -336,6 +336,32 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         player_bar.columnconfigure(0, weight=1)
         self._build_player_bar(player_bar)
 
+    # ---------- Trier liste audio ----------
+    def _sort_treeview(self, col, reverse):
+        # 1. On récupère la liste des objets (index, AudioFile)
+        l = []
+        for k, audio in self.index_to_audio.items():
+            # On détermine la valeur de tri selon la colonne
+            val = ""
+            if col == "titre":
+                val = audio.metadata.get("title", audio.filepath.stem).lower()
+            elif col == "artiste":
+                val = audio.metadata.get("artist", "").lower()
+            elif col == "duree":
+                val = audio.get_duration() 
+            
+            l.append((val, k, audio))
+
+        # 2. On trie la liste
+        l.sort(key=lambda x: x[0], reverse=reverse)
+
+        # 3. On met à jour displayed_files et l'interface
+        self.displayed_files = [x[2] for x in l]
+        self._refresh_listbox()
+
+        # 4. On inverse le sens pour le prochain clic (Ascendant <-> Descendant)
+        self.tree.heading(col, command=lambda: self._sort_treeview(col, not reverse))
+
     # ---------- Sidebar ----------
     def _build_sidebar(self, parent):
         c = self.colors
@@ -448,9 +474,12 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         )
 
         # Configuration des en-têtes
-        self.tree.heading("titre", text="Titre", anchor="w")
-        self.tree.heading("artiste", text="Artiste", anchor="w")
-        self.tree.heading("duree", text="Durée", anchor="e")
+        for col in columns:
+            self.tree.heading(
+                col, 
+                text=col.capitalize(), 
+                command=lambda c=col: self._sort_treeview(c, False)
+            )
 
         # Configuration des largeurs de colonnes
         self.tree.column("titre", width=150, minwidth=100)
