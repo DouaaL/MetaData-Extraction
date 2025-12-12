@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='utf-8'?>
+<playlist xmlns="http://xspf.org/ns/0/" version="1">
+  <title>Ma Playlist</title>
+  <artist>Moi</artist>
+  <trackList>
+    <track>
+      <location>file:///Users/yacinebrahimi/Documents/GitHub/TestProject/src/AudioProjet/Chuck_Berry_-_You_Never_Can_Tell_%28mp3.pm%29.mp3</location>
+      <title>Chuck_Berry_-_You_Never_Can_Tell</title>
+      <artist>Artiste inconnu</artist>
+      <album />
+      <duration>160235</duration>
+    </track><track>
+      <location>file:///Users/yacinebrahimi/Documents/GitHub/TestProject/src/AudioProjet/Kevin_Kilberry_-_Born_to_Fly.mp3</location>
+      <title>Born to Fly</title>
+      <artist>Kevin Kilberry</artist>
+      <album />
+      <duration>151771</duration>
+    </track><track>
+      <location>file:///Users/yacinebrahimi/Documents/GitHub/TestProject/src/AudioProjet/Kevin_MacLeod_-_Movement_Proposition_%28mp3.pm%29.mp3</location>
+      <title>Kevin_MacLeod_-_Movement_Proposition</title>
+      <artist>Artiste inconnu</artist>
+      <album />
+      <duration>141035</duration>
+    </track><track>
+      <location>file:///Users/yacinebrahimi/Documents/GitHub/TestProject/src/AudioProjet/Kygo_feat._Conrad_-_Firestone_%28mp3.pm%29.mp3</location>
+      <title>Kygo_feat._Conrad_-_Firestone_(mp3.pm)</title>
+      <artist>Artiste inconnu</artist>
+      <album />
+      <duration>238184</duration>
+    </track><track>
+      <location>file:///Users/yacinebrahimi/Documents/GitHub/TestProject/src/AudioProjet/MokkaMusic_-_Technology_Ambient_Piano.mp3</location>
+      <title>Technology Ambient Pia</title>
+      <artist>MokkaMusic</artist>
+      <album>idk</album>
+      <duration>172748</duration>
+    </track><track>
+      <location>file:///Users/yacinebrahimi/Documents/GitHub/TestProject/src/AudioProjet/Taylor%20Swift%20-%20The%20Fate%20of%20Ophelia.mp3</location>
+      <title>The Fate of Ophelia --</title>
+      <artist>Taylor Swift</artist>
+      <album />
+      <duration>226273</duration>
+    </track><track>
+      <location>file:///Users/yacinebrahimi/Documents/GitHub/TestProject/src/AudioProjet/The%20Neighbourhood%20-%20Softcore%20%28Lyrics%29.mp3</location>
+      <title>The Neighbourhood - Softcore (Lyrics)</title>
+      <artist>7clouds Rock</artist>
+      <album />
+      <duration>206472</duration>
+    </track><track>
+      <location>file:///Users/yacinebrahimi/Documents/GitHub/TestProject/src/AudioProjet/ka.mp3</location>
+      <title>catacombs</title>
+      <artist>nothhingspecial</artist>
+      <album>WHERE DO YOU WANNA GO?</album>
+      <duration>231576</duration>
+    </track><track>
+      <location>file:///Users/yacinebrahimi/Documents/GitHub/TestProject/src/AudioProjet/quel%20type%20de%20vibe%EF%BC%9F.mp3</location>
+      <title>quel type de vibe?</title>
+      <artist>aupinard</artist>
+      <album>quel type de vibe?</album>
+      <duration>116480</duration>
+    </track>
+  </trackList>
+</playlist>
