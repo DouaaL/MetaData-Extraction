@@ -63,7 +63,9 @@ from library.core.lyricsresolver import LyricsResolver
 
 # --------- Tooltip simple pour IHM (guidage) ----------
 class Tooltip:
+    """Crée une petite info-bulle (tooltip) qui s'affiche au survol d'un widget."""
     def __init__(self, widget, text: str):
+        """Initialise le tooltip pour un widget spécifique."""
         self.widget = widget
         self.text = text
         self.tipwindow = None
@@ -71,6 +73,7 @@ class Tooltip:
         widget.bind("<Leave>", self.hide)
 
     def show(self, event=None):
+        """Affiche la fenêtre d'info-bulle calculée près de la souris."""
         if self.tipwindow or not self.text:
             return
         x = self.widget.winfo_rootx() + 20
@@ -89,13 +92,31 @@ class Tooltip:
         label.pack(ipadx=4, ipady=2)
 
     def hide(self, event=None):
+        """Détruit la fenêtre d'info-bulle."""
         if self.tipwindow:
             self.tipwindow.destroy()
             self.tipwindow = None
 
 
 class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
+    """
+    Interface graphique principale de l'application PyMetaPlay.
+
+    Cette classe gère la fenêtre principale, la boucle d'événements, 
+    le lecteur audio (via pygame) et l'interaction avec la bibliothèque musicale.
+
+    Attributes:
+        library (MusicLibrary): Instance de la bibliothèque gérant les fichiers.
+        audio_files (List[AudioFile]): Liste complète des fichiers chargés.
+        displayed_files (List[AudioFile]): Liste des fichiers affichés (filtrés par recherche).
+        current_theme (str): Thème actif ('light' ou 'dark').
+        is_playing (bool): Indique si une lecture est en cours.
+    """
     def __init__(self):
+        """
+        Initialise la fenêtre principale, les variables d'état, le moteur audio
+        et construit toute l'interface graphique.
+        """
         super().__init__()
         self.title("PyMetaPlay")
         self.geometry("1200x800")
@@ -247,15 +268,22 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         # Appliquer le thème initial
         self._apply_theme(self.current_theme)
 
+        self.bind("<space>", self._on_space_pressed)
+
         # Message IHM au démarrage dans la liste
         self._refresh_listbox()
 
     # Helper tooltip
     def _add_tooltip(self, widget, text: str):
+        """Ajoute une info-bulle à un widget donné."""
         Tooltip(widget, text)
 
     # ---------- Styles ----------
     def _setup_styles(self):
+        """
+        Configure les styles TTK (couleurs, polices, bordures) en fonction
+        du thème actuel (Light ou Dark).
+        """
         style = ttk.Style(self)
         c = self.colors
 
@@ -339,6 +367,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
     
     # ---------- Layout général ----------
     def _build_layout(self):
+        """Place les trois grandes zones principales (Sidebar, Main Content, Player Bar)."""
         self.columnconfigure(0, weight=0)
         self.columnconfigure(1, weight=1)
         self.rowconfigure(0, weight=1)
@@ -359,6 +388,13 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
 
     # ---------- Trier liste audio ----------
     def _sort_treeview(self, col, reverse):
+        """
+        Trie la liste des fichiers audio dans le Treeview.
+        
+        Args:
+            col (str): La colonne à trier ('titre', 'artiste', 'duree').
+            reverse (bool): Si True, tri descendant. Sinon ascendant.
+        """
         # 1. On récupère la liste des objets (index, AudioFile)
         l = []
         for k, audio in self.index_to_audio.items():
@@ -385,6 +421,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
 
     # ---------- Sidebar ----------
     def _build_sidebar(self, parent):
+        """Construit la barre latérale (Logo, Recherche, Boutons fichiers, Liste des pistes)."""
         c = self.colors
         
         # Configuration de la grille (Layout)
@@ -433,10 +470,12 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         self._search_placeholder = "nom auteur ou chanson"
         # Helper pour afficher/masquer le placeholder
         def _show_search_placeholder(event=None):
+            """
+            Mets un placeholder dans la bar de recherche
+            """
             try:
                 if not self.var_search.get():
                     self.var_search.set(self._search_placeholder)
-                    # ttk.Entry doesn't support fg directly; use tk.Entry if needed.
                     try:
                         self.search_entry.config(foreground=self.colors.get("text_dim", "#757575"))
                     except Exception:
@@ -445,6 +484,9 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
                 pass
 
         def _clear_search_placeholder(event=None):
+            """
+            Enleve le placeholder a l'input
+            """
             try:
                 if self.var_search.get() == self._search_placeholder:
                     self.var_search.set("")
@@ -569,6 +611,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
 
     # ---------- Contenu principal ----------
     def _build_main_content(self, parent):
+        """Construit la zone centrale (Grande pochette, Titres, Paroles, Boutons d'édition)."""
         c = self.colors
         parent.columnconfigure(0, weight=1)
         parent.columnconfigure(1, weight=2)
@@ -697,6 +740,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
 
     # ---------- Player bar ----------
     def _build_player_bar(self, parent):
+        """Construit la barre de lecture en bas (Contrôles, Barre de progression, Volume)."""
         c = self.colors
         
         # On configure 3 colonnes : Gauche (Info), Centre (Player), Droite (Volume/Outils)
@@ -838,14 +882,17 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         )
         self.theme_toggle_btn.pack(side=tk.LEFT, padx=5)
     def _on_player_btn_enter(self, event):
+        """Change la couleur de fond au survol des boutons du lecteur."""
         c = self.colors
         event.widget.config(bg=c["accent_dark"])
 
     def _on_player_btn_leave(self, event):
+        """Rétablit la couleur de fond quand la souris quitte un bouton."""
         c = self.colors
         event.widget.config(bg=c["player"])
 
     def _build_menu(self):
+        """Crée la barre de menu supérieure (Fichier, Affichage)."""
         menubar = tk.Menu(self)
         menu_file = tk.Menu(menubar, tearoff=0)
         menu_file.add_command(label="Ouvrir un dossier…", command=self.open_directory)
@@ -861,6 +908,13 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
 
     # ============ THEME ==============
     def _apply_theme(self, theme_name: str):
+        """
+        Applique un thème complet (couleurs de fond, de texte, des boutons).
+        Met à jour manuellement les widgets standards (tk) qui ne supportent pas les styles TTK.
+        
+        Args:
+            theme_name (str): 'light' ou 'dark'.
+        """
         if theme_name not in self.themes:
             return
 
@@ -1030,11 +1084,13 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             if self.cover_image_ref is None:
                 self._clear_cover()
     def _toggle_theme(self):
+        """Bascule entre le mode clair et le mode sombre."""
         new_theme = "light" if self.current_theme == "dark" else "dark"
         self._apply_theme(new_theme)
 
     # ============ LOGIC ==============
     def open_directory(self):
+        """Ouvre une boîte de dialogue pour choisir un dossier et charge les fichiers audio."""
         directory = filedialog.askdirectory()
         if not directory:
             return
@@ -1061,13 +1117,15 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             messagebox.showerror("Erreur", str(e))
 
     def on_search_change(self, *args):
-        # During initialization the trace can fire before the Treeview exists.
-        # Guard early to avoid AttributeError when widgets are not yet built.
+        """
+        Filtre la liste des fichiers affichés en temps réel selon le texte saisi.
+        Recherche dans le titre, l'artiste et le nom de fichier.
+        """
         if not hasattr(self, 'tree') or self.tree is None:
             return
 
         raw = self.var_search.get()
-        # Ignore placeholder text as a real query
+        # Ignore le placeholder et prends en compte que un vrai input
         if getattr(self, '_search_placeholder', None) and raw == self._search_placeholder:
             query = ""
         else:
@@ -1086,7 +1144,10 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         self._refresh_listbox()
 
     def _refresh_listbox(self):
-        # Nettoyage du tableau
+        """
+        Vide et remplit le Treeview (liste des pistes) avec les fichiers de `displayed_files`.
+        Met à jour le mappage index -> fichier audio.
+        """
         for item in self.tree.get_children():
             self.tree.delete(item)
             
@@ -1097,7 +1158,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             if hasattr(self, 'lbl_tracks_overlay') and self.lbl_tracks_overlay is not None:
                 try:
                     self.lbl_tracks_overlay.lift()
-                    # Place a bit lower so it doesn't hide column headers
+                    # positionnement
                     self.lbl_tracks_overlay.place(relx=0.03, rely=0.20, anchor="nw")
                 except Exception:
                     pass
@@ -1136,7 +1197,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             self.index_to_audio[idx] = audio
 
     def on_selection_change(self, event):
-        # Récupère l'ID de l'item sélectionné
+        """Gère le clic sur une ligne du tableau pour lancer la lecture."""
         selected_items = self.tree.selection()
         if not selected_items:
             return
@@ -1151,6 +1212,19 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             pass
 
     def play_from_index(self, idx: int, start_play: bool = True):
+        """
+        Docstring for play_from_index
+        Prépare et lance la lecture d'une piste basée sur son index dans la liste.
+
+        Met à jour l'interface (titre, artiste, cover), charge les paroles 
+        en arrière-plan et lance le moteur audio pygame.
+        
+        Args:
+            idx (int): L'index de la piste dans `self.displayed_files` (et non `self.audio_files`).
+            start_play (bool, optional): Si True, la lecture commence immédiatement. 
+                                         Si False, la piste est chargée mais mise en pause. 
+                                         Défaut à True.
+        """
         self.current_index = idx
         self.current_offset = 0.0
         audio = self.index_to_audio.get(idx)
@@ -1228,6 +1302,9 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
                 self.var_status.set("Erreur lecture audio.")
 
         def _bg_lyrics(aud, i):
+            """
+            Component lyrics
+            """
             try:
                 l = self.metadata_fetcher.fetch_lyrics_for_audio(aud)
             except:
@@ -1247,6 +1324,10 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         threading.Thread(target=_bg_lyrics, args=(audio, idx), daemon=True).start()
 
     def _progress_loop(self):
+        """
+        Boucle récursive (exécutée toutes les 500ms) pour mettre à jour
+        la barre de progression et passer à la piste suivante à la fin du morceau.
+        """
         if (
             self.audio_player_enabled
             and self.is_playing
@@ -1276,6 +1357,15 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         self.after(500, self._progress_loop)
 
     def _fmt_time(self, s: float) -> str:
+        """
+        Convertit une durée en secondes vers un format lisible MM:SS.
+
+        Args:
+            s (float): La durée en secondes (ex: 73.5).
+
+        Returns:
+            str: La chaîne formatée (ex: "01:02").
+        """
         return f"{int(s//60)}:{int(s%60):02d}"
 
     def _update_play_button_color(self):
@@ -1295,6 +1385,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             pass
 
     def toggle_play_pause(self):
+        """Bascule entre Lecture et Pause, ou lance la lecture si rien n'est joué."""
         if not self.audio_player_enabled:
             return
         if self.is_paused:
@@ -1311,13 +1402,36 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             if self.current_index is not None:
                 self.play_from_index(self.current_index)
 
+    def _on_space_pressed(self, event):
+        """Gère l'appui sur la barre espace (Pause/Play) sauf si on écrit du texte."""
+        # On vérifie quel widget a le focus
+        widget = event.widget
+        
+        # Si on est dans une zone de texte (Recherche, Édition tags, Paroles...), on laisse l'espace s'écrire
+        if isinstance(widget, (tk.Entry, ttk.Entry, tk.Text)):
+            return
+            
+        # Sinon, on lance la commande Play/Pause
+        self.toggle_play_pause()
+        
+        # (Optionnel) Empêche l'événement de se propager (ex: scroller vers le bas)
+        return "break"
+
     def toggle_shuffle(self):
+        """
+        Active ou désactive le mode aléatoire.
+        
+        Change l'état du booléen `shuffle_mode` et met à jour la couleur 
+        du bouton pour refléter l'état (Accent si actif, Gris/Blanc sinon).
+        """
         self.shuffle_mode = not self.shuffle_mode
-        # Change la couleur pour montrer que c'est actif
-        color = self.colors["accent"] if self.shuffle_mode else "white"
+        normal_fg = "#FFFFFF" if self.current_theme == "dark" else "#424242"
+        color = self.colors["accent"] if self.shuffle_mode else normal_fg
+        
         self.btn_shuffle.config(fg=color)
     
     def play_next(self):
+        """Passe au morceau suivant (ou aléatoire si Shuffle activé)."""
         if self.current_index is not None and self.displayed_files:
             import random
 
@@ -1344,6 +1458,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             self.play_from_index(idx, start_play=(not self.is_paused))
 
     def play_prev(self):
+        """Passe au morceau précédent."""
         if self.current_index is not None and self.displayed_files:
             # 1. Calcul du nouvel index (avec modulo pour revenir à la fin si on est au début)
             idx = (self.current_index - 1) % len(self.displayed_files)            
@@ -1356,11 +1471,15 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
 
             # Respecter l'état de pause lors du changement de piste
             self.play_from_index(idx, start_play=(not self.is_paused))
+
     def toggle_repeat(self):
+        """Active/Désactive la répétition de la piste en cours."""
         self.repeat = not self.repeat
-        self.btn_repeat.config(fg=self.colors["accent"] if self.repeat else "white")
+        normal_fg = "#FFFFFF" if self.current_theme == "dark" else "#424242"
+        self.btn_repeat.config(fg=self.colors["accent"] if self.repeat else normal_fg)
 
     def toggle_mute(self):
+        """Coupe ou rétablit le son (Mute)."""
         if not self.audio_player_enabled:
             return
         self.muted = not self.muted
@@ -1397,13 +1516,16 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             self.var_status.set("Audio désactivé : installez 'pygame' ou vérifiez la sortie audio.")
 
     def _on_progress_press(self, event):
+        """Arrête la mise à jour automatique de la barre quand l'utilisateur clique dessus."""
         self.user_dragging_progress = True
 
     def _on_progress_release(self, event):
+        """Reprend la lecture à la nouvelle position quand l'utilisateur relâche la barre."""
         self.user_dragging_progress = False
         self._seek_absolute(self.progress_scale.get())
 
     def _seek_absolute(self, pct: float):
+        """Déplace la tête de lecture à un pourcentage donné (0-100)."""
         if not self.audio_player_enabled or not self.var_duration.get():
             return
         try:
@@ -1427,7 +1549,18 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
 
   # --------- API & METADATA ----------
     def fetch_api_current(self):
-        """Version Priorité Utilisateur : Force l'utilisation du texte de l'écran pour la recherche"""
+        """
+        Récupère les métadonnées depuis l'API Spotify via MetadataFetcher.
+
+        Workflow :
+        1. Utilise les champs texte de l'interface (Titre/Artiste) comme requête prioritaire.
+        2. Sauvegarde temporairement ces infos dans le fichier.
+        3. Interroge l'API.
+        4. Met à jour l'interface et recharge la cover si un résultat est trouvé.
+
+        Raises:
+            Exception: Affiche une popup d'erreur si la connexion échoue ou si l'écriture fichier est bloquée.
+        """
         if self.current_index is None:
             messagebox.showwarning("Attention", "Aucune piste sélectionnée")
             return
@@ -1572,7 +1705,10 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             
     
     def save_metadata_current(self):
-        """Sauvegarde les métadonnées affichées dans le fichier audio"""
+        """
+        Sauvegarde les informations affichées (Titre, Artiste, Album, Année) 
+        directement dans les tags ID3/FLAC du fichier.
+        """
         if self.current_index is None:
             messagebox.showwarning("Attention", "Aucune piste sélectionnée")
             return
@@ -1623,7 +1759,6 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             audio.save_metadata()
             time.sleep(0.3)
             
-            # === FIX CRITIQUE : RELOAD FORCE ===
             # On recharge l'objet audio pour vidanger le cache mutagen
             # Cela force une relecture RÉELLE depuis le fichier disque
             if hasattr(audio, 'reload'):
@@ -1759,6 +1894,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         btn_frame.grid(row=8, column=0, sticky="ew")
 
         def save_and_close():
+            """ Fenetre de sauvegarde de metadonnées"""
             self.var_title.set(entry_title.get())
             self.var_artist.set(entry_artist.get())
             self.var_album_internal = entry_album.get()
@@ -1802,6 +1938,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
 
     # --------- Playlist placeholders ----------
     def open_playlist(self):
+        """Lit un fichier .xspf, extrait les chemins et charge les fichiers correspondants."""
         filename = filedialog.askopenfilename(
             title="Ouvrir une playlist XSPF",
             filetypes=[("Playlists XSPF", "*.xspf"), ("Tous les fichiers", "*.*")]
@@ -1869,6 +2006,10 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             messagebox.showerror("Erreur", f"Impossible de lire le fichier XSPF :\n{e}")
 
     def generate_playlist_selection(self):
+        """
+        Génère un fichier playlist .xspf contenant soit les fichiers sélectionnés,
+        soit tous les fichiers affichés actuellement.
+        """
         # 1. Récupérer les fichiers (soit la sélection, soit tout)
         selection_indices = self.tree.selection()
         files_to_save = []
@@ -1915,6 +2056,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
 
     # --------- Cover & lyrics ----------
     def _create_placeholder_cover(self, size=320):
+        """Génère une image par défaut (Note de musique ♪) si aucune pochette n'existe."""
         if not HAS_PIL:
             return None
         c = self.colors
@@ -1936,6 +2078,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
         return ImageTk.PhotoImage(img)
 
     def _clear_cover(self):
+        """Réinitialise l'affichage de la pochette avec le placeholder."""
         if self.placeholder_image:
             self.cover_label.config(image=self.placeholder_image)
             self.cover_image_ref = self.placeholder_image
@@ -1944,6 +2087,15 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             self.lbl_mini_cover.config(image="", width=0, bg=self.colors["player"])
 
     def _update_cover(self, audio: AudioFile, force_validation: bool = False):
+            """
+            Affiche la pochette de l'album.
+            
+            Stratégie :
+            1. Cherche une image locale téléchargée par l'API.
+            2. (Optionnel) Demande validation à l'utilisateur.
+            3. Sinon, extrait l'image intégrée dans les tags du fichier.
+            4. Sinon, affiche le placeholder.
+            """
             if not HAS_PIL:
                 return
 
@@ -2089,6 +2241,7 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
                 self._clear_cover()
 
     def _set_lyrics_text(self, text: str):
+        """Affiche les paroles dans la zone de texte (déverrouille, écrit, verrouille)."""
         self.lyrics_text.config(state=tk.NORMAL)
         self.lyrics_text.delete("1.0", tk.END)
         self.lyrics_text.insert(tk.END, text if text else "Paroles non disponibles.")
@@ -2096,7 +2249,10 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
 
 
     def on_drop_files(self, event):
-        """Gère les fichiers dropés dans la fenêtre"""
+        """
+        Gère le glisser-déposer de fichiers depuis l'explorateur Windows.
+        Parse les chemins (parfois complexes avec accolades) et ajoute les fichiers valides.
+        """
         raw_data = event.data
         print(f"Fichiers reçus (raw): {raw_data}")
 

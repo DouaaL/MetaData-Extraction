@@ -60,18 +60,16 @@ class MetadataFetcher:
 
         self.lyrics_resolver = LyricsResolver(spotify_client=self.sp)
 
-    # ----------------------------------------------------------
-    # 🔧 1. Split intelligent artiste/titre si tags manquants
-    # ----------------------------------------------------------
+    
+    # 1. Split intelligent artiste/titre si tags manquants
+    
     def smart_split_filename(self, stem: str):
         parts = stem.split(" - ", 1)
         if len(parts) == 2:
             return parts[0].strip(), parts[1].strip()
         return "", stem.strip()
 
-    # ----------------------------------------------------------
-    # 🔧 helper : détecter les artistes “génériques”
-    # ----------------------------------------------------------
+    # helper : détecter les artistes “génériques”
     def _is_generic_artist(self, name: str) -> bool:
         if not name:
             return True
@@ -93,9 +91,8 @@ class MetadataFetcher:
         s = re.sub(r"\s+", " ", s)
         return s.strip()
 
-    # ----------------------------------------------------------
-    # 🎨 2. Cover par fichier (Logique Principale)
-    # ----------------------------------------------------------
+    
+    #  2. Cover par fichier (Logique Principale)
     def ensure_cover_image(self, audio_file: AudioFile) -> Optional[Path]:
         """
         S'assure qu'une cover spécifique existe pour CE fichier :
@@ -160,9 +157,7 @@ class MetadataFetcher:
             print("[ensure_cover_image] Erreur Deezer cover:", e)
             return None
 
-    # ----------------------------------------------------------
-    # 🎨 3. Appel DEEZER API (Remplace MusicBrainz)
-    # ----------------------------------------------------------
+    #  3. Appel DEEZER API (Remplace MusicBrainz)
     def _search_deezer_and_download_cover(
         self, artist: str, title: str, dest_dir: Path, filename_stem: str
     ) -> Optional[Path]:
@@ -227,9 +222,7 @@ class MetadataFetcher:
             print(f"[Deezer] Exception : {e}")
             return None
 
-    # ----------------------------------------------------------
-    # 🎧 4. Spotify → récupération metadata
-    # ----------------------------------------------------------
+    #  4. Spotify → récupération metadata
     def search_metadata(self, artist: str, title: str) -> Optional[Dict[str, str]]:
         if not self.sp:
             return None
@@ -265,9 +258,9 @@ class MetadataFetcher:
         except Exception:
             return None
 
-    # ----------------------------------------------------------
-    # 🎧 5. Mise à jour metadata audio_file
-    # ----------------------------------------------------------
+    
+    #  5. Mise à jour metadata audio_file
+    
     def update_audio_file_metadata(self, audio_file: AudioFile) -> bool:
         if not self.sp:
             return False
@@ -302,9 +295,9 @@ class MetadataFetcher:
 
         return True
 
-    # ----------------------------------------------------------
-    # 🎤 6. Paroles
-    # ----------------------------------------------------------
+    
+    # 6. Paroles
+    
     def fetch_lyrics_for_audio(self, audio_file: AudioFile) -> Optional[str]:
         md = audio_file.metadata or {}
         return self.lyrics_resolver.get_lyrics(

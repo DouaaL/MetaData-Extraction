@@ -150,6 +150,9 @@ class MusicLibrary:
         ]
 
     def get_statistics(self) -> Dict[str, any]:
+        """
+        Calcule la durée d'un titre.
+        """
         total_duration = sum(f.get_duration() for f in self.files)
         formats: Dict[str, int] = {}
         for f in self.files:

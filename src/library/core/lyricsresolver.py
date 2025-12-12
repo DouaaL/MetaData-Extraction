@@ -1,5 +1,5 @@
 # 1) API principale : LRCLIB
-#👉 URL : https://lrclib.net/
+# URL : https://lrclib.net/
 #2) API secondaire (fallback) : Lyrics.ovh
 
 import re
@@ -21,10 +21,18 @@ class LyricsResolver:
     def __init__(self, spotify_client=None):
         self.spotify = spotify_client
 
-    # -------------------------------------------------------------
     # 1) Nettoyage intelligent du titre
-    # -------------------------------------------------------------
     def clean_title(self, title: str) -> str:
+        """
+        Docstring for clean_title
+        Nettoie un titre de certains termes.
+        
+        :param self: Description
+        :param title: Description
+        :type title: str
+        :return: Description
+        :rtype: str
+        """
         if not title:
             return ""
 
@@ -67,9 +75,9 @@ class LyricsResolver:
 
         return t
 
-    # -------------------------------------------------------------
+
     # 2) Deviner artiste/titre depuis le nom du fichier
-    # -------------------------------------------------------------
+    
     def guess_from_filename(self, filename: str):
         """
         Ex : 'The Neighbourhood - Softcore (Lyrics).mp3'
@@ -79,7 +87,7 @@ class LyricsResolver:
         stem = stem.replace("_", " ")
 
         if "-" in stem:
-            # On ne split qu'une fois : Artiste - Titre - blabla
+            # On ne split qu'une fois : Artiste - Titre - reste
             left, right = stem.split("-", 1)
             artist = left.strip()
             title_raw = right.strip()
@@ -88,13 +96,13 @@ class LyricsResolver:
 
         return None, None
 
-    # -------------------------------------------------------------
+    
     # 3) Correction artiste/titre via Spotify
-    # -------------------------------------------------------------
+    
     def spotify_fix(self, artist: str, title: str):
         """
         On utilise Spotify pour corriger artiste / titre s'il y a un écart
-        (ex : "Softcore (Lyrics)" -> "Softcore")
+        (ex : "Titre (Lyrics)" -> "Titre")
         """
         if not self.spotify or not title:
             return artist, title
@@ -119,9 +127,9 @@ class LyricsResolver:
             # En cas de problème, on garde les valeurs d'origine
             return artist, title
 
-    # -------------------------------------------------------------
+    
     # 4) API LRCLIB
-    # -------------------------------------------------------------
+    
     def fetch_lrclib(self, artist: str, title: str):
         if not title:
             return None
@@ -165,10 +173,13 @@ class LyricsResolver:
 
         return None
 
-    # -------------------------------------------------------------
+    
     # 5) API lyrics.ovh (fallback)
-    # -------------------------------------------------------------
+    
     def fetch_lyrics_ovh(self, artist: str, title: str):
+        """
+        Fetch les lyrics a partir de l'api.
+        """
         if not (artist and title):
             return None
 
@@ -191,9 +202,9 @@ class LyricsResolver:
 
         return data.get("lyrics")
 
-    # -------------------------------------------------------------
+    
     # MÉTHODE PRINCIPALE : get_lyrics
-    # -------------------------------------------------------------
+    
     def get_lyrics(self, artist: str, title: str, filename: str):
         """
         1) Devine artiste/titre depuis le nom du fichier (prioritaire)
