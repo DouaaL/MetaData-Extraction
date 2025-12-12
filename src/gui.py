@@ -43,9 +43,11 @@ except ImportError:
     print("tkinterdnd2 non installé. Drag & Drop désactivé.")
     
 # Accès à src/
-BASE_DIR = Path(__file__).resolve().parent
-if str(BASE_DIR) not in sys.path:
-    sys.path.insert(0, str(BASE_DIR))
+CURRENT_DIR = Path(__file__).resolve().parent
+SRC_DIR = CURRENT_DIR.parent 
+
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
 
 from library.models.music_library import MusicLibrary
 from library.models.audio_file import AudioFile
@@ -57,20 +59,6 @@ from library.core.metadatafetcher import MetadataFetcher
 from library.core.lyricsresolver import LyricsResolver
 
     
-class MusicLibrary:
-    def __init__(self): self.files = []
-    def load_directory(self, p): pass
-    
-class AudioFile:
-    def __init__(self, p): self.filepath = p; self.metadata = {}
-    def extract_metadata(self): return {}
-    def get_duration(self): return 0
-    def get_cover_art(self): return None
-    def save_metadata(self): pass
-
-class MetadataFetcher:
-    def fetch_lyrics_for_audio(self, a): return "Paroles démo..."
-    def update_audio_file_metadata(self, a): return False
 
 
 # --------- Tooltip simple pour IHM (guidage) ----------
