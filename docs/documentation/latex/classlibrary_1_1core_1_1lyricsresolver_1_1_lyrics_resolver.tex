@@ -1,0 +1,126 @@
+\doxysection{Référence de la classe library.\+core.\+lyricsresolver.\+Lyrics\+Resolver}
+\hypertarget{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver}{}\label{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver}\index{library.core.lyricsresolver.LyricsResolver@{library.core.lyricsresolver.LyricsResolver}}
+\doxysubsubsection*{Fonctions membres publiques}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_a04982dcfb62e961f8c1d3ed3c8bbdbd9}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, spotify\+\_\+client=None)
+\item 
+str \mbox{\hyperlink{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_af16320659f3c34a696b1cd0dc5449a9b}{clean\+\_\+title}} (self, str title)
+\item 
+\mbox{\hyperlink{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_a3121d91b2a6de2b44d2d1a081f354786}{guess\+\_\+from\+\_\+filename}} (self, str filename)
+\item 
+\mbox{\hyperlink{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_a50b2daaa9a9c98a23063dcbba85f5443}{spotify\+\_\+fix}} (self, str artist, str title)
+\item 
+\mbox{\hyperlink{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_ae3dcb788eef880dab076787d295e6db6}{fetch\+\_\+lrclib}} (self, str artist, str title)
+\item 
+\mbox{\hyperlink{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_aa25fb6e57803d9b9498cab4e8d4ddad5}{fetch\+\_\+lyrics\+\_\+ovh}} (self, str artist, str title)
+\item 
+\mbox{\hyperlink{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_a326278235486e59acbe1a8776962fec1}{get\+\_\+lyrics}} (self, str artist, str title, str filename)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Attributs publics}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_a9eeb294a3f89dacc7183eeacbccf56fb}{spotify}} = spotify\+\_\+client
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Description détaillée}
+\begin{DoxyVerb}Système de récupération de paroles 'intelligent' :
+
+1) Nettoie les titres (enlève : (Lyrics), (Official Video), (8D Audio), etc.)
+2) Essaie de deviner artiste / titre à partir du nom du fichier : "Artist - Title"
+3) Utilise Spotify (si dispo) pour corriger artiste / titre
+4) Interroge LRCLIB
+5) Fallback sur lyrics.ovh si LRCLIB ne trouve rien
+\end{DoxyVerb}
+ 
+
+\label{doc-constructors}
+\Hypertarget{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_doc-constructors}
+\doxysubsection{Documentation des constructeurs et destructeur}
+\Hypertarget{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_a04982dcfb62e961f8c1d3ed3c8bbdbd9}\index{library.core.lyricsresolver.LyricsResolver@{library.core.lyricsresolver.LyricsResolver}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!library.core.lyricsresolver.LyricsResolver@{library.core.lyricsresolver.LyricsResolver}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_a04982dcfb62e961f8c1d3ed3c8bbdbd9} 
+library.\+core.\+lyricsresolver.\+Lyrics\+Resolver.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{}]{spotify\+\_\+client}{ = {\ttfamily None}}\end{DoxyParamCaption})}
+
+
+
+\label{doc-func-members}
+\Hypertarget{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_doc-func-members}
+\doxysubsection{Documentation des fonctions membres}
+\Hypertarget{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_af16320659f3c34a696b1cd0dc5449a9b}\index{library.core.lyricsresolver.LyricsResolver@{library.core.lyricsresolver.LyricsResolver}!clean\_title@{clean\_title}}
+\index{clean\_title@{clean\_title}!library.core.lyricsresolver.LyricsResolver@{library.core.lyricsresolver.LyricsResolver}}
+\doxysubsubsection{\texorpdfstring{clean\_title()}{clean\_title()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_af16320659f3c34a696b1cd0dc5449a9b} 
+ str library.\+core.\+lyricsresolver.\+Lyrics\+Resolver.\+clean\+\_\+title (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{str}]{title}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Docstring for clean_title
+Nettoie un titre de certains termes.
+
+:param self: Description
+:param title: Description
+:type title: str
+:return: Description
+:rtype: str
+\end{DoxyVerb}
+ \Hypertarget{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_ae3dcb788eef880dab076787d295e6db6}\index{library.core.lyricsresolver.LyricsResolver@{library.core.lyricsresolver.LyricsResolver}!fetch\_lrclib@{fetch\_lrclib}}
+\index{fetch\_lrclib@{fetch\_lrclib}!library.core.lyricsresolver.LyricsResolver@{library.core.lyricsresolver.LyricsResolver}}
+\doxysubsubsection{\texorpdfstring{fetch\_lrclib()}{fetch\_lrclib()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_ae3dcb788eef880dab076787d295e6db6} 
+library.\+core.\+lyricsresolver.\+Lyrics\+Resolver.\+fetch\+\_\+lrclib (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{str}]{artist}{, }\item[{str}]{title}{}\end{DoxyParamCaption})}
+
+\Hypertarget{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_aa25fb6e57803d9b9498cab4e8d4ddad5}\index{library.core.lyricsresolver.LyricsResolver@{library.core.lyricsresolver.LyricsResolver}!fetch\_lyrics\_ovh@{fetch\_lyrics\_ovh}}
+\index{fetch\_lyrics\_ovh@{fetch\_lyrics\_ovh}!library.core.lyricsresolver.LyricsResolver@{library.core.lyricsresolver.LyricsResolver}}
+\doxysubsubsection{\texorpdfstring{fetch\_lyrics\_ovh()}{fetch\_lyrics\_ovh()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_aa25fb6e57803d9b9498cab4e8d4ddad5} 
+library.\+core.\+lyricsresolver.\+Lyrics\+Resolver.\+fetch\+\_\+lyrics\+\_\+ovh (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{str}]{artist}{, }\item[{str}]{title}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Fetch les lyrics a partir de l'api.
+\end{DoxyVerb}
+ \Hypertarget{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_a326278235486e59acbe1a8776962fec1}\index{library.core.lyricsresolver.LyricsResolver@{library.core.lyricsresolver.LyricsResolver}!get\_lyrics@{get\_lyrics}}
+\index{get\_lyrics@{get\_lyrics}!library.core.lyricsresolver.LyricsResolver@{library.core.lyricsresolver.LyricsResolver}}
+\doxysubsubsection{\texorpdfstring{get\_lyrics()}{get\_lyrics()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_a326278235486e59acbe1a8776962fec1} 
+library.\+core.\+lyricsresolver.\+Lyrics\+Resolver.\+get\+\_\+lyrics (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{str}]{artist}{, }\item[{str}]{title}{, }\item[{str}]{filename}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}1) Devine artiste/titre depuis le nom du fichier (prioritaire)
+2) Nettoie le titre
+3) Corrige via Spotify (si dispo)
+4) Interroge LRCLIB
+5) Fallback sur lyrics.ovh
+\end{DoxyVerb}
+ \Hypertarget{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_a3121d91b2a6de2b44d2d1a081f354786}\index{library.core.lyricsresolver.LyricsResolver@{library.core.lyricsresolver.LyricsResolver}!guess\_from\_filename@{guess\_from\_filename}}
+\index{guess\_from\_filename@{guess\_from\_filename}!library.core.lyricsresolver.LyricsResolver@{library.core.lyricsresolver.LyricsResolver}}
+\doxysubsubsection{\texorpdfstring{guess\_from\_filename()}{guess\_from\_filename()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_a3121d91b2a6de2b44d2d1a081f354786} 
+library.\+core.\+lyricsresolver.\+Lyrics\+Resolver.\+guess\+\_\+from\+\_\+filename (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{str}]{filename}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Ex : 'The Neighbourhood - Softcore (Lyrics).mp3'
+-> ('The Neighbourhood', 'Softcore')
+\end{DoxyVerb}
+ \Hypertarget{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_a50b2daaa9a9c98a23063dcbba85f5443}\index{library.core.lyricsresolver.LyricsResolver@{library.core.lyricsresolver.LyricsResolver}!spotify\_fix@{spotify\_fix}}
+\index{spotify\_fix@{spotify\_fix}!library.core.lyricsresolver.LyricsResolver@{library.core.lyricsresolver.LyricsResolver}}
+\doxysubsubsection{\texorpdfstring{spotify\_fix()}{spotify\_fix()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_a50b2daaa9a9c98a23063dcbba85f5443} 
+library.\+core.\+lyricsresolver.\+Lyrics\+Resolver.\+spotify\+\_\+fix (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{str}]{artist}{, }\item[{str}]{title}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}On utilise Spotify pour corriger artiste / titre s'il y a un écart
+(ex : "Titre (Lyrics)" -> "Titre")
+\end{DoxyVerb}
+ 
+
+\label{doc-variable-members}
+\Hypertarget{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_doc-variable-members}
+\doxysubsection{Documentation des données membres}
+\Hypertarget{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_a9eeb294a3f89dacc7183eeacbccf56fb}\index{library.core.lyricsresolver.LyricsResolver@{library.core.lyricsresolver.LyricsResolver}!spotify@{spotify}}
+\index{spotify@{spotify}!library.core.lyricsresolver.LyricsResolver@{library.core.lyricsresolver.LyricsResolver}}
+\doxysubsubsection{\texorpdfstring{spotify}{spotify}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver_a9eeb294a3f89dacc7183eeacbccf56fb} 
+library.\+core.\+lyricsresolver.\+Lyrics\+Resolver.\+spotify = spotify\+\_\+client}
+
+
+
+La documentation de cette classe a été générée à partir du fichier suivant \+:\begin{DoxyCompactItemize}
+\item 
+library/core/\mbox{\hyperlink{lyricsresolver_8py}{lyricsresolver.\+py}}\end{DoxyCompactItemize}

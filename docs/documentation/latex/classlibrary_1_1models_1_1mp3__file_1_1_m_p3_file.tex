@@ -1,0 +1,133 @@
+\doxysection{Référence de la classe library.\+models.\+mp3\+\_\+file.\+MP3\+File}
+\hypertarget{classlibrary_1_1models_1_1mp3__file_1_1_m_p3_file}{}\label{classlibrary_1_1models_1_1mp3__file_1_1_m_p3_file}\index{library.models.mp3\_file.MP3File@{library.models.mp3\_file.MP3File}}
+Graphe d\textquotesingle{}héritage de library.\+models.\+mp3\+\_\+file.\+MP3\+File\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classlibrary_1_1models_1_1mp3__file_1_1_m_p3_file}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Fonctions membres publiques}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classlibrary_1_1models_1_1mp3__file_1_1_m_p3_file_ab4e4ef0286dafd5de90869857df5d777}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, Path\texorpdfstring{$\vert$}{|}str \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_aa6834eeea3586b3a5de9f8a09201e4f6}{filepath}})
+\item 
+\mbox{\hyperlink{classlibrary_1_1models_1_1mp3__file_1_1_m_p3_file_aeb36bbbc9eb194a3e763eb0b9fade684}{save\+\_\+metadata}} (self)
+\item 
+Dict\mbox{[}str, any\mbox{]} \mbox{\hyperlink{classlibrary_1_1models_1_1mp3__file_1_1_m_p3_file_aa1a9470e4e103816a871a3212f21155e}{extract\+\_\+metadata}} (self)
+\item 
+Optional\mbox{[}bytes\mbox{]} \mbox{\hyperlink{classlibrary_1_1models_1_1mp3__file_1_1_m_p3_file_abda312ac19668e805a422a69540c8ed7}{get\+\_\+cover\+\_\+art}} (self)
+\item 
+None \mbox{\hyperlink{classlibrary_1_1models_1_1mp3__file_1_1_m_p3_file_a14ef376b26d3d5b0569291d5d66a4ef7}{reload}} (self)
+\end{DoxyCompactItemize}
+\doxysubsection*{Fonctions membres publiques hérités de \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file}{library.\+models.\+audio\+\_\+file.\+Audio\+File}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_ad49a24b03a3da6c2404f880a2a814e4e}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, Path \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_aa6834eeea3586b3a5de9f8a09201e4f6}{filepath}})
+\item 
+float \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_a6aa20d188aff3637f93b564fc6c1243e}{get\+\_\+duration}} (self)
+\item 
+str \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_af05e9aa78046f5224320cab0bff0db73}{get\+\_\+file\+\_\+hash}} (self)
+\item 
+str \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_a8bafe381d30fd358cffbd103ca1cd25a}{\+\_\+\+\_\+str\+\_\+\+\_\+}} (self)
+\item 
+str \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_a51a0513911c2ea7557ef6e0260d86817}{\+\_\+\+\_\+repr\+\_\+\+\_\+}} (self)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Membres hérités additionnels}
+\doxysubsection*{Attributs publics hérités de \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file}{library.\+models.\+audio\+\_\+file.\+Audio\+File}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_aa6834eeea3586b3a5de9f8a09201e4f6}{filepath}} = Path(filepath)
+\item 
+dict \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_a0bafc8c58b59e7d66cc73d02e98c1da7}{metadata}} = \{\}
+\end{DoxyCompactItemize}
+\doxysubsection*{Attributs protégés hérités de \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file}{library.\+models.\+audio\+\_\+file.\+Audio\+File}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_a27b4842972523dc988aa104f1400b955}{\+\_\+audio\+\_\+object}} = None
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Description détaillée}
+\begin{DoxyVerb}Classe spécialisée pour les fichiers MP3.
+
+- extract_metadata : lit les tags ID3
+- save_metadata    : écrit / met à jour les tags ID3
+- get_cover_art    : récupère la cover (APIC)
+\end{DoxyVerb}
+ 
+
+\label{doc-constructors}
+\Hypertarget{classlibrary_1_1models_1_1mp3__file_1_1_m_p3_file_doc-constructors}
+\doxysubsection{Documentation des constructeurs et destructeur}
+\Hypertarget{classlibrary_1_1models_1_1mp3__file_1_1_m_p3_file_ab4e4ef0286dafd5de90869857df5d777}\index{library.models.mp3\_file.MP3File@{library.models.mp3\_file.MP3File}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!library.models.mp3\_file.MP3File@{library.models.mp3\_file.MP3File}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1models_1_1mp3__file_1_1_m_p3_file_ab4e4ef0286dafd5de90869857df5d777} 
+library.\+models.\+mp3\+\_\+file.\+MP3\+File.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{Path \texorpdfstring{$\vert$}{|} str}]{filepath}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-func-members}
+\Hypertarget{classlibrary_1_1models_1_1mp3__file_1_1_m_p3_file_doc-func-members}
+\doxysubsection{Documentation des fonctions membres}
+\Hypertarget{classlibrary_1_1models_1_1mp3__file_1_1_m_p3_file_aa1a9470e4e103816a871a3212f21155e}\index{library.models.mp3\_file.MP3File@{library.models.mp3\_file.MP3File}!extract\_metadata@{extract\_metadata}}
+\index{extract\_metadata@{extract\_metadata}!library.models.mp3\_file.MP3File@{library.models.mp3\_file.MP3File}}
+\doxysubsubsection{\texorpdfstring{extract\_metadata()}{extract\_metadata()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1models_1_1mp3__file_1_1_m_p3_file_aa1a9470e4e103816a871a3212f21155e} 
+ Dict\mbox{[}str, any\mbox{]} library.\+models.\+mp3\+\_\+file.\+MP3\+File.\+extract\+\_\+metadata (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Extrait les métadonnées ID3 du fichier MP3.
+
+Tags ID3 courants :
+- TIT2: Titre
+- TPE1: Artiste
+- TALB: Album
+- TDRC: Année
+- TCON: Genre
+- TRCK: Numéro de piste
+\end{DoxyVerb}
+ 
+
+Réimplémentée à partir de \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_af32c5ee2b02ba2ecfcb61ddab5b53366}{library.\+models.\+audio\+\_\+file.\+Audio\+File}}.
+
+\Hypertarget{classlibrary_1_1models_1_1mp3__file_1_1_m_p3_file_abda312ac19668e805a422a69540c8ed7}\index{library.models.mp3\_file.MP3File@{library.models.mp3\_file.MP3File}!get\_cover\_art@{get\_cover\_art}}
+\index{get\_cover\_art@{get\_cover\_art}!library.models.mp3\_file.MP3File@{library.models.mp3\_file.MP3File}}
+\doxysubsubsection{\texorpdfstring{get\_cover\_art()}{get\_cover\_art()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1models_1_1mp3__file_1_1_m_p3_file_abda312ac19668e805a422a69540c8ed7} 
+ Optional\mbox{[}bytes\mbox{]} library.\+models.\+mp3\+\_\+file.\+MP3\+File.\+get\+\_\+cover\+\_\+art (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Retourne les données binaires de la cover (APIC) si présente.
+\end{DoxyVerb}
+ 
+
+Réimplémentée à partir de \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_aa09155ce6e36d6f7bf46cc799a791eee}{library.\+models.\+audio\+\_\+file.\+Audio\+File}}.
+
+\Hypertarget{classlibrary_1_1models_1_1mp3__file_1_1_m_p3_file_a14ef376b26d3d5b0569291d5d66a4ef7}\index{library.models.mp3\_file.MP3File@{library.models.mp3\_file.MP3File}!reload@{reload}}
+\index{reload@{reload}!library.models.mp3\_file.MP3File@{library.models.mp3\_file.MP3File}}
+\doxysubsubsection{\texorpdfstring{reload()}{reload()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1models_1_1mp3__file_1_1_m_p3_file_a14ef376b26d3d5b0569291d5d66a4ef7} 
+ None library.\+models.\+mp3\+\_\+file.\+MP3\+File.\+reload (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Réinitialise l'objet audio pour forcer une relecture du fichier depuis le disque.
+Cela vidange le cache de mutagen et garantit que extract_metadata() lira les nouveaux tags.
+\end{DoxyVerb}
+ 
+
+Réimplémentée à partir de \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_a0a355b2547effbed01517b7d0c33d2c8}{library.\+models.\+audio\+\_\+file.\+Audio\+File}}.
+
+\Hypertarget{classlibrary_1_1models_1_1mp3__file_1_1_m_p3_file_aeb36bbbc9eb194a3e763eb0b9fade684}\index{library.models.mp3\_file.MP3File@{library.models.mp3\_file.MP3File}!save\_metadata@{save\_metadata}}
+\index{save\_metadata@{save\_metadata}!library.models.mp3\_file.MP3File@{library.models.mp3\_file.MP3File}}
+\doxysubsubsection{\texorpdfstring{save\_metadata()}{save\_metadata()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1models_1_1mp3__file_1_1_m_p3_file_aeb36bbbc9eb194a3e763eb0b9fade684} 
+library.\+models.\+mp3\+\_\+file.\+MP3\+File.\+save\+\_\+metadata (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Version avec validation stricte des données\end{DoxyVerb}
+ 
+
+Réimplémentée à partir de \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_a04e6a7257b1c626a7487d882a0005c17}{library.\+models.\+audio\+\_\+file.\+Audio\+File}}.
+
+
+
+La documentation de cette classe a été générée à partir du fichier suivant \+:\begin{DoxyCompactItemize}
+\item 
+library/models/\mbox{\hyperlink{mp3__file_8py}{mp3\+\_\+file.\+py}}\end{DoxyCompactItemize}

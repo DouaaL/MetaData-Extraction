@@ -1,0 +1,130 @@
+\doxysection{Référence de la classe library.\+core.\+metadatafetcher.\+Metadata\+Fetcher}
+\hypertarget{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher}{}\label{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher}\index{library.core.metadatafetcher.MetadataFetcher@{library.core.metadatafetcher.MetadataFetcher}}
+\doxysubsubsection*{Fonctions membres publiques}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a155e5f1d150ddeed57ac66322614fd69}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self)
+\item 
+\mbox{\hyperlink{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a3ffdeba05054223caf0078c1bafd19f4}{smart\+\_\+split\+\_\+filename}} (self, str stem)
+\item 
+str \mbox{\hyperlink{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a24ca0989c4f33f35a224b37e321f8863}{clean\+\_\+text}} (self, str s)
+\item 
+Optional\mbox{[}Path\mbox{]} \mbox{\hyperlink{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a3dffa56dea7e86f35771594c364e93f2}{ensure\+\_\+cover\+\_\+image}} (self, \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file}{Audio\+File}} audio\+\_\+file)
+\item 
+Optional\mbox{[}Dict\mbox{[}str, str\mbox{]}\mbox{]} \mbox{\hyperlink{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_ae7d753659a56dc8140c83e091c79d775}{search\+\_\+metadata}} (self, str artist, str title)
+\item 
+bool \mbox{\hyperlink{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a93fa5da87420fab88ecceb777fbd23ea}{update\+\_\+audio\+\_\+file\+\_\+metadata}} (self, \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file}{Audio\+File}} audio\+\_\+file)
+\item 
+Optional\mbox{[}str\mbox{]} \mbox{\hyperlink{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a19fbe3810c278b68797cc2e14c436ba0}{fetch\+\_\+lyrics\+\_\+for\+\_\+audio}} (self, \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file}{Audio\+File}} audio\+\_\+file)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Attributs publics}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a86873c5f9d84bae017224d9e12e56245}{sp}} = None
+\item 
+\mbox{\hyperlink{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a969f03f2858d7917c5349ff25fcf87c8}{lyrics\+\_\+resolver}} = \mbox{\hyperlink{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver}{Lyrics\+Resolver}}(spotify\+\_\+client=self.\+sp)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Fonctions membres protégées}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_abb9aaa3f49bb0b594e855e61390f3f6b}{\+\_\+is\+\_\+generic\+\_\+artist}} (self, str name)
+\item 
+Optional\mbox{[}Path\mbox{]} \mbox{\hyperlink{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_ac592feb5e63ccd8084f657c2980c2830}{\+\_\+search\+\_\+deezer\+\_\+and\+\_\+download\+\_\+cover}} (self, str artist, str title, Path dest\+\_\+dir, str filename\+\_\+stem)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Description détaillée}
+\begin{DoxyVerb}- Métadonnées enrichies via Spotify (optionnel)
+- Paroles via LyricsResolver
+- Cover via Deezer API (par fichier)
+\end{DoxyVerb}
+ 
+
+\label{doc-constructors}
+\Hypertarget{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_doc-constructors}
+\doxysubsection{Documentation des constructeurs et destructeur}
+\Hypertarget{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a155e5f1d150ddeed57ac66322614fd69}\index{library.core.metadatafetcher.MetadataFetcher@{library.core.metadatafetcher.MetadataFetcher}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!library.core.metadatafetcher.MetadataFetcher@{library.core.metadatafetcher.MetadataFetcher}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a155e5f1d150ddeed57ac66322614fd69} 
+library.\+core.\+metadatafetcher.\+Metadata\+Fetcher.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-func-members}
+\Hypertarget{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_doc-func-members}
+\doxysubsection{Documentation des fonctions membres}
+\Hypertarget{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_abb9aaa3f49bb0b594e855e61390f3f6b}\index{library.core.metadatafetcher.MetadataFetcher@{library.core.metadatafetcher.MetadataFetcher}!\_is\_generic\_artist@{\_is\_generic\_artist}}
+\index{\_is\_generic\_artist@{\_is\_generic\_artist}!library.core.metadatafetcher.MetadataFetcher@{library.core.metadatafetcher.MetadataFetcher}}
+\doxysubsubsection{\texorpdfstring{\_is\_generic\_artist()}{\_is\_generic\_artist()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_abb9aaa3f49bb0b594e855e61390f3f6b} 
+ bool library.\+core.\+metadatafetcher.\+Metadata\+Fetcher.\+\_\+is\+\_\+generic\+\_\+artist (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{str}]{name}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_ac592feb5e63ccd8084f657c2980c2830}\index{library.core.metadatafetcher.MetadataFetcher@{library.core.metadatafetcher.MetadataFetcher}!\_search\_deezer\_and\_download\_cover@{\_search\_deezer\_and\_download\_cover}}
+\index{\_search\_deezer\_and\_download\_cover@{\_search\_deezer\_and\_download\_cover}!library.core.metadatafetcher.MetadataFetcher@{library.core.metadatafetcher.MetadataFetcher}}
+\doxysubsubsection{\texorpdfstring{\_search\_deezer\_and\_download\_cover()}{\_search\_deezer\_and\_download\_cover()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_ac592feb5e63ccd8084f657c2980c2830} 
+ Optional\mbox{[}Path\mbox{]} library.\+core.\+metadatafetcher.\+Metadata\+Fetcher.\+\_\+search\+\_\+deezer\+\_\+and\+\_\+download\+\_\+cover (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{str}]{artist}{, }\item[{str}]{title}{, }\item[{Path}]{dest\+\_\+dir}{, }\item[{str     }]{filename\+\_\+stem}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a24ca0989c4f33f35a224b37e321f8863}\index{library.core.metadatafetcher.MetadataFetcher@{library.core.metadatafetcher.MetadataFetcher}!clean\_text@{clean\_text}}
+\index{clean\_text@{clean\_text}!library.core.metadatafetcher.MetadataFetcher@{library.core.metadatafetcher.MetadataFetcher}}
+\doxysubsubsection{\texorpdfstring{clean\_text()}{clean\_text()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a24ca0989c4f33f35a224b37e321f8863} 
+ str library.\+core.\+metadatafetcher.\+Metadata\+Fetcher.\+clean\+\_\+text (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{str}]{s}{}\end{DoxyParamCaption})}
+
+\Hypertarget{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a3dffa56dea7e86f35771594c364e93f2}\index{library.core.metadatafetcher.MetadataFetcher@{library.core.metadatafetcher.MetadataFetcher}!ensure\_cover\_image@{ensure\_cover\_image}}
+\index{ensure\_cover\_image@{ensure\_cover\_image}!library.core.metadatafetcher.MetadataFetcher@{library.core.metadatafetcher.MetadataFetcher}}
+\doxysubsubsection{\texorpdfstring{ensure\_cover\_image()}{ensure\_cover\_image()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a3dffa56dea7e86f35771594c364e93f2} 
+ Optional\mbox{[}Path\mbox{]} library.\+core.\+metadatafetcher.\+Metadata\+Fetcher.\+ensure\+\_\+cover\+\_\+image (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{\mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file}{Audio\+File}}}]{audio\+\_\+file}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}S'assure qu'une cover spécifique existe pour CE fichier :
+- cherche <stem>_cover.jpg dans le dossier du fichier
+- sinon la télécharge via DEEZER API
+\end{DoxyVerb}
+ \Hypertarget{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a19fbe3810c278b68797cc2e14c436ba0}\index{library.core.metadatafetcher.MetadataFetcher@{library.core.metadatafetcher.MetadataFetcher}!fetch\_lyrics\_for\_audio@{fetch\_lyrics\_for\_audio}}
+\index{fetch\_lyrics\_for\_audio@{fetch\_lyrics\_for\_audio}!library.core.metadatafetcher.MetadataFetcher@{library.core.metadatafetcher.MetadataFetcher}}
+\doxysubsubsection{\texorpdfstring{fetch\_lyrics\_for\_audio()}{fetch\_lyrics\_for\_audio()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a19fbe3810c278b68797cc2e14c436ba0} 
+ Optional\mbox{[}str\mbox{]} library.\+core.\+metadatafetcher.\+Metadata\+Fetcher.\+fetch\+\_\+lyrics\+\_\+for\+\_\+audio (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{\mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file}{Audio\+File}}}]{audio\+\_\+file}{}\end{DoxyParamCaption})}
+
+\Hypertarget{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_ae7d753659a56dc8140c83e091c79d775}\index{library.core.metadatafetcher.MetadataFetcher@{library.core.metadatafetcher.MetadataFetcher}!search\_metadata@{search\_metadata}}
+\index{search\_metadata@{search\_metadata}!library.core.metadatafetcher.MetadataFetcher@{library.core.metadatafetcher.MetadataFetcher}}
+\doxysubsubsection{\texorpdfstring{search\_metadata()}{search\_metadata()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_ae7d753659a56dc8140c83e091c79d775} 
+ Optional\mbox{[}Dict\mbox{[}str, str\mbox{]}\mbox{]} library.\+core.\+metadatafetcher.\+Metadata\+Fetcher.\+search\+\_\+metadata (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{str}]{artist}{, }\item[{str}]{title}{}\end{DoxyParamCaption})}
+
+\Hypertarget{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a3ffdeba05054223caf0078c1bafd19f4}\index{library.core.metadatafetcher.MetadataFetcher@{library.core.metadatafetcher.MetadataFetcher}!smart\_split\_filename@{smart\_split\_filename}}
+\index{smart\_split\_filename@{smart\_split\_filename}!library.core.metadatafetcher.MetadataFetcher@{library.core.metadatafetcher.MetadataFetcher}}
+\doxysubsubsection{\texorpdfstring{smart\_split\_filename()}{smart\_split\_filename()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a3ffdeba05054223caf0078c1bafd19f4} 
+library.\+core.\+metadatafetcher.\+Metadata\+Fetcher.\+smart\+\_\+split\+\_\+filename (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{str}]{stem}{}\end{DoxyParamCaption})}
+
+\Hypertarget{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a93fa5da87420fab88ecceb777fbd23ea}\index{library.core.metadatafetcher.MetadataFetcher@{library.core.metadatafetcher.MetadataFetcher}!update\_audio\_file\_metadata@{update\_audio\_file\_metadata}}
+\index{update\_audio\_file\_metadata@{update\_audio\_file\_metadata}!library.core.metadatafetcher.MetadataFetcher@{library.core.metadatafetcher.MetadataFetcher}}
+\doxysubsubsection{\texorpdfstring{update\_audio\_file\_metadata()}{update\_audio\_file\_metadata()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a93fa5da87420fab88ecceb777fbd23ea} 
+ bool library.\+core.\+metadatafetcher.\+Metadata\+Fetcher.\+update\+\_\+audio\+\_\+file\+\_\+metadata (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{\mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file}{Audio\+File}}}]{audio\+\_\+file}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-variable-members}
+\Hypertarget{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_doc-variable-members}
+\doxysubsection{Documentation des données membres}
+\Hypertarget{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a969f03f2858d7917c5349ff25fcf87c8}\index{library.core.metadatafetcher.MetadataFetcher@{library.core.metadatafetcher.MetadataFetcher}!lyrics\_resolver@{lyrics\_resolver}}
+\index{lyrics\_resolver@{lyrics\_resolver}!library.core.metadatafetcher.MetadataFetcher@{library.core.metadatafetcher.MetadataFetcher}}
+\doxysubsubsection{\texorpdfstring{lyrics\_resolver}{lyrics\_resolver}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a969f03f2858d7917c5349ff25fcf87c8} 
+library.\+core.\+metadatafetcher.\+Metadata\+Fetcher.\+lyrics\+\_\+resolver = \mbox{\hyperlink{classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver}{Lyrics\+Resolver}}(spotify\+\_\+client=self.\+sp)}
+
+\Hypertarget{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a86873c5f9d84bae017224d9e12e56245}\index{library.core.metadatafetcher.MetadataFetcher@{library.core.metadatafetcher.MetadataFetcher}!sp@{sp}}
+\index{sp@{sp}!library.core.metadatafetcher.MetadataFetcher@{library.core.metadatafetcher.MetadataFetcher}}
+\doxysubsubsection{\texorpdfstring{sp}{sp}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher_a86873c5f9d84bae017224d9e12e56245} 
+library.\+core.\+metadatafetcher.\+Metadata\+Fetcher.\+sp = None}
+
+
+
+La documentation de cette classe a été générée à partir du fichier suivant \+:\begin{DoxyCompactItemize}
+\item 
+library/core/\mbox{\hyperlink{metadatafetcher_8py}{metadatafetcher.\+py}}\end{DoxyCompactItemize}

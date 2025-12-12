@@ -1,0 +1,23 @@
+var NAVTREEINDEX2 =
+{
+"namespacelibrary.html":[1,0,2],
+"namespacelibrary_1_1core.html":[1,0,2,0],
+"namespacelibrary_1_1core_1_1file__explorer.html":[1,0,2,0,0],
+"namespacelibrary_1_1core_1_1lyricsresolver.html":[1,0,2,0,1],
+"namespacelibrary_1_1core_1_1metadatafetcher.html":[1,0,2,0,2],
+"namespacelibrary_1_1core_1_1metadatafetcher.html#a7a920bbccd85123b123d125ed7aee1e8":[1,0,2,0,2,1],
+"namespacelibrary_1_1core_1_1metadatafetcher.html#ad31fda750b5745125e7f5672a42e841e":[1,0,2,0,2,2],
+"namespacelibrary_1_1core_1_1playlist__generator.html":[1,0,2,0,3],
+"namespacelibrary_1_1core_1_1playlist__generator.html#abf9c0df22ae34b7feb1a07ca5b82a4a8":[1,0,2,0,3,1],
+"namespacelibrary_1_1models.html":[1,0,2,1],
+"namespacelibrary_1_1models_1_1audio__file.html":[1,0,2,1,0],
+"namespacelibrary_1_1models_1_1flac__file.html":[1,0,2,1,1],
+"namespacelibrary_1_1models_1_1mp3__file.html":[1,0,2,1,2],
+"namespacelibrary_1_1models_1_1music__library.html":[1,0,2,1,3],
+"namespacemembers.html":[1,1,0],
+"namespacemembers_func.html":[1,1,1],
+"namespacemembers_vars.html":[1,1,2],
+"namespaces.html":[1,0],
+"pages.html":[],
+"playlist__generator_8py.html":[3,0,0,0,4]
+};

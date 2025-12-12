@@ -1,0 +1,153 @@
+\doxysection{Référence de la classe library.\+models.\+music\+\_\+library.\+Music\+Library}
+\hypertarget{classlibrary_1_1models_1_1music__library_1_1_music_library}{}\label{classlibrary_1_1models_1_1music__library_1_1_music_library}\index{library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}}
+\doxysubsubsection*{Fonctions membres publiques}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classlibrary_1_1models_1_1music__library_1_1_music_library_aeac4b458d3cfbc344dc49748396871f1}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self)
+\item 
+bool \mbox{\hyperlink{classlibrary_1_1models_1_1music__library_1_1_music_library_a159c4be7e2529ed90f734b7c91840445}{ajouter\+\_\+fichier}} (self, \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file}{Audio\+File}} \mbox{\hyperlink{namespacelibrary_1_1models_1_1audio__file}{audio\+\_\+file}}, bool check\+\_\+duplicates=True)
+\item 
+\mbox{\hyperlink{classlibrary_1_1models_1_1music__library_1_1_music_library_a731c451df16447a636aa223cd56c345f}{load\+\_\+directory}} (self, Path directory, bool recursive=True)
+\item 
+\mbox{\hyperlink{classlibrary_1_1models_1_1music__library_1_1_music_library_a94ef3266a3390a29ed0ca4fc770ae47c}{load\+\_\+file}} (self, Path\texorpdfstring{$\vert$}{|}str filepath)
+\item 
+Optional\mbox{[}\mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file}{Audio\+File}}\mbox{]} \mbox{\hyperlink{classlibrary_1_1models_1_1music__library_1_1_music_library_a9fc7b3238f24f4ad6e7896d496d6678c}{get\+\_\+file\+\_\+by\+\_\+path}} (self, str filepath)
+\item 
+List\mbox{[}\mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file}{Audio\+File}}\mbox{]} \mbox{\hyperlink{classlibrary_1_1models_1_1music__library_1_1_music_library_a74d6580287783bf9becd93a1c77475bc}{filter\+\_\+by\+\_\+artist}} (self, str artist)
+\item 
+Dict\mbox{[}str, any\mbox{]} \mbox{\hyperlink{classlibrary_1_1models_1_1music__library_1_1_music_library_a1c72dd498892c8b4f2115a763a6ceb95}{get\+\_\+statistics}} (self)
+\item 
+int \mbox{\hyperlink{classlibrary_1_1models_1_1music__library_1_1_music_library_a16202ee1746b9d0ba1793f6c17b9de68}{\+\_\+\+\_\+len\+\_\+\+\_\+}} (self)
+\item 
+\mbox{\hyperlink{classlibrary_1_1models_1_1music__library_1_1_music_library_a9bb7bab39e9247fa46a1affe445579bd}{\+\_\+\+\_\+iter\+\_\+\+\_\+}} (self)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Attributs publics}
+\begin{DoxyCompactItemize}
+\item 
+list \mbox{\hyperlink{classlibrary_1_1models_1_1music__library_1_1_music_library_a7c606de6715e2782140cb59f2b23b5a1}{files}} = \mbox{[}$\,$\mbox{]}
+\item 
+\mbox{\hyperlink{classlibrary_1_1models_1_1music__library_1_1_music_library_a6ecce6848f74f749656537d0cb30b673}{explorer}} = \mbox{\hyperlink{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer}{File\+Explorer}}()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Attributs protégés}
+\begin{DoxyCompactItemize}
+\item 
+Set\mbox{[}str\mbox{]} \mbox{\hyperlink{classlibrary_1_1models_1_1music__library_1_1_music_library_abc6e32b712f06b335dddd4af1225c766}{\+\_\+file\+\_\+hashes}} = set()
+\item 
+dict \mbox{\hyperlink{classlibrary_1_1models_1_1music__library_1_1_music_library_ab352e2ed11abc4151fa0e82221f4d59b}{\+\_\+filepath\+\_\+index}} = \{\}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Description détaillée}
+\begin{DoxyVerb}Bibliothèque musicale en mémoire.
+Gère :
+- liste d'AudioFile (MP3/FLAC)
+- détection de doublons par hash
+- stats simples
+\end{DoxyVerb}
+ 
+
+\label{doc-constructors}
+\Hypertarget{classlibrary_1_1models_1_1music__library_1_1_music_library_doc-constructors}
+\doxysubsection{Documentation des constructeurs et destructeur}
+\Hypertarget{classlibrary_1_1models_1_1music__library_1_1_music_library_aeac4b458d3cfbc344dc49748396871f1}\index{library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1models_1_1music__library_1_1_music_library_aeac4b458d3cfbc344dc49748396871f1} 
+library.\+models.\+music\+\_\+library.\+Music\+Library.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-func-members}
+\Hypertarget{classlibrary_1_1models_1_1music__library_1_1_music_library_doc-func-members}
+\doxysubsection{Documentation des fonctions membres}
+\Hypertarget{classlibrary_1_1models_1_1music__library_1_1_music_library_a9bb7bab39e9247fa46a1affe445579bd}\index{library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}!\_\_iter\_\_@{\_\_iter\_\_}}
+\index{\_\_iter\_\_@{\_\_iter\_\_}!library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}}
+\doxysubsubsection{\texorpdfstring{\_\_iter\_\_()}{\_\_iter\_\_()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1models_1_1music__library_1_1_music_library_a9bb7bab39e9247fa46a1affe445579bd} 
+library.\+models.\+music\+\_\+library.\+Music\+Library.\+\_\+\+\_\+iter\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\Hypertarget{classlibrary_1_1models_1_1music__library_1_1_music_library_a16202ee1746b9d0ba1793f6c17b9de68}\index{library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}!\_\_len\_\_@{\_\_len\_\_}}
+\index{\_\_len\_\_@{\_\_len\_\_}!library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}}
+\doxysubsubsection{\texorpdfstring{\_\_len\_\_()}{\_\_len\_\_()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1models_1_1music__library_1_1_music_library_a16202ee1746b9d0ba1793f6c17b9de68} 
+ int library.\+models.\+music\+\_\+library.\+Music\+Library.\+\_\+\+\_\+len\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\Hypertarget{classlibrary_1_1models_1_1music__library_1_1_music_library_a159c4be7e2529ed90f734b7c91840445}\index{library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}!ajouter\_fichier@{ajouter\_fichier}}
+\index{ajouter\_fichier@{ajouter\_fichier}!library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}}
+\doxysubsubsection{\texorpdfstring{ajouter\_fichier()}{ajouter\_fichier()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1models_1_1music__library_1_1_music_library_a159c4be7e2529ed90f734b7c91840445} 
+ bool library.\+models.\+music\+\_\+library.\+Music\+Library.\+ajouter\+\_\+fichier (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{\mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file}{Audio\+File}}}]{audio\+\_\+file}{, }\item[{bool }]{check\+\_\+duplicates}{ = {\ttfamily True}}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Ajoute un fichier à la bibliothèque, avec option de détection de doublons.
+\end{DoxyVerb}
+ \Hypertarget{classlibrary_1_1models_1_1music__library_1_1_music_library_a74d6580287783bf9becd93a1c77475bc}\index{library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}!filter\_by\_artist@{filter\_by\_artist}}
+\index{filter\_by\_artist@{filter\_by\_artist}!library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}}
+\doxysubsubsection{\texorpdfstring{filter\_by\_artist()}{filter\_by\_artist()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1models_1_1music__library_1_1_music_library_a74d6580287783bf9becd93a1c77475bc} 
+ List\mbox{[}\mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file}{Audio\+File}}\mbox{]} library.\+models.\+music\+\_\+library.\+Music\+Library.\+filter\+\_\+by\+\_\+artist (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{str}]{artist}{}\end{DoxyParamCaption})}
+
+\Hypertarget{classlibrary_1_1models_1_1music__library_1_1_music_library_a9fc7b3238f24f4ad6e7896d496d6678c}\index{library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}!get\_file\_by\_path@{get\_file\_by\_path}}
+\index{get\_file\_by\_path@{get\_file\_by\_path}!library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}}
+\doxysubsubsection{\texorpdfstring{get\_file\_by\_path()}{get\_file\_by\_path()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1models_1_1music__library_1_1_music_library_a9fc7b3238f24f4ad6e7896d496d6678c} 
+ Optional\mbox{[}\mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file}{Audio\+File}}\mbox{]} library.\+models.\+music\+\_\+library.\+Music\+Library.\+get\+\_\+file\+\_\+by\+\_\+path (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{str}]{filepath}{}\end{DoxyParamCaption})}
+
+\Hypertarget{classlibrary_1_1models_1_1music__library_1_1_music_library_a1c72dd498892c8b4f2115a763a6ceb95}\index{library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}!get\_statistics@{get\_statistics}}
+\index{get\_statistics@{get\_statistics}!library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}}
+\doxysubsubsection{\texorpdfstring{get\_statistics()}{get\_statistics()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1models_1_1music__library_1_1_music_library_a1c72dd498892c8b4f2115a763a6ceb95} 
+ Dict\mbox{[}str, any\mbox{]} library.\+models.\+music\+\_\+library.\+Music\+Library.\+get\+\_\+statistics (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Calcule la durée d'un titre.
+\end{DoxyVerb}
+ \Hypertarget{classlibrary_1_1models_1_1music__library_1_1_music_library_a731c451df16447a636aa223cd56c345f}\index{library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}!load\_directory@{load\_directory}}
+\index{load\_directory@{load\_directory}!library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}}
+\doxysubsubsection{\texorpdfstring{load\_directory()}{load\_directory()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1models_1_1music__library_1_1_music_library_a731c451df16447a636aa223cd56c345f} 
+library.\+models.\+music\+\_\+library.\+Music\+Library.\+load\+\_\+directory (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{Path}]{directory}{, }\item[{bool }]{recursive}{ = {\ttfamily True}}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Charge tous les fichiers audio d'un répertoire et les affiche dans la console.
+\end{DoxyVerb}
+ \Hypertarget{classlibrary_1_1models_1_1music__library_1_1_music_library_a94ef3266a3390a29ed0ca4fc770ae47c}\index{library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}!load\_file@{load\_file}}
+\index{load\_file@{load\_file}!library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}}
+\doxysubsubsection{\texorpdfstring{load\_file()}{load\_file()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1models_1_1music__library_1_1_music_library_a94ef3266a3390a29ed0ca4fc770ae47c} 
+library.\+models.\+music\+\_\+library.\+Music\+Library.\+load\+\_\+file (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{Path \texorpdfstring{$\vert$}{|} str}]{filepath}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Charge un seul fichier audio, affiche ses métadonnées et l’ajoute à la bibliothèque.
+Si le fichier n’existe pas, le cherche dans tout le projet.
+\end{DoxyVerb}
+ 
+
+\label{doc-variable-members}
+\Hypertarget{classlibrary_1_1models_1_1music__library_1_1_music_library_doc-variable-members}
+\doxysubsection{Documentation des données membres}
+\Hypertarget{classlibrary_1_1models_1_1music__library_1_1_music_library_abc6e32b712f06b335dddd4af1225c766}\index{library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}!\_file\_hashes@{\_file\_hashes}}
+\index{\_file\_hashes@{\_file\_hashes}!library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}}
+\doxysubsubsection{\texorpdfstring{\_file\_hashes}{\_file\_hashes}}
+{\footnotesize\ttfamily \label{classlibrary_1_1models_1_1music__library_1_1_music_library_abc6e32b712f06b335dddd4af1225c766} 
+Set\mbox{[}str\mbox{]} library.\+models.\+music\+\_\+library.\+Music\+Library.\+\_\+file\+\_\+hashes = set()\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{classlibrary_1_1models_1_1music__library_1_1_music_library_ab352e2ed11abc4151fa0e82221f4d59b}\index{library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}!\_filepath\_index@{\_filepath\_index}}
+\index{\_filepath\_index@{\_filepath\_index}!library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}}
+\doxysubsubsection{\texorpdfstring{\_filepath\_index}{\_filepath\_index}}
+{\footnotesize\ttfamily \label{classlibrary_1_1models_1_1music__library_1_1_music_library_ab352e2ed11abc4151fa0e82221f4d59b} 
+dict library.\+models.\+music\+\_\+library.\+Music\+Library.\+\_\+filepath\+\_\+index = \{\}\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{classlibrary_1_1models_1_1music__library_1_1_music_library_a6ecce6848f74f749656537d0cb30b673}\index{library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}!explorer@{explorer}}
+\index{explorer@{explorer}!library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}}
+\doxysubsubsection{\texorpdfstring{explorer}{explorer}}
+{\footnotesize\ttfamily \label{classlibrary_1_1models_1_1music__library_1_1_music_library_a6ecce6848f74f749656537d0cb30b673} 
+library.\+models.\+music\+\_\+library.\+Music\+Library.\+explorer = \mbox{\hyperlink{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer}{File\+Explorer}}()}
+
+\Hypertarget{classlibrary_1_1models_1_1music__library_1_1_music_library_a7c606de6715e2782140cb59f2b23b5a1}\index{library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}!files@{files}}
+\index{files@{files}!library.models.music\_library.MusicLibrary@{library.models.music\_library.MusicLibrary}}
+\doxysubsubsection{\texorpdfstring{files}{files}}
+{\footnotesize\ttfamily \label{classlibrary_1_1models_1_1music__library_1_1_music_library_a7c606de6715e2782140cb59f2b23b5a1} 
+library.\+models.\+music\+\_\+library.\+Music\+Library.\+files = \mbox{[}$\,$\mbox{]}}
+
+
+
+La documentation de cette classe a été générée à partir du fichier suivant \+:\begin{DoxyCompactItemize}
+\item 
+library/models/\mbox{\hyperlink{music__library_8py}{music\+\_\+library.\+py}}\end{DoxyCompactItemize}

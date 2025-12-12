@@ -1,0 +1,571 @@
+\chapter{Projet Python – Gestion et Lecture de Fichiers Audio (CLI + GUI) }
+\hypertarget{index}{}\label{index}\index{Projet Python – Gestion et Lecture de Fichiers Audio (CLI + GUI)@{Projet Python – Gestion et Lecture de Fichiers Audio (CLI + GUI)}}
+\label{index_md__r_e_a_d_m_e}%
+\Hypertarget{index_md__r_e_a_d_m_e}%
+\hypertarget{index_autotoc_md1}{}\doxysection{\texorpdfstring{1. Informations générales}{1. Informations générales}}\label{index_autotoc_md1}
+
+\begin{DoxyItemize}
+\item Nom \+: Yacine Brahimi \texorpdfstring{$\vert$}{|} Soumeya Dahmen \texorpdfstring{$\vert$}{|} Lekhal Douaa
+\item UE \+: Mineure Python\+: un langage Multipass
+\item Projet \+: Application de gestion et lecture de fichiers audio ~\newline
+
+\item Formation \+: L3 Informatique ~\newline
+
+\item Date \+: Décembre-\/2025 ~\newline
+
+\end{DoxyItemize}
+
+\DoxyHorRuler{0}
+\hypertarget{index_autotoc_md3}{}\doxysection{\texorpdfstring{2. Présentation générale du projet}{2. Présentation générale du projet}}\label{index_autotoc_md3}
+Ce projet a pour objectif d’implémenter une application Python capable de \+:
+
+
+\begin{DoxyItemize}
+\item lire des fichiers audio (MP3 / FLAC),
+\item extraire et afficher leurs métadonnées,
+\item modifier les tags directement dans les fichiers,
+\item parcourir un dossier audio complet,
+\item générer une playlist au format XSPF,
+\item lire les playlists en mode interactif (piste suivante / précédente),
+\item offrir une interface graphique (GUI) et inerface console (CLI).
+\end{DoxyItemize}
+
+Le projet est construit selon une {\bfseries{architecture modulaire}}, séparant \+:
+
+
+\begin{DoxyItemize}
+\item {\bfseries{l’interface utilisateur (CLI et GUI)}}, ~\newline
+
+\item {\bfseries{la logique métier}} (playlist, bibliothèque audio), ~\newline
+
+\item {\bfseries{la représentation des fichiers audio}} (MP3, FLAC, etc.).
+\end{DoxyItemize}
+
+Cette organisation rend le projet plus clair, maintenable et évolutif.
+
+\DoxyHorRuler{0}
+\hypertarget{index_autotoc_md5}{}\doxysection{\texorpdfstring{3. Structure du projet}{3. Structure du projet}}\label{index_autotoc_md5}
+L’arborescence du projet est la suivante \+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Projet\_Python/}
+\DoxyCodeLine{│}
+\DoxyCodeLine{├──\ doc/}
+\DoxyCodeLine{│\ \ │}
+\DoxyCodeLine{│\ \ ├──\ diaporama}
+\DoxyCodeLine{│\ \ ├──\ documentation}
+\DoxyCodeLine{│\ \ └──\ rapport}
+\DoxyCodeLine{│}
+\DoxyCodeLine{├──\ src/}
+\DoxyCodeLine{│\ │}
+\DoxyCodeLine{│\ ├──\ audio/\ \#\ Fichiers\ audio\ de\ test}
+\DoxyCodeLine{│\ ├──\ cli.py\ \#\ Interface\ en\ ligne\ de\ commande\ (CLI)}
+\DoxyCodeLine{│\ ├──\ gui.py\ \#\ Interface\ graphique\ (GUI)}
+\DoxyCodeLine{│\ │}
+\DoxyCodeLine{│\ └──\ library/\ \#\ Modules\ internes\ du\ projet}
+\DoxyCodeLine{│\ \ \ \ │}
+\DoxyCodeLine{│\ \ \ \ ├──\ models/\ \#\ Classes\ représentant\ les\ fichiers\ audio}
+\DoxyCodeLine{│\ \ \ \ │\ \ ├──\ audio\_file.py}
+\DoxyCodeLine{│\ \ \ \ │\ \ ├──\ mp3\_file.py}
+\DoxyCodeLine{│\ \ \ \ │\ \ ├──\ flac\_file.py}
+\DoxyCodeLine{│\ \ \ \ │\ \ └──\ music\_library.py}
+\DoxyCodeLine{│\ \ \ \ │}
+\DoxyCodeLine{│\ \ \ \ └──\ core/\ \#\ Logique\ métier\ (génération\ et\ gestion\ de\ playlists)}
+\DoxyCodeLine{│\ \ \ \ \ \ ├──\ lyricsresolver.py\ }
+\DoxyCodeLine{│\ \ \ \ \ \ ├──\ metadatafetcher.py\ }
+\DoxyCodeLine{│\ \ \ \ \ \ ├──\ playlist\_generator.py\ }
+\DoxyCodeLine{│\ \ \ \ \ \ └──\ file\_explorer.py}
+\DoxyCodeLine{│\ \ \ \ \ \ }
+\DoxyCodeLine{│}
+\DoxyCodeLine{│}
+\DoxyCodeLine{└──\ README.md}
+
+\end{DoxyCode}
+\hypertarget{index_autotoc_md6}{}\doxysection{\texorpdfstring{4. Description détaillée des fichiers du projet}{4. Description détaillée des fichiers du projet}}\label{index_autotoc_md6}
+Cette section présente l’ensemble des fichiers Python du projet, organisés par dossiers, avec une description de leurs rôles et de leurs principales fonctions.
+
+\DoxyHorRuler{0}
+\hypertarget{index_autotoc_md8}{}\doxysection{\texorpdfstring{4.\+1 Dossier library/models/ — Représentation des fichiers audio}{4.\+1 Dossier library/models/ — Représentation des fichiers audio}}\label{index_autotoc_md8}
+\hypertarget{index_autotoc_md9}{}\doxysubsection{\texorpdfstring{4.\+1.\+1 audio\+\_\+file.\+py}{4.\+1.\+1 audio\+\_\+file.\+py}}\label{index_autotoc_md9}
+Fichier contenant la classe abstraite {\ttfamily Audio\+File}. ~\newline
+ Elle représente la structure minimale d’un fichier audio.
+
+Fonctionnalités principales \+:
+\begin{DoxyItemize}
+\item attributs communs \+: {\ttfamily filepath}, {\ttfamily metadata}, {\ttfamily extension}
+\item méthode {\ttfamily load\+\_\+metadata()} (à surcharger) ~\newline
+
+\item base pour les classes MP3\+File et FLACFile
+\end{DoxyItemize}
+
+Objectif \+: fournir une interface commune à tous les types de fichiers audio.
+
+\DoxyHorRuler{0}
+\hypertarget{index_autotoc_md11}{}\doxysubsection{\texorpdfstring{4.\+1.\+2 mp3\+\_\+file.\+py}{4.\+1.\+2 mp3\+\_\+file.\+py}}\label{index_autotoc_md11}
+Fichier contenant la classe {\ttfamily MP3\+File(\+Audio\+File)}.
+
+Fonctionnalités principales \+:
+\begin{DoxyItemize}
+\item extraction des métadonnées ID3 (via mutagen)
+\item gestion du format MP3
+\item lecture des tags \+: {\ttfamily title}, {\ttfamily artist}, {\ttfamily album}
+\end{DoxyItemize}
+
+Méthodes importantes \+:
+\begin{DoxyItemize}
+\item {\ttfamily load\+\_\+metadata()} \+: lit les informations ID3 du fichier
+\end{DoxyItemize}
+
+\DoxyHorRuler{0}
+\hypertarget{index_autotoc_md13}{}\doxysubsection{\texorpdfstring{4.\+1.\+3 flac\+\_\+file.\+py}{4.\+1.\+3 flac\+\_\+file.\+py}}\label{index_autotoc_md13}
+Fichier contenant la classe {\ttfamily FLACFile(\+Audio\+File)}.
+
+Fonctionnalités principales \+:
+\begin{DoxyItemize}
+\item extraction des métadonnées propres au format FLAC
+\item utilisation de {\ttfamily mutagen.\+FLAC}
+\end{DoxyItemize}
+
+Méthodes importantes \+:
+\begin{DoxyItemize}
+\item {\ttfamily load\+\_\+metadata()} \+: lit les tags Vorbis\+Comment du fichier
+\end{DoxyItemize}
+
+\DoxyHorRuler{0}
+\hypertarget{index_autotoc_md15}{}\doxysubsection{\texorpdfstring{4.\+1.\+4 music\+\_\+library.\+py}{4.\+1.\+4 music\+\_\+library.\+py}}\label{index_autotoc_md15}
+Classe centrale responsable du chargement et du stockage des fichiers audio.
+
+Fonctionnalités principales \+:
+\begin{DoxyItemize}
+\item {\ttfamily load\+\_\+file(path)} \+: charge un fichier MP3/\+FLAC et crée l’objet correspondant ~\newline
+
+\item {\ttfamily load\+\_\+directory(path)} \+: explore un dossier et charge tous les fichiers audio ~\newline
+
+\item gestion interne d’une liste \+: {\ttfamily self.\+files}
+\end{DoxyItemize}
+
+Rôle général \+: fournir une bibliothèque audio exploitable dans le CLI.
+
+\DoxyHorRuler{0}
+\hypertarget{index_autotoc_md17}{}\doxysection{\texorpdfstring{4.\+2 Dossier library/core/ — Logique interne}{4.\+2 Dossier library/core/ — Logique interne}}\label{index_autotoc_md17}
+\hypertarget{index_autotoc_md18}{}\doxysubsection{\texorpdfstring{4.\+2.\+1 playlist\+\_\+generator.\+py}{4.\+2.\+1 playlist\+\_\+generator.\+py}}\label{index_autotoc_md18}
+Crée un fichier playlist au format XSPF.
+
+Fonctionnalités principales \+:
+\begin{DoxyItemize}
+\item exploration d’un dossier audio
+\item filtrage des fichiers valides
+\item construction d\textquotesingle{}un fichier XML XSPF
+\item méthode {\ttfamily generer\+\_\+playlist()}
+\end{DoxyItemize}\hypertarget{index_autotoc_md19}{}\doxysubsection{\texorpdfstring{4.\+2.\+2 file\+\_\+explorer.\+py}{4.\+2.\+2 file\+\_\+explorer.\+py}}\label{index_autotoc_md19}
+Fichier utilitaire facilitant la recherche de fichiers.
+
+Fonctionnalités principales \+:
+
+
+\begin{DoxyItemize}
+\item exploration récursive des dossiers
+\item filtrage des extensions audio
+\item fonctions utilisées par music\+\_\+library ou par d’autres modules
+\end{DoxyItemize}
+
+Rôle \+: offrir une couche d’accès au système de fichiers.\hypertarget{index_autotoc_md20}{}\doxysubsection{\texorpdfstring{4.\+2.\+3 metadatafetcher.\+py}{4.\+2.\+3 metadatafetcher.\+py}}\label{index_autotoc_md20}
+Fichier pour enrichir automatique des métadonnées via API externes.
+
+Fonctionnalités principales\+:
+
+
+\begin{DoxyItemize}
+\item Récupération des tags (Album, Année) via Spotify.
+\item Téléchargement de cover haute qualité via Deezer.
+\item Sauvegarde physique des nouvelles données dans les fichiers audio.
+\end{DoxyItemize}
+
+Rôle \+: Connecter la bibliothèque locale aux bases de données musicales en ligne.\hypertarget{index_autotoc_md21}{}\doxysubsection{\texorpdfstring{4.\+2.\+4 lyricsresolver.\+py}{4.\+2.\+4 lyricsresolver.\+py}}\label{index_autotoc_md21}
+Fichier pour la recherche et le nettoyage des paroles.
+
+Fonctionnalités \+:
+
+
+\begin{DoxyItemize}
+\item Recherche multi-\/sources \+: LRCLIB (principal) et Lyrics.\+ovh (secours).
+\item Nettoyage intelligent des titres (suppression des mentions parasites) via Regex.
+\item Validation des titres via Spotify pour optimiser la recherche.
+\end{DoxyItemize}
+
+Rôle \+: Fournir le texte des chansons à l\textquotesingle{}interface utilisateur.\hypertarget{index_autotoc_md22}{}\doxysection{\texorpdfstring{5. Interface CLI — Détails techniques}{5. Interface CLI — Détails techniques}}\label{index_autotoc_md22}
+Le fichier \doxylink{cli_8py}{cli.\+py} constitue l’interface principale du projet. Toutes les interactions de l’utilisateur passent par ce fichier.
+
+Il contient \+:
+
+
+\begin{DoxyItemize}
+\item les imports essentiels,
+\item les outils de lecture audio,
+\item les outils de modification des tags,
+\item la gestion des playlists,
+\item l\textquotesingle{}exploration du projet,
+\item le parseur d’arguments (argparse),
+\item la logique principale (main).
+\end{DoxyItemize}
+
+Toutes les commandes suivent la forme \+: python3 \doxylink{cli_8py}{src/cli.\+py} \mbox{[}options\mbox{]}\hypertarget{index_autotoc_md23}{}\doxysection{\texorpdfstring{5.\+1 Fonctions internes du fichier cli.\+py}{5.\+1 Fonctions internes du fichier cli.\+py}}\label{index_autotoc_md23}
+Cette section décrit les fonctions internes utilisées par l’interface en ligne de commande. ~\newline
+ Elles assurent la lecture, l’analyse, la modification et la navigation dans les fichiers audio et playlists.
+
+\DoxyHorRuler{0}
+\hypertarget{index_autotoc_md25}{}\doxysubsection{\texorpdfstring{5.\+1.\+1 chercher\+\_\+fichier\+\_\+partout(nom)}{5.\+1.\+1 chercher\+\_\+fichier\+\_\+partout(nom)}}\label{index_autotoc_md25}
+Rôle \+:
+\begin{DoxyItemize}
+\item rechercher un fichier portant un nom donné dans tout le projet,
+\item retourner son chemin absolu dès qu’un fichier correspondant est trouvé.
+\end{DoxyItemize}
+
+Fonctionnalités principales \+:
+\begin{DoxyItemize}
+\item exploration récursive du projet,
+\item comparaison du nom fourni avec chaque fichier rencontré.
+\end{DoxyItemize}
+
+Utilisation \+:
+\begin{DoxyItemize}
+\item utilisée par {\ttfamily -\/p fichier} pour retrouver un fichier audio,
+\item utilisée par {\ttfamily -\/f fichier} lorsqu’un fichier est introuvable au chemin donné.
+\end{DoxyItemize}
+
+\DoxyHorRuler{0}
+\hypertarget{index_autotoc_md27}{}\doxysubsection{\texorpdfstring{5.\+1.\+2 charger\+\_\+playlist\+\_\+xspf(path)}{5.\+1.\+2 charger\+\_\+playlist\+\_\+xspf(path)}}\label{index_autotoc_md27}
+Rôle \+:
+\begin{DoxyItemize}
+\item lire un fichier playlist au format XSPF,
+\item extraire la liste des chemins complets des fichiers audio qu’il contient.
+\end{DoxyItemize}
+
+Fonctionnement \+:
+\begin{DoxyItemize}
+\item analyse du fichier XML via {\ttfamily xml.\+etree.\+Element\+Tree},
+\item récupération des balises {\ttfamily \texorpdfstring{$<$}{<}location\texorpdfstring{$>$}{>}} dans les éléments {\ttfamily \texorpdfstring{$<$}{<}track\texorpdfstring{$>$}{>}},
+\item conversion de la valeur de chaque {\ttfamily \texorpdfstring{$<$}{<}location\texorpdfstring{$>$}{>}} en objet {\ttfamily Path}.
+\end{DoxyItemize}
+
+Utilisation \+:
+\begin{DoxyItemize}
+\item nécessaire pour l’option {\ttfamily -\/l playlist.\+xspf}.
+\end{DoxyItemize}
+
+\DoxyHorRuler{0}
+\hypertarget{index_autotoc_md29}{}\doxysubsection{\texorpdfstring{5.\+1.\+3 jouer\+\_\+fichier\+\_\+audio(path)}{5.\+1.\+3 jouer\+\_\+fichier\+\_\+audio(path)}}\label{index_autotoc_md29}
+Rôle \+:
+\begin{DoxyItemize}
+\item effectuer la lecture simple d’un fichier audio via {\ttfamily pygame.\+mixer}.
+\end{DoxyItemize}
+
+Fonctionnalités principales \+:
+\begin{DoxyItemize}
+\item initialisation du module audio,
+\item chargement et lecture du fichier,
+\item boucle bloquante attendant la commande « q » pour arrêter la lecture.
+\end{DoxyItemize}
+
+Caractéristiques \+:
+\begin{DoxyItemize}
+\item lecture mono-\/fichier,
+\item arrêt manuel par l’utilisateur,
+\item affichage du nom du fichier en cours.
+\end{DoxyItemize}
+
+\DoxyHorRuler{0}
+\hypertarget{index_autotoc_md31}{}\doxysubsection{\texorpdfstring{5.\+1.\+4 editer\+\_\+tags(path)}{5.\+1.\+4 editer\+\_\+tags(path)}}\label{index_autotoc_md31}
+Rôle \+:
+\begin{DoxyItemize}
+\item modifier les métadonnées (titre, artiste, album) d’un fichier audio.
+\end{DoxyItemize}
+
+Fonctionnement \+:
+\begin{DoxyItemize}
+\item extraction des métadonnées existantes via {\ttfamily mutagen},
+\item affichage des valeurs actuelles et saisie utilisateur,
+\item mise à jour et sauvegarde des tags dans le fichier audio.
+\end{DoxyItemize}
+
+Support \+:
+\begin{DoxyItemize}
+\item MP3 via ID3 (mutagen.\+easyid3),
+\item FLAC via Vorbis\+Comment (mutagen.\+FLAC).
+\end{DoxyItemize}
+
+Utilisation \+:
+\begin{DoxyItemize}
+\item appelée lors de l’option {\ttfamily -\/f fichier -\/e}.
+\end{DoxyItemize}
+
+\DoxyHorRuler{0}
+\hypertarget{index_autotoc_md33}{}\doxysubsection{\texorpdfstring{5.\+1.\+5 lecteur\+\_\+interactif(lib)}{5.\+1.\+5 lecteur\+\_\+interactif(lib)}}\label{index_autotoc_md33}
+Rôle \+:
+\begin{DoxyItemize}
+\item permettre la lecture interactive d’une playlist (XSPF ou dossier chargé).
+\end{DoxyItemize}
+
+Commandes utilisateur \+:
+\begin{DoxyItemize}
+\item {\ttfamily n} \+: passer immédiatement au fichier suivant,
+\item {\ttfamily p} \+: revenir au fichier précédent,
+\item {\ttfamily q} \+: arrêter la lecture.
+\end{DoxyItemize}
+
+Fonctionnement \+:
+\begin{DoxyItemize}
+\item lecture non bloquante grâce à {\ttfamily pygame.\+mixer},
+\item chargement dynamique de chaque piste selon la commande saisie,
+\item gestion d’un index interne dans la bibliothèque {\ttfamily Music\+Library},
+\item boucle continue tant que l’utilisateur ne quitte pas.
+\end{DoxyItemize}
+
+Utilisation \+:
+\begin{DoxyItemize}
+\item option {\ttfamily -\/l playlist.\+xspf},
+\item option de lecture interactive après la création d’une playlist.
+\end{DoxyItemize}\hypertarget{index_autotoc_md34}{}\doxysection{\texorpdfstring{5.\+2 Options disponibles dans le CLI}{5.\+2 Options disponibles dans le CLI}}\label{index_autotoc_md34}
+L’interface en ligne de commande repose sur le module {\ttfamily argparse}. ~\newline
+ Chaque option active une fonctionnalité spécifique du projet. ~\newline
+ Le tableau ci-\/dessous regroupe l’ensemble des options et leur rôle.
+
+
+\begin{DoxyTable}{2}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Option  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Rôle  \\
+{\ttfamily -\/p fichier}  &Lire un fichier audio  \\
+{\ttfamily -\/f fichier}  &Analyser un fichier audio (métadonnées)  \\
+{\ttfamily -\/f fichier -\/e}  &Modifier les métadonnées (titre, artiste, album)  \\
+{\ttfamily -\/d dossier}  &Charger et analyser tous les fichiers audio d’un dossier  \\
+{\ttfamily -\/d dossier -\/o playlist.\+xspf}  &Générer une playlist XSPF à partir d’un dossier  \\
+{\ttfamily -\/l playlist.\+xspf}  &Lire une playlist XSPF en mode interactif (n/p/q)  \\
+\end{DoxyTable}
+\hypertarget{index_autotoc_md35}{}\doxysubsection{\texorpdfstring{Détails des options}{Détails des options}}\label{index_autotoc_md35}
+\hypertarget{index_autotoc_md36}{}\doxysubsubsection{\texorpdfstring{{\ttfamily -\/p fichier}}{{\ttfamily -\/p fichier}}}\label{index_autotoc_md36}
+
+\begin{DoxyItemize}
+\item lance la lecture d’un fichier audio unique,
+\item utilise la fonction {\ttfamily jouer\+\_\+fichier\+\_\+audio()}.
+\end{DoxyItemize}\hypertarget{index_autotoc_md37}{}\doxysubsubsection{\texorpdfstring{{\ttfamily -\/f fichier}}{{\ttfamily -\/f fichier}}}\label{index_autotoc_md37}
+
+\begin{DoxyItemize}
+\item charge un fichier audio via {\ttfamily Music\+Library.\+load\+\_\+file()},
+\item analyse et affiche les métadonnées.
+\end{DoxyItemize}\hypertarget{index_autotoc_md38}{}\doxysubsubsection{\texorpdfstring{{\ttfamily -\/f fichier -\/e}}{{\ttfamily -\/f fichier -\/e}}}\label{index_autotoc_md38}
+
+\begin{DoxyItemize}
+\item active en plus la modification des tags via {\ttfamily editer\+\_\+tags()}.
+\end{DoxyItemize}\hypertarget{index_autotoc_md39}{}\doxysubsubsection{\texorpdfstring{{\ttfamily -\/d dossier}}{{\ttfamily -\/d dossier}}}\label{index_autotoc_md39}
+
+\begin{DoxyItemize}
+\item charge tous les fichiers audio du dossier,
+\item utilise {\ttfamily Music\+Library.\+load\+\_\+directory()}.
+\end{DoxyItemize}\hypertarget{index_autotoc_md40}{}\doxysubsubsection{\texorpdfstring{{\ttfamily -\/d dossier -\/o playlist.\+xspf}}{{\ttfamily -\/d dossier -\/o playlist.\+xspf}}}\label{index_autotoc_md40}
+
+\begin{DoxyItemize}
+\item génère une playlist XSPF via {\ttfamily Playlist\+Generator.\+generer\+\_\+playlist()}.
+\end{DoxyItemize}\hypertarget{index_autotoc_md41}{}\doxysubsubsection{\texorpdfstring{{\ttfamily -\/l playlist.\+xspf}}{{\ttfamily -\/l playlist.\+xspf}}}\label{index_autotoc_md41}
+
+\begin{DoxyItemize}
+\item charge une playlist existante,
+\item lit chaque piste via {\ttfamily lecteur\+\_\+interactif()}.
+\end{DoxyItemize}\hypertarget{index_autotoc_md42}{}\doxysection{\texorpdfstring{5.\+3 Logique interne de la fonction main()}{5.\+3 Logique interne de la fonction main()}}\label{index_autotoc_md42}
+La fonction {\ttfamily main()} constitue le cœur du fichier {\ttfamily \doxylink{cli_8py}{cli.\+py}}. ~\newline
+ Elle effectue \+:
+
+
+\begin{DoxyEnumerate}
+\item la création du parseur d’arguments,
+\item la lecture des options fournies par l\textquotesingle{}utilisateur,
+\item la résolution de chaque fonctionnalité selon l’option activée,
+\item les contrôles nécessaires (existence des fichiers, formats valides…).
+\end{DoxyEnumerate}
+
+L\textquotesingle{}ordre de traitement est volontairement structuré pour éviter les conflits entre options.\hypertarget{index_autotoc_md43}{}\doxysubsection{\texorpdfstring{Ordre de traitement des options}{Ordre de traitement des options}}\label{index_autotoc_md43}
+
+\begin{DoxyEnumerate}
+\item {\bfseries{Lecture d’une playlist XSPF ({\ttfamily -\/l})}} ~\newline
+
+\begin{DoxyItemize}
+\item chargement du fichier XSPF, ~\newline
+
+\item lecture interactive par commandes {\ttfamily n}, {\ttfamily p}, {\ttfamily q}.
+\end{DoxyItemize}
+\item {\bfseries{Création d’une playlist ({\ttfamily -\/d dossier -\/o fichier.\+xspf})}} ~\newline
+
+\begin{DoxyItemize}
+\item parcours du dossier, ~\newline
+
+\item génération d’un fichier XSPF via Playlist\+Generator.
+\end{DoxyItemize}
+\item {\bfseries{Analyse d’un dossier ({\ttfamily -\/d dossier})}} ~\newline
+
+\begin{DoxyItemize}
+\item chargement de tous les fichiers audio, ~\newline
+
+\item affichage des métadonnées.
+\end{DoxyItemize}
+\item {\bfseries{Lecture d’un fichier audio ({\ttfamily -\/p fichier})}} ~\newline
+
+\begin{DoxyItemize}
+\item lecture simple via pygame.
+\end{DoxyItemize}
+\item {\bfseries{Modification des tags ({\ttfamily -\/f fichier -\/e})}} ~\newline
+
+\begin{DoxyItemize}
+\item extraction, saisie utilisateur, écriture des modifications.
+\end{DoxyItemize}
+\item {\bfseries{Analyse d’un fichier ({\ttfamily -\/f fichier})}} ~\newline
+
+\begin{DoxyItemize}
+\item lecture et affichage des métadonnées.
+\end{DoxyItemize}
+\end{DoxyEnumerate}\hypertarget{index_autotoc_md44}{}\doxysubsection{\texorpdfstring{Rôle principal de main()}{Rôle principal de main()}}\label{index_autotoc_md44}
+
+\begin{DoxyItemize}
+\item s\textquotesingle{}assurer que seule l’option demandée est exécutée,
+\item fournir un point d\textquotesingle{}entrée unique aux fonctionnalités du projet,
+\item gérer les erreurs classiques \+: fichier introuvable, dossier vide, mauvais format,
+\item garantir une utilisation intuitive et cohérente du programme.
+\end{DoxyItemize}
+
+Ainsi, {\ttfamily main()} agit comme un routeur logique entre les différentes fonctionnalités du projet.\hypertarget{index_autotoc_md45}{}\doxysection{\texorpdfstring{6. Exemples complets d’utilisation du CLI}{6. Exemples complets d’utilisation du CLI}}\label{index_autotoc_md45}
+Cette section présente des cas d’utilisation concrets du programme, afin de faciliter la prise en main de l’interface en ligne de commande.
+
+\DoxyHorRuler{0}
+\hypertarget{index_autotoc_md47}{}\doxysubsection{\texorpdfstring{6.\+1 help}{6.\+1 help}}\label{index_autotoc_md47}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{python3\ \ src/cli.py\ -\/h}
+
+\end{DoxyCode}
+\hypertarget{index_autotoc_md48}{}\doxysubsection{\texorpdfstring{6.\+2 Analyser un fichier audio}{6.\+2 Analyser un fichier audio}}\label{index_autotoc_md48}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{python3\ \ src/cli.py\ -\/f\ audio/musique.mp3}
+
+\end{DoxyCode}
+ Affiche \+:
+\begin{DoxyItemize}
+\item le titre,
+\item l’artiste,
+\item l’album,
+\item le format,
+\item la durée (selon métadonnées disponibles).
+\end{DoxyItemize}\hypertarget{index_autotoc_md49}{}\doxysubsection{\texorpdfstring{6.\+3 Analyser un dossier complet}{6.\+3 Analyser un dossier complet}}\label{index_autotoc_md49}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{python3\ \ src/cli.py\ -\/d\ .}
+
+\end{DoxyCode}
+ Tous les fichiers audio du dossier sont chargés et affichés.\hypertarget{index_autotoc_md50}{}\doxysubsection{\texorpdfstring{6.\+4 Générer une playlist XSPF}{6.\+4 Générer une playlist XSPF}}\label{index_autotoc_md50}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{python3\ src/cli.py\ -\/d\ audio/\ -\/o\ playlist.xspf}
+
+\end{DoxyCode}
+\hypertarget{index_autotoc_md51}{}\doxysubsection{\texorpdfstring{6.\+5 Lire un fichier audio}{6.\+5 Lire un fichier audio}}\label{index_autotoc_md51}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{python3\ src/cli.py\ -\/p\ audio/musique.mp3}
+
+\end{DoxyCode}
+\hypertarget{index_autotoc_md52}{}\doxysubsection{\texorpdfstring{6.\+6 Modifier les tags d’un fichier MP3/\+FLAC}{6.\+6 Modifier les tags d’un fichier MP3/\+FLAC}}\label{index_autotoc_md52}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{python3\ src/cli.py\ -\/f\ audio/musique.mp3\ -\/e}
+
+\end{DoxyCode}
+ Le programme affiche les valeurs existantes et demande \+: Nouveau titre \mbox{[}...\mbox{]} Nouvel artiste \mbox{[}...\mbox{]} Nouvel album \mbox{[}...\mbox{]} Les changements sont sauvegardés directement dans le fichier.\hypertarget{index_autotoc_md53}{}\doxysubsection{\texorpdfstring{6.\+7 Lire une playlist de manière interactive}{6.\+7 Lire une playlist de manière interactive}}\label{index_autotoc_md53}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{python3\ src/cli.py\ -\/l\ playlist.xspf}
+
+\end{DoxyCode}
+ Commandes disponibles \+:
+\begin{DoxyItemize}
+\item n \+: piste suivante,
+\item p \+: piste précédente,
+\item q \+: quitter. La lecture utilise pygame et permet un changement instantané de piste.
+\end{DoxyItemize}\hypertarget{index_autotoc_md54}{}\doxysubsection{\texorpdfstring{6.\+8 Interface Graphique (GUI) — Détails techniques}{6.\+8 Interface Graphique (GUI) — Détails techniques}}\label{index_autotoc_md54}
+Le fichier \doxylink{gui_8py}{src/gui.\+py} propose une interface utilisateur graphique moderne basée sur Tkinter. Elle permet de bénéficier de toutes les fonctionnalités du projet (lecture, gestion, édition) dans un environnement visuel ergonomique.
+
+
+\begin{DoxyItemize}
+\item L\textquotesingle{}interface repose sur plusieurs bibliothèques clés \+:
+\item Tkinter \& TTL \+: Pour la structure de base.
+\item Sun Valley TTK (sv\+\_\+ttk) \+: Pour l\textquotesingle{}application d\textquotesingle{}un thème moderne (Windows 11 style).
+\item Tkinter\+DnD \+: Pour la gestion du glisser-\/déposer (Drag \& Drop).
+\item Pillow (PIL) \+: Pour la gestion et l\textquotesingle{}affichage des pochettes d\textquotesingle{}album.
+\item Pygame \+: Pour le moteur audio (backend de lecture).
+\end{DoxyItemize}\hypertarget{index_autotoc_md55}{}\doxysubsection{\texorpdfstring{6.\+1 Architecture de l\textquotesingle{}interface (Music\+Library\+GUI)}{6.\+1 Architecture de l\textquotesingle{}interface (Music\+Library\+GUI)}}\label{index_autotoc_md55}
+La classe principale Music\+Library\+GUI orchestre l\textquotesingle{}ensemble de l\textquotesingle{}affichage. Elle est divisée en trois zones principales \+:\hypertarget{index_autotoc_md56}{}\doxysection{\texorpdfstring{La Sidebar (Barre latérale) \+:}{La Sidebar (Barre latérale) \+:}}\label{index_autotoc_md56}
+
+\begin{DoxyItemize}
+\item Barre de recherche dynamique (filtre les pistes en temps réel).
+\item Boutons d\textquotesingle{}importation (Dossier, Playlist XSPF).
+\item Liste des pistes (Treeview) affichant Titre, Artiste et Durée.
+\item Gestion du tri par colonnes.
+\end{DoxyItemize}\hypertarget{index_autotoc_md57}{}\doxysection{\texorpdfstring{La Zone Principale (Main Content) \+:}{La Zone Principale (Main Content) \+:}}\label{index_autotoc_md57}
+
+\begin{DoxyItemize}
+\item Affichage de la pochette d\textquotesingle{}album (extraite des tags ou image locale).
+\item Affichage des métadonnées détaillées (Titre, Artiste, Album, Année).
+\item Module de Paroles \+: Zone de texte scrollable pour afficher les paroles récupérées.
+\item Boutons d\textquotesingle{}édition \+: Permet de modifier les tags manuellement ou de lancer une requête API pour mise à jour automatique.
+\end{DoxyItemize}\hypertarget{index_autotoc_md58}{}\doxysection{\texorpdfstring{La Barre de Lecture (Player Bar) \+:}{La Barre de Lecture (Player Bar) \+:}}\label{index_autotoc_md58}
+
+\begin{DoxyItemize}
+\item Contrôles de lecture \+: Play/\+Pause, Suivant, Précédent.
+\item Fonctions avancées \+: Mode Aléatoire (Shuffle), Répétition (Repeat).
+\item Barre de progression interactive (cliquable pour naviguer dans la piste).
+\item Contrôle du volume et bouton Mute.
+\item Sélecteur de thème (Jour / Nuit).
+\end{DoxyItemize}\hypertarget{index_autotoc_md59}{}\doxysubsection{\texorpdfstring{6.\+2 Fonctionnalités spécifiques au GUI}{6.\+2 Fonctionnalités spécifiques au GUI}}\label{index_autotoc_md59}
+\hypertarget{index_autotoc_md60}{}\doxysection{\texorpdfstring{Gestion des Thèmes}{Gestion des Thèmes}}\label{index_autotoc_md60}
+L\textquotesingle{}application intègre un système de thèmes dynamique (Clair / Sombre). Le changement de thème met à jour instantanément les couleurs de fond, les polices, les boutons et le style des listes grâce à la méthode \+\_\+apply\+\_\+theme().\hypertarget{index_autotoc_md61}{}\doxysection{\texorpdfstring{Glisser-\/\+Déposer (Drag \& Drop)}{Glisser-\/\+Déposer (Drag \& Drop)}}\label{index_autotoc_md61}
+Grâce à tkinterdnd2, l\textquotesingle{}utilisateur peut glisser des fichiers audio ou des dossiers directement depuis son explorateur de fichiers vers la fenêtre de l\textquotesingle{}application pour les ajouter à la liste de lecture courante.\hypertarget{index_autotoc_md62}{}\doxysection{\texorpdfstring{Édition des métadonnées}{Édition des métadonnées}}\label{index_autotoc_md62}
+Contrairement au CLI qui procède par arguments, le GUI offre deux modes d\textquotesingle{}édition \+:
+
+
+\begin{DoxyItemize}
+\item Manuel \+: Une fenêtre modale permet de saisir les tags (Titre, Artiste, Album, Année).
+\item Automatique (API) \+: Un bouton dédié lance la recherche de métadonnées via Metadata\+Fetcher et met à jour l\textquotesingle{}affichage et le fichier automatiquement.
+\end{DoxyItemize}\hypertarget{index_autotoc_md63}{}\doxysubsection{\texorpdfstring{7. Installation du projet}{7. Installation du projet}}\label{index_autotoc_md63}
+L’installation recommandée s’appuie sur un environnement virtuel Python.
+
+\DoxyHorRuler{0}
+\hypertarget{index_autotoc_md65}{}\doxysubsection{\texorpdfstring{7.\+1 Cloner ou télécharger le projet}{7.\+1 Cloner ou télécharger le projet}}\label{index_autotoc_md65}
+Placez le dossier du projet sur votre machine (Windows, Linux ou mac\+OS).
+
+\DoxyHorRuler{0}
+\hypertarget{index_autotoc_md67}{}\doxysubsection{\texorpdfstring{7.\+2 Créer un environnement virtuel}{7.\+2 Créer un environnement virtuel}}\label{index_autotoc_md67}
+Sur mac\+OS / Linux \+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{python3\ -\/m\ venv\ venv}
+\DoxyCodeLine{source\ venv/bin/activate}
+
+\end{DoxyCode}
+
+
+Sur Windows \+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{python\ -\/m\ venv\ venv}
+\DoxyCodeLine{venv\(\backslash\)Scripts\(\backslash\)activate}
+
+\end{DoxyCode}
+ \hypertarget{index_autotoc_md68}{}\doxysubsection{\texorpdfstring{7.\+3 Installer les dépendances}{7.\+3 Installer les dépendances}}\label{index_autotoc_md68}
+Pour le CLI\+:
+\begin{DoxyItemize}
+\item pip install pygame
+\item pip install mutagen
+\item pip install playsound
+\end{DoxyItemize}
+
+Pour le GUI\+:
+\begin{DoxyItemize}
+\item pip install sv\+\_\+ttk
+\item pip install tkinterdnd2
+\item pip install Pillow
+\item pip install requests
+\end{DoxyItemize}\hypertarget{index_autotoc_md69}{}\doxysubsection{\texorpdfstring{7.\+5 Désactiver l’environnement virtuel}{7.\+5 Désactiver l’environnement virtuel}}\label{index_autotoc_md69}
+deactivate 

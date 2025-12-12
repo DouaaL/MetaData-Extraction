@@ -1,0 +1,156 @@
+\doxysection{Référence de l\textquotesingle{}espace de nommage cli}
+\hypertarget{namespacecli}{}\label{namespacecli}\index{cli@{cli}}
+\doxysubsubsection*{Fonctions}
+\begin{DoxyCompactItemize}
+\item 
+Path\texorpdfstring{$\vert$}{|}None \mbox{\hyperlink{namespacecli_a5c9400f810c00b4398148b5a46037cfb}{chercher\+\_\+fichier\+\_\+partout}} (str nom)
+\item 
+list\mbox{[}Path\mbox{]} \mbox{\hyperlink{namespacecli_ab8073e104227da64371dbb09cac462c2}{charger\+\_\+playlist\+\_\+xspf}} (Path filepath)
+\item 
+None \mbox{\hyperlink{namespacecli_ad3c3922b94810055dcaad4f018424de1}{jouer\+\_\+fichier\+\_\+audio}} (Path filepath)
+\item 
+None \mbox{\hyperlink{namespacecli_ad9c85439b1c19e50fe0f9f83e2c3c987}{editer\+\_\+tags}} (Path filepath)
+\item 
+None \mbox{\hyperlink{namespacecli_aee41443ccd6c90e9470cae459f73b3c6}{lecteur\+\_\+interactif}} (\mbox{\hyperlink{classlibrary_1_1models_1_1music__library_1_1_music_library}{Music\+Library}} lib)
+\item 
+None \mbox{\hyperlink{namespacecli_a75c0d55e81958f861c860414b4e33e11}{main}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{namespacecli_a9559aa98eee768cf4c104e9f2bfb0885}{HAS\+\_\+\+PYGAME}} = True
+\item 
+bool \mbox{\hyperlink{namespacecli_a9ba0719deedf6c919baf54a5954ff736}{HAS\+\_\+\+PLAYSOUND}} = True
+\item 
+bool \mbox{\hyperlink{namespacecli_a29568f6a13296176c1019ab38394e1b7}{HAS\+\_\+\+MUTAGEN}} = True
+\item 
+\mbox{\hyperlink{namespacecli_acf41f26e96988decaf6a75bb82fdc637}{SRC\+\_\+\+DIR}} = Path(\+\_\+\+\_\+file\+\_\+\+\_\+).resolve().parent
+\item 
+\mbox{\hyperlink{namespacecli_aa3fe5f61a2b0ffed26a4366edf749fc7}{PROJECT\+\_\+\+DIR}} = SRC\+\_\+\+DIR.\+parent
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{namespacecli_doc-func-members}
+\doxysubsection{Documentation des fonctions}
+\Hypertarget{namespacecli_ab8073e104227da64371dbb09cac462c2}\index{cli@{cli}!charger\_playlist\_xspf@{charger\_playlist\_xspf}}
+\index{charger\_playlist\_xspf@{charger\_playlist\_xspf}!cli@{cli}}
+\doxysubsubsection{\texorpdfstring{charger\_playlist\_xspf()}{charger\_playlist\_xspf()}}
+{\footnotesize\ttfamily \label{namespacecli_ab8073e104227da64371dbb09cac462c2} 
+ list\mbox{[}Path\mbox{]} cli.\+charger\+\_\+playlist\+\_\+xspf (\begin{DoxyParamCaption}\item[{Path}]{filepath}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Lit un fichier XSPF et retourne la liste des chemins audio trouvés.
+
+Args:
+    filepath: Chemin vers le fichier .xspf
+
+Returns:
+    Liste de Path vers les fichiers audio.
+\end{DoxyVerb}
+ \Hypertarget{namespacecli_a5c9400f810c00b4398148b5a46037cfb}\index{cli@{cli}!chercher\_fichier\_partout@{chercher\_fichier\_partout}}
+\index{chercher\_fichier\_partout@{chercher\_fichier\_partout}!cli@{cli}}
+\doxysubsubsection{\texorpdfstring{chercher\_fichier\_partout()}{chercher\_fichier\_partout()}}
+{\footnotesize\ttfamily \label{namespacecli_a5c9400f810c00b4398148b5a46037cfb} 
+ Path \texorpdfstring{$\vert$}{|} None cli.\+chercher\+\_\+fichier\+\_\+partout (\begin{DoxyParamCaption}\item[{str}]{nom}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Cherche un fichier par son nom dans tout le projet.
+
+Args:
+    nom: Nom (ou chemin) du fichier recherché.
+
+Returns:
+    Path du fichier trouvé, sinon None.
+\end{DoxyVerb}
+ \Hypertarget{namespacecli_ad9c85439b1c19e50fe0f9f83e2c3c987}\index{cli@{cli}!editer\_tags@{editer\_tags}}
+\index{editer\_tags@{editer\_tags}!cli@{cli}}
+\doxysubsubsection{\texorpdfstring{editer\_tags()}{editer\_tags()}}
+{\footnotesize\ttfamily \label{namespacecli_ad9c85439b1c19e50fe0f9f83e2c3c987} 
+ None cli.\+editer\+\_\+tags (\begin{DoxyParamCaption}\item[{Path}]{filepath}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Modifie les tags d'un fichier MP3 ou FLAC (title, artist, album) via mutagen.
+
+Args:
+    filepath: Chemin du fichier audio (.mp3 ou .flac)
+\end{DoxyVerb}
+ \Hypertarget{namespacecli_ad3c3922b94810055dcaad4f018424de1}\index{cli@{cli}!jouer\_fichier\_audio@{jouer\_fichier\_audio}}
+\index{jouer\_fichier\_audio@{jouer\_fichier\_audio}!cli@{cli}}
+\doxysubsubsection{\texorpdfstring{jouer\_fichier\_audio()}{jouer\_fichier\_audio()}}
+{\footnotesize\ttfamily \label{namespacecli_ad3c3922b94810055dcaad4f018424de1} 
+ None cli.\+jouer\+\_\+fichier\+\_\+audio (\begin{DoxyParamCaption}\item[{Path}]{filepath}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Lit un fichier audio.
+
+Contrôles (via input):
+    q : stop
+    espace : pause / reprise
+
+Note:
+    L'espace est détecté comme " " (espace) après validation Entrée.
+\end{DoxyVerb}
+ \Hypertarget{namespacecli_aee41443ccd6c90e9470cae459f73b3c6}\index{cli@{cli}!lecteur\_interactif@{lecteur\_interactif}}
+\index{lecteur\_interactif@{lecteur\_interactif}!cli@{cli}}
+\doxysubsubsection{\texorpdfstring{lecteur\_interactif()}{lecteur\_interactif()}}
+{\footnotesize\ttfamily \label{namespacecli_aee41443ccd6c90e9470cae459f73b3c6} 
+ None cli.\+lecteur\+\_\+interactif (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classlibrary_1_1models_1_1music__library_1_1_music_library}{Music\+Library}}}]{lib}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Lecture interactive d'une liste de morceaux (playlist).
+
+Commandes:
+    n : morceau suivant
+    p : morceau précédent
+    q : quitter
+    espace : pause / reprise
+
+Note:
+    L'espace est détecté comme " " (espace) après validation Entrée.
+\end{DoxyVerb}
+ \Hypertarget{namespacecli_a75c0d55e81958f861c860414b4e33e11}\index{cli@{cli}!main@{main}}
+\index{main@{main}!cli@{cli}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily \label{namespacecli_a75c0d55e81958f861c860414b4e33e11} 
+ None cli.\+main (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Point d'entrée CLI.
+Gère les options:
+    -l : lire une playlist XSPF
+    -d/-o : générer une playlist XSPF depuis un dossier
+    -d : analyser un dossier
+    -p : lire un fichier
+    -f : analyser un fichier
+    -f -e : modifier les tags
+\end{DoxyVerb}
+ 
+
+\label{doc-var-members}
+\Hypertarget{namespacecli_doc-var-members}
+\doxysubsection{Documentation des variables}
+\Hypertarget{namespacecli_a29568f6a13296176c1019ab38394e1b7}\index{cli@{cli}!HAS\_MUTAGEN@{HAS\_MUTAGEN}}
+\index{HAS\_MUTAGEN@{HAS\_MUTAGEN}!cli@{cli}}
+\doxysubsubsection{\texorpdfstring{HAS\_MUTAGEN}{HAS\_MUTAGEN}}
+{\footnotesize\ttfamily \label{namespacecli_a29568f6a13296176c1019ab38394e1b7} 
+bool cli.\+HAS\+\_\+\+MUTAGEN = True}
+
+\Hypertarget{namespacecli_a9ba0719deedf6c919baf54a5954ff736}\index{cli@{cli}!HAS\_PLAYSOUND@{HAS\_PLAYSOUND}}
+\index{HAS\_PLAYSOUND@{HAS\_PLAYSOUND}!cli@{cli}}
+\doxysubsubsection{\texorpdfstring{HAS\_PLAYSOUND}{HAS\_PLAYSOUND}}
+{\footnotesize\ttfamily \label{namespacecli_a9ba0719deedf6c919baf54a5954ff736} 
+bool cli.\+HAS\+\_\+\+PLAYSOUND = True}
+
+\Hypertarget{namespacecli_a9559aa98eee768cf4c104e9f2bfb0885}\index{cli@{cli}!HAS\_PYGAME@{HAS\_PYGAME}}
+\index{HAS\_PYGAME@{HAS\_PYGAME}!cli@{cli}}
+\doxysubsubsection{\texorpdfstring{HAS\_PYGAME}{HAS\_PYGAME}}
+{\footnotesize\ttfamily \label{namespacecli_a9559aa98eee768cf4c104e9f2bfb0885} 
+bool cli.\+HAS\+\_\+\+PYGAME = True}
+
+\Hypertarget{namespacecli_aa3fe5f61a2b0ffed26a4366edf749fc7}\index{cli@{cli}!PROJECT\_DIR@{PROJECT\_DIR}}
+\index{PROJECT\_DIR@{PROJECT\_DIR}!cli@{cli}}
+\doxysubsubsection{\texorpdfstring{PROJECT\_DIR}{PROJECT\_DIR}}
+{\footnotesize\ttfamily \label{namespacecli_aa3fe5f61a2b0ffed26a4366edf749fc7} 
+cli.\+PROJECT\+\_\+\+DIR = SRC\+\_\+\+DIR.\+parent}
+
+\Hypertarget{namespacecli_acf41f26e96988decaf6a75bb82fdc637}\index{cli@{cli}!SRC\_DIR@{SRC\_DIR}}
+\index{SRC\_DIR@{SRC\_DIR}!cli@{cli}}
+\doxysubsubsection{\texorpdfstring{SRC\_DIR}{SRC\_DIR}}
+{\footnotesize\ttfamily \label{namespacecli_acf41f26e96988decaf6a75bb82fdc637} 
+cli.\+SRC\+\_\+\+DIR = Path(\+\_\+\+\_\+file\+\_\+\+\_\+).resolve().parent}
+

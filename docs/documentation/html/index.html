@@ -1,0 +1,612 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>PyMetaPlay: Projet Python – Gestion et Lecture de Fichiers Audio (CLI + GUI)</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">PyMetaPlay
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Généré par Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Recherche',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('index.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Chargement...</div>
+<div class="SRStatus" id="Searching">Recherche...</div>
+<div class="SRStatus" id="NoMatches">Aucune correspondance</div>
+</div>
+</div>
+</div>
+</div>
+
+<div><div class="header">
+  <div class="headertitle"><div class="title">Projet Python – Gestion et Lecture de Fichiers Audio (CLI + GUI) </div></div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><p><a class="anchor" id="md__r_e_a_d_m_e"></a></p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md1"></a>
+1. Informations générales</h1>
+<ul>
+<li>Nom : Yacine Brahimi | Soumeya Dahmen | Lekhal Douaa</li>
+<li>UE : Mineure Python: un langage Multipass</li>
+<li>Projet : Application de gestion et lecture de fichiers audio <br  />
+</li>
+<li>Formation : L3 Informatique <br  />
+</li>
+<li>Date : Décembre-2025 <br  />
+</li>
+</ul>
+<hr  />
+<h1 class="doxsection"><a class="anchor" id="autotoc_md3"></a>
+2. Présentation générale du projet</h1>
+<p>Ce projet a pour objectif d’implémenter une application Python capable de :</p>
+<ul>
+<li>lire des fichiers audio (MP3 / FLAC),</li>
+<li>extraire et afficher leurs métadonnées,</li>
+<li>modifier les tags directement dans les fichiers,</li>
+<li>parcourir un dossier audio complet,</li>
+<li>générer une playlist au format XSPF,</li>
+<li>lire les playlists en mode interactif (piste suivante / précédente),</li>
+<li>offrir une interface graphique (GUI) et inerface console (CLI).</li>
+</ul>
+<p>Le projet est construit selon une <b>architecture modulaire</b>, séparant :</p>
+<ul>
+<li><b>l’interface utilisateur (CLI et GUI)</b>, <br  />
+</li>
+<li><b>la logique métier</b> (playlist, bibliothèque audio), <br  />
+</li>
+<li><b>la représentation des fichiers audio</b> (MP3, FLAC, etc.).</li>
+</ul>
+<p>Cette organisation rend le projet plus clair, maintenable et évolutif.</p>
+<hr  />
+<h1 class="doxsection"><a class="anchor" id="autotoc_md5"></a>
+3. Structure du projet</h1>
+<p>L’arborescence du projet est la suivante : </p><div class="fragment"><div class="line">Projet_Python/</div>
+<div class="line">│</div>
+<div class="line">├── doc/</div>
+<div class="line">│  │</div>
+<div class="line">│  ├── diaporama</div>
+<div class="line">│  ├── documentation</div>
+<div class="line">│  └── rapport</div>
+<div class="line">│</div>
+<div class="line">├── src/</div>
+<div class="line">│ │</div>
+<div class="line">│ ├── audio/ # Fichiers audio de test</div>
+<div class="line">│ ├── cli.py # Interface en ligne de commande (CLI)</div>
+<div class="line">│ ├── gui.py # Interface graphique (GUI)</div>
+<div class="line">│ │</div>
+<div class="line">│ └── library/ # Modules internes du projet</div>
+<div class="line">│    │</div>
+<div class="line">│    ├── models/ # Classes représentant les fichiers audio</div>
+<div class="line">│    │  ├── audio_file.py</div>
+<div class="line">│    │  ├── mp3_file.py</div>
+<div class="line">│    │  ├── flac_file.py</div>
+<div class="line">│    │  └── music_library.py</div>
+<div class="line">│    │</div>
+<div class="line">│    └── core/ # Logique métier (génération et gestion de playlists)</div>
+<div class="line">│      ├── lyricsresolver.py </div>
+<div class="line">│      ├── metadatafetcher.py </div>
+<div class="line">│      ├── playlist_generator.py </div>
+<div class="line">│      └── file_explorer.py</div>
+<div class="line">│      </div>
+<div class="line">│</div>
+<div class="line">│</div>
+<div class="line">└── README.md</div>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md6"></a>
+4. Description détaillée des fichiers du projet</h1>
+<p>Cette section présente l’ensemble des fichiers Python du projet, organisés par dossiers, avec une description de leurs rôles et de leurs principales fonctions.</p>
+<hr  />
+<h1 class="doxsection"><a class="anchor" id="autotoc_md8"></a>
+4.1 Dossier library/models/ — Représentation des fichiers audio</h1>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md9"></a>
+4.1.1 audio_file.py</h2>
+<p>Fichier contenant la classe abstraite <span class="tt">AudioFile</span>. <br  />
+ Elle représente la structure minimale d’un fichier audio.</p>
+<p>Fonctionnalités principales :</p><ul>
+<li>attributs communs : <span class="tt">filepath</span>, <span class="tt">metadata</span>, <span class="tt">extension</span></li>
+<li>méthode <span class="tt">load_metadata()</span> (à surcharger) <br  />
+</li>
+<li>base pour les classes MP3File et FLACFile</li>
+</ul>
+<p>Objectif : fournir une interface commune à tous les types de fichiers audio.</p>
+<hr  />
+<h2 class="doxsection"><a class="anchor" id="autotoc_md11"></a>
+4.1.2 mp3_file.py</h2>
+<p>Fichier contenant la classe <span class="tt">MP3File(AudioFile)</span>.</p>
+<p>Fonctionnalités principales :</p><ul>
+<li>extraction des métadonnées ID3 (via mutagen)</li>
+<li>gestion du format MP3</li>
+<li>lecture des tags : <span class="tt">title</span>, <span class="tt">artist</span>, <span class="tt">album</span></li>
+</ul>
+<p>Méthodes importantes :</p><ul>
+<li><span class="tt">load_metadata()</span> : lit les informations ID3 du fichier</li>
+</ul>
+<hr  />
+<h2 class="doxsection"><a class="anchor" id="autotoc_md13"></a>
+4.1.3 flac_file.py</h2>
+<p>Fichier contenant la classe <span class="tt">FLACFile(AudioFile)</span>.</p>
+<p>Fonctionnalités principales :</p><ul>
+<li>extraction des métadonnées propres au format FLAC</li>
+<li>utilisation de <span class="tt">mutagen.FLAC</span></li>
+</ul>
+<p>Méthodes importantes :</p><ul>
+<li><span class="tt">load_metadata()</span> : lit les tags VorbisComment du fichier</li>
+</ul>
+<hr  />
+<h2 class="doxsection"><a class="anchor" id="autotoc_md15"></a>
+4.1.4 music_library.py</h2>
+<p>Classe centrale responsable du chargement et du stockage des fichiers audio.</p>
+<p>Fonctionnalités principales :</p><ul>
+<li><span class="tt">load_file(path)</span> : charge un fichier MP3/FLAC et crée l’objet correspondant <br  />
+</li>
+<li><span class="tt">load_directory(path)</span> : explore un dossier et charge tous les fichiers audio <br  />
+</li>
+<li>gestion interne d’une liste : <span class="tt">self.files</span></li>
+</ul>
+<p>Rôle général : fournir une bibliothèque audio exploitable dans le CLI.</p>
+<hr  />
+<h1 class="doxsection"><a class="anchor" id="autotoc_md17"></a>
+4.2 Dossier library/core/ — Logique interne</h1>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md18"></a>
+4.2.1 playlist_generator.py</h2>
+<p>Crée un fichier playlist au format XSPF.</p>
+<p>Fonctionnalités principales :</p><ul>
+<li>exploration d’un dossier audio</li>
+<li>filtrage des fichiers valides</li>
+<li>construction d'un fichier XML XSPF</li>
+<li>méthode <span class="tt">generer_playlist()</span></li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md19"></a>
+4.2.2 file_explorer.py</h2>
+<p>Fichier utilitaire facilitant la recherche de fichiers.</p>
+<p>Fonctionnalités principales :</p>
+<ul>
+<li>exploration récursive des dossiers</li>
+<li>filtrage des extensions audio</li>
+<li>fonctions utilisées par music_library ou par d’autres modules</li>
+</ul>
+<p>Rôle : offrir une couche d’accès au système de fichiers.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md20"></a>
+4.2.3 metadatafetcher.py</h2>
+<p>Fichier pour enrichir automatique des métadonnées via API externes.</p>
+<p>Fonctionnalités principales:</p>
+<ul>
+<li>Récupération des tags (Album, Année) via Spotify.</li>
+<li>Téléchargement de cover haute qualité via Deezer.</li>
+<li>Sauvegarde physique des nouvelles données dans les fichiers audio.</li>
+</ul>
+<p>Rôle : Connecter la bibliothèque locale aux bases de données musicales en ligne.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md21"></a>
+4.2.4 lyricsresolver.py</h2>
+<p>Fichier pour la recherche et le nettoyage des paroles.</p>
+<p>Fonctionnalités :</p>
+<ul>
+<li>Recherche multi-sources : LRCLIB (principal) et Lyrics.ovh (secours).</li>
+<li>Nettoyage intelligent des titres (suppression des mentions parasites) via Regex.</li>
+<li>Validation des titres via Spotify pour optimiser la recherche.</li>
+</ul>
+<p>Rôle : Fournir le texte des chansons à l'interface utilisateur.</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md22"></a>
+5. Interface CLI — Détails techniques</h1>
+<p>Le fichier <a class="el" href="cli_8py.html">cli.py</a> constitue l’interface principale du projet. Toutes les interactions de l’utilisateur passent par ce fichier.</p>
+<p>Il contient :</p>
+<ul>
+<li>les imports essentiels,</li>
+<li>les outils de lecture audio,</li>
+<li>les outils de modification des tags,</li>
+<li>la gestion des playlists,</li>
+<li>l'exploration du projet,</li>
+<li>le parseur d’arguments (argparse),</li>
+<li>la logique principale (main).</li>
+</ul>
+<p>Toutes les commandes suivent la forme : python3 <a class="el" href="cli_8py.html">src/cli.py</a> [options]</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md23"></a>
+5.1 Fonctions internes du fichier cli.py</h1>
+<p>Cette section décrit les fonctions internes utilisées par l’interface en ligne de commande. <br  />
+ Elles assurent la lecture, l’analyse, la modification et la navigation dans les fichiers audio et playlists.</p>
+<hr  />
+<h2 class="doxsection"><a class="anchor" id="autotoc_md25"></a>
+5.1.1 chercher_fichier_partout(nom)</h2>
+<p>Rôle :</p><ul>
+<li>rechercher un fichier portant un nom donné dans tout le projet,</li>
+<li>retourner son chemin absolu dès qu’un fichier correspondant est trouvé.</li>
+</ul>
+<p>Fonctionnalités principales :</p><ul>
+<li>exploration récursive du projet,</li>
+<li>comparaison du nom fourni avec chaque fichier rencontré.</li>
+</ul>
+<p>Utilisation :</p><ul>
+<li>utilisée par <span class="tt">-p fichier</span> pour retrouver un fichier audio,</li>
+<li>utilisée par <span class="tt">-f fichier</span> lorsqu’un fichier est introuvable au chemin donné.</li>
+</ul>
+<hr  />
+<h2 class="doxsection"><a class="anchor" id="autotoc_md27"></a>
+5.1.2 charger_playlist_xspf(path)</h2>
+<p>Rôle :</p><ul>
+<li>lire un fichier playlist au format XSPF,</li>
+<li>extraire la liste des chemins complets des fichiers audio qu’il contient.</li>
+</ul>
+<p>Fonctionnement :</p><ul>
+<li>analyse du fichier XML via <span class="tt">xml.etree.ElementTree</span>,</li>
+<li>récupération des balises <span class="tt">&lt;location&gt;</span> dans les éléments <span class="tt">&lt;track&gt;</span>,</li>
+<li>conversion de la valeur de chaque <span class="tt">&lt;location&gt;</span> en objet <span class="tt">Path</span>.</li>
+</ul>
+<p>Utilisation :</p><ul>
+<li>nécessaire pour l’option <span class="tt">-l playlist.xspf</span>.</li>
+</ul>
+<hr  />
+<h2 class="doxsection"><a class="anchor" id="autotoc_md29"></a>
+5.1.3 jouer_fichier_audio(path)</h2>
+<p>Rôle :</p><ul>
+<li>effectuer la lecture simple d’un fichier audio via <span class="tt">pygame.mixer</span>.</li>
+</ul>
+<p>Fonctionnalités principales :</p><ul>
+<li>initialisation du module audio,</li>
+<li>chargement et lecture du fichier,</li>
+<li>boucle bloquante attendant la commande « q » pour arrêter la lecture.</li>
+</ul>
+<p>Caractéristiques :</p><ul>
+<li>lecture mono-fichier,</li>
+<li>arrêt manuel par l’utilisateur,</li>
+<li>affichage du nom du fichier en cours.</li>
+</ul>
+<hr  />
+<h2 class="doxsection"><a class="anchor" id="autotoc_md31"></a>
+5.1.4 editer_tags(path)</h2>
+<p>Rôle :</p><ul>
+<li>modifier les métadonnées (titre, artiste, album) d’un fichier audio.</li>
+</ul>
+<p>Fonctionnement :</p><ul>
+<li>extraction des métadonnées existantes via <span class="tt">mutagen</span>,</li>
+<li>affichage des valeurs actuelles et saisie utilisateur,</li>
+<li>mise à jour et sauvegarde des tags dans le fichier audio.</li>
+</ul>
+<p>Support :</p><ul>
+<li>MP3 via ID3 (mutagen.easyid3),</li>
+<li>FLAC via VorbisComment (mutagen.FLAC).</li>
+</ul>
+<p>Utilisation :</p><ul>
+<li>appelée lors de l’option <span class="tt">-f fichier -e</span>.</li>
+</ul>
+<hr  />
+<h2 class="doxsection"><a class="anchor" id="autotoc_md33"></a>
+5.1.5 lecteur_interactif(lib)</h2>
+<p>Rôle :</p><ul>
+<li>permettre la lecture interactive d’une playlist (XSPF ou dossier chargé).</li>
+</ul>
+<p>Commandes utilisateur :</p><ul>
+<li><span class="tt">n</span> : passer immédiatement au fichier suivant,</li>
+<li><span class="tt">p</span> : revenir au fichier précédent,</li>
+<li><span class="tt">q</span> : arrêter la lecture.</li>
+</ul>
+<p>Fonctionnement :</p><ul>
+<li>lecture non bloquante grâce à <span class="tt">pygame.mixer</span>,</li>
+<li>chargement dynamique de chaque piste selon la commande saisie,</li>
+<li>gestion d’un index interne dans la bibliothèque <span class="tt">MusicLibrary</span>,</li>
+<li>boucle continue tant que l’utilisateur ne quitte pas.</li>
+</ul>
+<p>Utilisation :</p><ul>
+<li>option <span class="tt">-l playlist.xspf</span>,</li>
+<li>option de lecture interactive après la création d’une playlist.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md34"></a>
+5.2 Options disponibles dans le CLI</h1>
+<p>L’interface en ligne de commande repose sur le module <span class="tt">argparse</span>. <br  />
+ Chaque option active une fonctionnalité spécifique du projet. <br  />
+ Le tableau ci-dessous regroupe l’ensemble des options et leur rôle.</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Option  </th><th class="markdownTableHeadNone">Rôle  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">-p fichier</span>  </td><td class="markdownTableBodyNone">Lire un fichier audio  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">-f fichier</span>  </td><td class="markdownTableBodyNone">Analyser un fichier audio (métadonnées)  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">-f fichier -e</span>  </td><td class="markdownTableBodyNone">Modifier les métadonnées (titre, artiste, album)  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">-d dossier</span>  </td><td class="markdownTableBodyNone">Charger et analyser tous les fichiers audio d’un dossier  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">-d dossier -o playlist.xspf</span>  </td><td class="markdownTableBodyNone">Générer une playlist XSPF à partir d’un dossier  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">-l playlist.xspf</span>  </td><td class="markdownTableBodyNone">Lire une playlist XSPF en mode interactif (n/p/q)  </td></tr>
+</table>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md35"></a>
+Détails des options</h2>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md36"></a>
+<span class="tt">-p fichier</span></h3>
+<ul>
+<li>lance la lecture d’un fichier audio unique,</li>
+<li>utilise la fonction <span class="tt">jouer_fichier_audio()</span>.</li>
+</ul>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md37"></a>
+<span class="tt">-f fichier</span></h3>
+<ul>
+<li>charge un fichier audio via <span class="tt">MusicLibrary.load_file()</span>,</li>
+<li>analyse et affiche les métadonnées.</li>
+</ul>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md38"></a>
+<span class="tt">-f fichier -e</span></h3>
+<ul>
+<li>active en plus la modification des tags via <span class="tt">editer_tags()</span>.</li>
+</ul>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md39"></a>
+<span class="tt">-d dossier</span></h3>
+<ul>
+<li>charge tous les fichiers audio du dossier,</li>
+<li>utilise <span class="tt">MusicLibrary.load_directory()</span>.</li>
+</ul>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md40"></a>
+<span class="tt">-d dossier -o playlist.xspf</span></h3>
+<ul>
+<li>génère une playlist XSPF via <span class="tt">PlaylistGenerator.generer_playlist()</span>.</li>
+</ul>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md41"></a>
+<span class="tt">-l playlist.xspf</span></h3>
+<ul>
+<li>charge une playlist existante,</li>
+<li>lit chaque piste via <span class="tt">lecteur_interactif()</span>.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md42"></a>
+5.3 Logique interne de la fonction main()</h1>
+<p>La fonction <span class="tt">main()</span> constitue le cœur du fichier <span class="tt"><a class="el" href="cli_8py.html">cli.py</a></span>. <br  />
+ Elle effectue :</p>
+<ol type="1">
+<li>la création du parseur d’arguments,</li>
+<li>la lecture des options fournies par l'utilisateur,</li>
+<li>la résolution de chaque fonctionnalité selon l’option activée,</li>
+<li>les contrôles nécessaires (existence des fichiers, formats valides…).</li>
+</ol>
+<p>L'ordre de traitement est volontairement structuré pour éviter les conflits entre options.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md43"></a>
+Ordre de traitement des options</h2>
+<ol type="1">
+<li><b>Lecture d’une playlist XSPF (<span class="tt">-l</span>)</b> <br  />
+<ul>
+<li>chargement du fichier XSPF, <br  />
+</li>
+<li>lecture interactive par commandes <span class="tt">n</span>, <span class="tt">p</span>, <span class="tt">q</span>.</li>
+</ul>
+</li>
+<li><b>Création d’une playlist (<span class="tt">-d dossier -o fichier.xspf</span>)</b> <br  />
+<ul>
+<li>parcours du dossier, <br  />
+</li>
+<li>génération d’un fichier XSPF via PlaylistGenerator.</li>
+</ul>
+</li>
+<li><b>Analyse d’un dossier (<span class="tt">-d dossier</span>)</b> <br  />
+<ul>
+<li>chargement de tous les fichiers audio, <br  />
+</li>
+<li>affichage des métadonnées.</li>
+</ul>
+</li>
+<li><b>Lecture d’un fichier audio (<span class="tt">-p fichier</span>)</b> <br  />
+<ul>
+<li>lecture simple via pygame.</li>
+</ul>
+</li>
+<li><b>Modification des tags (<span class="tt">-f fichier -e</span>)</b> <br  />
+<ul>
+<li>extraction, saisie utilisateur, écriture des modifications.</li>
+</ul>
+</li>
+<li><b>Analyse d’un fichier (<span class="tt">-f fichier</span>)</b> <br  />
+<ul>
+<li>lecture et affichage des métadonnées.</li>
+</ul>
+</li>
+</ol>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md44"></a>
+Rôle principal de main()</h2>
+<ul>
+<li>s'assurer que seule l’option demandée est exécutée,</li>
+<li>fournir un point d'entrée unique aux fonctionnalités du projet,</li>
+<li>gérer les erreurs classiques : fichier introuvable, dossier vide, mauvais format,</li>
+<li>garantir une utilisation intuitive et cohérente du programme.</li>
+</ul>
+<p>Ainsi, <span class="tt">main()</span> agit comme un routeur logique entre les différentes fonctionnalités du projet.</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md45"></a>
+6. Exemples complets d’utilisation du CLI</h1>
+<p>Cette section présente des cas d’utilisation concrets du programme, afin de faciliter la prise en main de l’interface en ligne de commande.</p>
+<hr  />
+<h2 class="doxsection"><a class="anchor" id="autotoc_md47"></a>
+6.1 help</h2>
+<div class="fragment"><div class="line">python3  src/cli.py -h</div>
+</div><!-- fragment --><h2 class="doxsection"><a class="anchor" id="autotoc_md48"></a>
+6.2 Analyser un fichier audio</h2>
+<div class="fragment"><div class="line">python3  src/cli.py -f audio/musique.mp3</div>
+</div><!-- fragment --><p> Affiche :</p><ul>
+<li>le titre,</li>
+<li>l’artiste,</li>
+<li>l’album,</li>
+<li>le format,</li>
+<li>la durée (selon métadonnées disponibles).</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md49"></a>
+6.3 Analyser un dossier complet</h2>
+<div class="fragment"><div class="line">python3  src/cli.py -d .</div>
+</div><!-- fragment --><p> Tous les fichiers audio du dossier sont chargés et affichés.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md50"></a>
+6.4 Générer une playlist XSPF</h2>
+<div class="fragment"><div class="line">python3 src/cli.py -d audio/ -o playlist.xspf</div>
+</div><!-- fragment --><h2 class="doxsection"><a class="anchor" id="autotoc_md51"></a>
+6.5 Lire un fichier audio</h2>
+<div class="fragment"><div class="line">python3 src/cli.py -p audio/musique.mp3</div>
+</div><!-- fragment --><h2 class="doxsection"><a class="anchor" id="autotoc_md52"></a>
+6.6 Modifier les tags d’un fichier MP3/FLAC</h2>
+<div class="fragment"><div class="line">python3 src/cli.py -f audio/musique.mp3 -e</div>
+</div><!-- fragment --><p> Le programme affiche les valeurs existantes et demande : Nouveau titre [...] Nouvel artiste [...] Nouvel album [...] Les changements sont sauvegardés directement dans le fichier.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md53"></a>
+6.7 Lire une playlist de manière interactive</h2>
+<div class="fragment"><div class="line">python3 src/cli.py -l playlist.xspf</div>
+</div><!-- fragment --><p> Commandes disponibles :</p><ul>
+<li>n : piste suivante,</li>
+<li>p : piste précédente,</li>
+<li>q : quitter. La lecture utilise pygame et permet un changement instantané de piste.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md54"></a>
+6.8 Interface Graphique (GUI) — Détails techniques</h2>
+<p>Le fichier <a class="el" href="gui_8py.html">src/gui.py</a> propose une interface utilisateur graphique moderne basée sur Tkinter. Elle permet de bénéficier de toutes les fonctionnalités du projet (lecture, gestion, édition) dans un environnement visuel ergonomique.</p>
+<ul>
+<li>L'interface repose sur plusieurs bibliothèques clés :</li>
+<li>Tkinter &amp; TTL : Pour la structure de base.</li>
+<li>Sun Valley TTK (sv_ttk) : Pour l'application d'un thème moderne (Windows 11 style).</li>
+<li>TkinterDnD : Pour la gestion du glisser-déposer (Drag &amp; Drop).</li>
+<li>Pillow (PIL) : Pour la gestion et l'affichage des pochettes d'album.</li>
+<li>Pygame : Pour le moteur audio (backend de lecture).</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md55"></a>
+6.1 Architecture de l'interface (MusicLibraryGUI)</h2>
+<p>La classe principale MusicLibraryGUI orchestre l'ensemble de l'affichage. Elle est divisée en trois zones principales :</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md56"></a>
+La Sidebar (Barre latérale) :</h1>
+<ul>
+<li>Barre de recherche dynamique (filtre les pistes en temps réel).</li>
+<li>Boutons d'importation (Dossier, Playlist XSPF).</li>
+<li>Liste des pistes (Treeview) affichant Titre, Artiste et Durée.</li>
+<li>Gestion du tri par colonnes.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md57"></a>
+La Zone Principale (Main Content) :</h1>
+<ul>
+<li>Affichage de la pochette d'album (extraite des tags ou image locale).</li>
+<li>Affichage des métadonnées détaillées (Titre, Artiste, Album, Année).</li>
+<li>Module de Paroles : Zone de texte scrollable pour afficher les paroles récupérées.</li>
+<li>Boutons d'édition : Permet de modifier les tags manuellement ou de lancer une requête API pour mise à jour automatique.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md58"></a>
+La Barre de Lecture (Player Bar) :</h1>
+<ul>
+<li>Contrôles de lecture : Play/Pause, Suivant, Précédent.</li>
+<li>Fonctions avancées : Mode Aléatoire (Shuffle), Répétition (Repeat).</li>
+<li>Barre de progression interactive (cliquable pour naviguer dans la piste).</li>
+<li>Contrôle du volume et bouton Mute.</li>
+<li>Sélecteur de thème (Jour / Nuit).</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md59"></a>
+6.2 Fonctionnalités spécifiques au GUI</h2>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md60"></a>
+Gestion des Thèmes</h1>
+<p>L'application intègre un système de thèmes dynamique (Clair / Sombre). Le changement de thème met à jour instantanément les couleurs de fond, les polices, les boutons et le style des listes grâce à la méthode _apply_theme().</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md61"></a>
+Glisser-Déposer (Drag &amp; Drop)</h1>
+<p>Grâce à tkinterdnd2, l'utilisateur peut glisser des fichiers audio ou des dossiers directement depuis son explorateur de fichiers vers la fenêtre de l'application pour les ajouter à la liste de lecture courante.</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md62"></a>
+Édition des métadonnées</h1>
+<p>Contrairement au CLI qui procède par arguments, le GUI offre deux modes d'édition :</p>
+<ul>
+<li>Manuel : Une fenêtre modale permet de saisir les tags (Titre, Artiste, Album, Année).</li>
+<li>Automatique (API) : Un bouton dédié lance la recherche de métadonnées via MetadataFetcher et met à jour l'affichage et le fichier automatiquement.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md63"></a>
+7. Installation du projet</h2>
+<p>L’installation recommandée s’appuie sur un environnement virtuel Python.</p>
+<hr  />
+<h2 class="doxsection"><a class="anchor" id="autotoc_md65"></a>
+7.1 Cloner ou télécharger le projet</h2>
+<p>Placez le dossier du projet sur votre machine (Windows, Linux ou macOS).</p>
+<hr  />
+<h2 class="doxsection"><a class="anchor" id="autotoc_md67"></a>
+7.2 Créer un environnement virtuel</h2>
+<p>Sur macOS / Linux : </p><div class="fragment"><div class="line">python3 -m venv venv</div>
+<div class="line">source venv/bin/activate</div>
+</div><!-- fragment --><p>Sur Windows : </p><div class="fragment"><div class="line">python -m venv venv</div>
+<div class="line">venv\Scripts\activate</div>
+</div><!-- fragment --> <h2 class="doxsection"><a class="anchor" id="autotoc_md68"></a>
+7.3 Installer les dépendances</h2>
+<p>Pour le CLI:</p><ul>
+<li>pip install pygame</li>
+<li>pip install mutagen</li>
+<li>pip install playsound</li>
+</ul>
+<p>Pour le GUI:</p><ul>
+<li>pip install sv_ttk</li>
+<li>pip install tkinterdnd2</li>
+<li>pip install Pillow</li>
+<li>pip install requests</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md69"></a>
+7.5 Désactiver l’environnement virtuel</h2>
+<p>deactivate </p>
+</div></div><!-- PageDoc -->
+<a href="doxygen_crawl.html"></a>
+</div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Généré par <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

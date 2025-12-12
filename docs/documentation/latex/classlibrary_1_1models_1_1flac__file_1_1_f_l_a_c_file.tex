@@ -1,0 +1,141 @@
+\doxysection{Référence de la classe library.\+models.\+flac\+\_\+file.\+FLACFile}
+\hypertarget{classlibrary_1_1models_1_1flac__file_1_1_f_l_a_c_file}{}\label{classlibrary_1_1models_1_1flac__file_1_1_f_l_a_c_file}\index{library.models.flac\_file.FLACFile@{library.models.flac\_file.FLACFile}}
+Graphe d\textquotesingle{}héritage de library.\+models.\+flac\+\_\+file.\+FLACFile\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classlibrary_1_1models_1_1flac__file_1_1_f_l_a_c_file}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Fonctions membres publiques}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classlibrary_1_1models_1_1flac__file_1_1_f_l_a_c_file_a8191e1a1a466c2f41460d2279040e181}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, Path \mbox{\hyperlink{classlibrary_1_1models_1_1flac__file_1_1_f_l_a_c_file}{filepath}})
+\item 
+\mbox{\hyperlink{classlibrary_1_1models_1_1flac__file_1_1_f_l_a_c_file_aa901ce4817f6e6d8af7ff37acd86b0e4}{save\+\_\+metadata}} (self)
+\item 
+Dict\mbox{[}str, any\mbox{]} \mbox{\hyperlink{classlibrary_1_1models_1_1flac__file_1_1_f_l_a_c_file_a6e798c24d7f15c3f32ac23af16329586}{extract\+\_\+metadata}} (self)
+\item 
+Optional\mbox{[}bytes\mbox{]} \mbox{\hyperlink{classlibrary_1_1models_1_1flac__file_1_1_f_l_a_c_file_a881477be0b59536dbaa148d264de0977}{get\+\_\+cover\+\_\+art}} (self)
+\item 
+None \mbox{\hyperlink{classlibrary_1_1models_1_1flac__file_1_1_f_l_a_c_file_ac9d42d40f582586c9e99c8575341fa0f}{reload}} (self)
+\end{DoxyCompactItemize}
+\doxysubsection*{Fonctions membres publiques hérités de \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file}{library.\+models.\+audio\+\_\+file.\+Audio\+File}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_ad49a24b03a3da6c2404f880a2a814e4e}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, Path \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_aa6834eeea3586b3a5de9f8a09201e4f6}{filepath}})
+\item 
+float \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_a6aa20d188aff3637f93b564fc6c1243e}{get\+\_\+duration}} (self)
+\item 
+str \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_af05e9aa78046f5224320cab0bff0db73}{get\+\_\+file\+\_\+hash}} (self)
+\item 
+str \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_a8bafe381d30fd358cffbd103ca1cd25a}{\+\_\+\+\_\+str\+\_\+\+\_\+}} (self)
+\item 
+str \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_a51a0513911c2ea7557ef6e0260d86817}{\+\_\+\+\_\+repr\+\_\+\+\_\+}} (self)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Membres hérités additionnels}
+\doxysubsection*{Attributs publics hérités de \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file}{library.\+models.\+audio\+\_\+file.\+Audio\+File}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_aa6834eeea3586b3a5de9f8a09201e4f6}{filepath}} = Path(filepath)
+\item 
+dict \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_a0bafc8c58b59e7d66cc73d02e98c1da7}{metadata}} = \{\}
+\end{DoxyCompactItemize}
+\doxysubsection*{Attributs protégés hérités de \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file}{library.\+models.\+audio\+\_\+file.\+Audio\+File}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_a27b4842972523dc988aa104f1400b955}{\+\_\+audio\+\_\+object}} = None
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Description détaillée}
+\begin{DoxyVerb}Classe specialisee pour les fichiers FLAC.
+
+Contient 2 methodes qui gerent les tags Vorbis:
+- extract_metadata: Extrait les metadata d'un fichier FLAC.
+- get_cover_art: Extrait la couverture du fichier (attached picture).
+\end{DoxyVerb}
+ 
+
+\label{doc-constructors}
+\Hypertarget{classlibrary_1_1models_1_1flac__file_1_1_f_l_a_c_file_doc-constructors}
+\doxysubsection{Documentation des constructeurs et destructeur}
+\Hypertarget{classlibrary_1_1models_1_1flac__file_1_1_f_l_a_c_file_a8191e1a1a466c2f41460d2279040e181}\index{library.models.flac\_file.FLACFile@{library.models.flac\_file.FLACFile}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!library.models.flac\_file.FLACFile@{library.models.flac\_file.FLACFile}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1models_1_1flac__file_1_1_f_l_a_c_file_a8191e1a1a466c2f41460d2279040e181} 
+library.\+models.\+flac\+\_\+file.\+FLACFile.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{Path}]{filepath}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-func-members}
+\Hypertarget{classlibrary_1_1models_1_1flac__file_1_1_f_l_a_c_file_doc-func-members}
+\doxysubsection{Documentation des fonctions membres}
+\Hypertarget{classlibrary_1_1models_1_1flac__file_1_1_f_l_a_c_file_a6e798c24d7f15c3f32ac23af16329586}\index{library.models.flac\_file.FLACFile@{library.models.flac\_file.FLACFile}!extract\_metadata@{extract\_metadata}}
+\index{extract\_metadata@{extract\_metadata}!library.models.flac\_file.FLACFile@{library.models.flac\_file.FLACFile}}
+\doxysubsubsection{\texorpdfstring{extract\_metadata()}{extract\_metadata()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1models_1_1flac__file_1_1_f_l_a_c_file_a6e798c24d7f15c3f32ac23af16329586} 
+ Dict\mbox{[}str, any\mbox{]} library.\+models.\+flac\+\_\+file.\+FLACFile.\+extract\+\_\+metadata (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Extrait les métadonnées Vorbis Comment du fichier FLAC.
+
+Tags Vorbis courants :
+- TITLE: Titre
+- ARTIST: Artiste
+- ALBUM: Album
+- DATE: Date/Année
+- GENRE: Genre
+- TRACKNUMBER: Numéro de piste
+
+Returns:
+    Dictionnaire avec les métadonnées normalisées
+\end{DoxyVerb}
+ 
+
+Réimplémentée à partir de \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_af32c5ee2b02ba2ecfcb61ddab5b53366}{library.\+models.\+audio\+\_\+file.\+Audio\+File}}.
+
+\Hypertarget{classlibrary_1_1models_1_1flac__file_1_1_f_l_a_c_file_a881477be0b59536dbaa148d264de0977}\index{library.models.flac\_file.FLACFile@{library.models.flac\_file.FLACFile}!get\_cover\_art@{get\_cover\_art}}
+\index{get\_cover\_art@{get\_cover\_art}!library.models.flac\_file.FLACFile@{library.models.flac\_file.FLACFile}}
+\doxysubsubsection{\texorpdfstring{get\_cover\_art()}{get\_cover\_art()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1models_1_1flac__file_1_1_f_l_a_c_file_a881477be0b59536dbaa148d264de0977} 
+ Optional\mbox{[}bytes\mbox{]} library.\+models.\+flac\+\_\+file.\+FLACFile.\+get\+\_\+cover\+\_\+art (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Extrait l'image de couverture des pictures FLAC.
+
+Returns:
+    Données binaires de l'image
+\end{DoxyVerb}
+ 
+
+Réimplémentée à partir de \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_aa09155ce6e36d6f7bf46cc799a791eee}{library.\+models.\+audio\+\_\+file.\+Audio\+File}}.
+
+\Hypertarget{classlibrary_1_1models_1_1flac__file_1_1_f_l_a_c_file_ac9d42d40f582586c9e99c8575341fa0f}\index{library.models.flac\_file.FLACFile@{library.models.flac\_file.FLACFile}!reload@{reload}}
+\index{reload@{reload}!library.models.flac\_file.FLACFile@{library.models.flac\_file.FLACFile}}
+\doxysubsubsection{\texorpdfstring{reload()}{reload()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1models_1_1flac__file_1_1_f_l_a_c_file_ac9d42d40f582586c9e99c8575341fa0f} 
+ None library.\+models.\+flac\+\_\+file.\+FLACFile.\+reload (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Réinitialise l'objet audio pour forcer une relecture du fichier depuis le disque.
+Cela vidange le cache de mutagen et garantit que extract_metadata() lira les nouveaux tags.
+\end{DoxyVerb}
+ 
+
+Réimplémentée à partir de \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_a0a355b2547effbed01517b7d0c33d2c8}{library.\+models.\+audio\+\_\+file.\+Audio\+File}}.
+
+\Hypertarget{classlibrary_1_1models_1_1flac__file_1_1_f_l_a_c_file_aa901ce4817f6e6d8af7ff37acd86b0e4}\index{library.models.flac\_file.FLACFile@{library.models.flac\_file.FLACFile}!save\_metadata@{save\_metadata}}
+\index{save\_metadata@{save\_metadata}!library.models.flac\_file.FLACFile@{library.models.flac\_file.FLACFile}}
+\doxysubsubsection{\texorpdfstring{save\_metadata()}{save\_metadata()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1models_1_1flac__file_1_1_f_l_a_c_file_aa901ce4817f6e6d8af7ff37acd86b0e4} 
+library.\+models.\+flac\+\_\+file.\+FLACFile.\+save\+\_\+metadata (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Sauvegarde les métadonnées (Vorbis Comment) modifiées pour le fichier FLAC.
+Les tags Vorbis sont des listes de chaînes.
+\end{DoxyVerb}
+ 
+
+Réimplémentée à partir de \mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file_a04e6a7257b1c626a7487d882a0005c17}{library.\+models.\+audio\+\_\+file.\+Audio\+File}}.
+
+
+
+La documentation de cette classe a été générée à partir du fichier suivant \+:\begin{DoxyCompactItemize}
+\item 
+library/models/\mbox{\hyperlink{flac__file_8py}{flac\+\_\+file.\+py}}\end{DoxyCompactItemize}

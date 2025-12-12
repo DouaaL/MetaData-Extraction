@@ -1,0 +1,396 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>PyMetaPlay: Référence de la classe library.core.metadatafetcher.MetadataFetcher</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">PyMetaPlay
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Généré par Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Recherche',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher.html','','classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher-members'); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Chargement...</div>
+<div class="SRStatus" id="Searching">Recherche...</div>
+<div class="SRStatus" id="NoMatches">Aucune correspondance</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Référence de la classe library.core.metadatafetcher.MetadataFetcher</div></div>
+</div><!--header-->
+<div class="contents">
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
+Fonctions membres publiques</h2></td></tr>
+<tr class="memitem:a155e5f1d150ddeed57ac66322614fd69" id="r_a155e5f1d150ddeed57ac66322614fd69"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a155e5f1d150ddeed57ac66322614fd69">__init__</a> (self)</td></tr>
+<tr class="memitem:a3ffdeba05054223caf0078c1bafd19f4" id="r_a3ffdeba05054223caf0078c1bafd19f4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3ffdeba05054223caf0078c1bafd19f4">smart_split_filename</a> (self, str stem)</td></tr>
+<tr class="memitem:a24ca0989c4f33f35a224b37e321f8863" id="r_a24ca0989c4f33f35a224b37e321f8863"><td class="memItemLeft" align="right" valign="top">str&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a24ca0989c4f33f35a224b37e321f8863">clean_text</a> (self, str s)</td></tr>
+<tr class="memitem:a3dffa56dea7e86f35771594c364e93f2" id="r_a3dffa56dea7e86f35771594c364e93f2"><td class="memItemLeft" align="right" valign="top">Optional[Path]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3dffa56dea7e86f35771594c364e93f2">ensure_cover_image</a> (self, <a class="el" href="classlibrary_1_1models_1_1audio__file_1_1_audio_file.html">AudioFile</a> audio_file)</td></tr>
+<tr class="memitem:ae7d753659a56dc8140c83e091c79d775" id="r_ae7d753659a56dc8140c83e091c79d775"><td class="memItemLeft" align="right" valign="top">Optional[Dict[str, str]]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae7d753659a56dc8140c83e091c79d775">search_metadata</a> (self, str artist, str title)</td></tr>
+<tr class="memitem:a93fa5da87420fab88ecceb777fbd23ea" id="r_a93fa5da87420fab88ecceb777fbd23ea"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a93fa5da87420fab88ecceb777fbd23ea">update_audio_file_metadata</a> (self, <a class="el" href="classlibrary_1_1models_1_1audio__file_1_1_audio_file.html">AudioFile</a> audio_file)</td></tr>
+<tr class="memitem:a19fbe3810c278b68797cc2e14c436ba0" id="r_a19fbe3810c278b68797cc2e14c436ba0"><td class="memItemLeft" align="right" valign="top">Optional[str]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a19fbe3810c278b68797cc2e14c436ba0">fetch_lyrics_for_audio</a> (self, <a class="el" href="classlibrary_1_1models_1_1audio__file_1_1_audio_file.html">AudioFile</a> audio_file)</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Attributs publics</h2></td></tr>
+<tr class="memitem:a86873c5f9d84bae017224d9e12e56245" id="r_a86873c5f9d84bae017224d9e12e56245"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a86873c5f9d84bae017224d9e12e56245">sp</a> = None</td></tr>
+<tr class="memitem:a969f03f2858d7917c5349ff25fcf87c8" id="r_a969f03f2858d7917c5349ff25fcf87c8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a969f03f2858d7917c5349ff25fcf87c8">lyrics_resolver</a> = <a class="el" href="classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver.html">LyricsResolver</a>(spotify_client=self.sp)</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pro-methods" class="groupheader"><a id="pro-methods" name="pro-methods"></a>
+Fonctions membres protégées</h2></td></tr>
+<tr class="memitem:abb9aaa3f49bb0b594e855e61390f3f6b" id="r_abb9aaa3f49bb0b594e855e61390f3f6b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abb9aaa3f49bb0b594e855e61390f3f6b">_is_generic_artist</a> (self, str name)</td></tr>
+<tr class="memitem:ac592feb5e63ccd8084f657c2980c2830" id="r_ac592feb5e63ccd8084f657c2980c2830"><td class="memItemLeft" align="right" valign="top">Optional[Path]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac592feb5e63ccd8084f657c2980c2830">_search_deezer_and_download_cover</a> (self, str artist, str title, Path dest_dir, str filename_stem)</td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Description détaillée</h2>
+<div class="textblock"><pre class="fragment">- Métadonnées enrichies via Spotify (optionnel)
+- Paroles via LyricsResolver
+- Cover via Deezer API (par fichier)
+</pre> </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Documentation des constructeurs et destructeur</h2>
+<a id="a155e5f1d150ddeed57ac66322614fd69" name="a155e5f1d150ddeed57ac66322614fd69"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a155e5f1d150ddeed57ac66322614fd69">&#9670;&#160;</a></span>__init__()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">library.core.metadatafetcher.MetadataFetcher.__init__ </td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>self</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Documentation des fonctions membres</h2>
+<a id="abb9aaa3f49bb0b594e855e61390f3f6b" name="abb9aaa3f49bb0b594e855e61390f3f6b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abb9aaa3f49bb0b594e855e61390f3f6b">&#9670;&#160;</a></span>_is_generic_artist()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"> bool library.core.metadatafetcher.MetadataFetcher._is_generic_artist </td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">str</td>          <td class="paramname"><span class="paramname"><em>name</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac592feb5e63ccd8084f657c2980c2830" name="ac592feb5e63ccd8084f657c2980c2830"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac592feb5e63ccd8084f657c2980c2830">&#9670;&#160;</a></span>_search_deezer_and_download_cover()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"> Optional[Path] library.core.metadatafetcher.MetadataFetcher._search_deezer_and_download_cover </td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">str</td>          <td class="paramname"><span class="paramname"><em>artist</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">str</td>          <td class="paramname"><span class="paramname"><em>title</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Path</td>          <td class="paramname"><span class="paramname"><em>dest_dir</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">str
+    </td>          <td class="paramname"><span class="paramname"><em>filename_stem</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a24ca0989c4f33f35a224b37e321f8863" name="a24ca0989c4f33f35a224b37e321f8863"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a24ca0989c4f33f35a224b37e321f8863">&#9670;&#160;</a></span>clean_text()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> str library.core.metadatafetcher.MetadataFetcher.clean_text </td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">str</td>          <td class="paramname"><span class="paramname"><em>s</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3dffa56dea7e86f35771594c364e93f2" name="a3dffa56dea7e86f35771594c364e93f2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3dffa56dea7e86f35771594c364e93f2">&#9670;&#160;</a></span>ensure_cover_image()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> Optional[Path] library.core.metadatafetcher.MetadataFetcher.ensure_cover_image </td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classlibrary_1_1models_1_1audio__file_1_1_audio_file.html">AudioFile</a></td>          <td class="paramname"><span class="paramname"><em>audio_file</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<pre class="fragment">S'assure qu'une cover spécifique existe pour CE fichier :
+- cherche &lt;stem&gt;_cover.jpg dans le dossier du fichier
+- sinon la télécharge via DEEZER API
+</pre> 
+</div>
+</div>
+<a id="a19fbe3810c278b68797cc2e14c436ba0" name="a19fbe3810c278b68797cc2e14c436ba0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a19fbe3810c278b68797cc2e14c436ba0">&#9670;&#160;</a></span>fetch_lyrics_for_audio()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> Optional[str] library.core.metadatafetcher.MetadataFetcher.fetch_lyrics_for_audio </td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classlibrary_1_1models_1_1audio__file_1_1_audio_file.html">AudioFile</a></td>          <td class="paramname"><span class="paramname"><em>audio_file</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae7d753659a56dc8140c83e091c79d775" name="ae7d753659a56dc8140c83e091c79d775"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7d753659a56dc8140c83e091c79d775">&#9670;&#160;</a></span>search_metadata()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> Optional[Dict[str, str]] library.core.metadatafetcher.MetadataFetcher.search_metadata </td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">str</td>          <td class="paramname"><span class="paramname"><em>artist</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">str</td>          <td class="paramname"><span class="paramname"><em>title</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3ffdeba05054223caf0078c1bafd19f4" name="a3ffdeba05054223caf0078c1bafd19f4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ffdeba05054223caf0078c1bafd19f4">&#9670;&#160;</a></span>smart_split_filename()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">library.core.metadatafetcher.MetadataFetcher.smart_split_filename </td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">str</td>          <td class="paramname"><span class="paramname"><em>stem</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a93fa5da87420fab88ecceb777fbd23ea" name="a93fa5da87420fab88ecceb777fbd23ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a93fa5da87420fab88ecceb777fbd23ea">&#9670;&#160;</a></span>update_audio_file_metadata()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> bool library.core.metadatafetcher.MetadataFetcher.update_audio_file_metadata </td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>self</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classlibrary_1_1models_1_1audio__file_1_1_audio_file.html">AudioFile</a></td>          <td class="paramname"><span class="paramname"><em>audio_file</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Documentation des données membres</h2>
+<a id="a969f03f2858d7917c5349ff25fcf87c8" name="a969f03f2858d7917c5349ff25fcf87c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a969f03f2858d7917c5349ff25fcf87c8">&#9670;&#160;</a></span>lyrics_resolver</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">library.core.metadatafetcher.MetadataFetcher.lyrics_resolver = <a class="el" href="classlibrary_1_1core_1_1lyricsresolver_1_1_lyrics_resolver.html">LyricsResolver</a>(spotify_client=self.sp)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a86873c5f9d84bae017224d9e12e56245" name="a86873c5f9d84bae017224d9e12e56245"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a86873c5f9d84bae017224d9e12e56245">&#9670;&#160;</a></span>sp</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">library.core.metadatafetcher.MetadataFetcher.sp = None</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<hr/>La documentation de cette classe a été générée à partir du fichier suivant :<ul>
+<li>library/core/<a class="el" href="metadatafetcher_8py.html">metadatafetcher.py</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="namespacelibrary.html">library</a></li><li class="navelem"><a href="namespacelibrary_1_1core.html">core</a></li><li class="navelem"><a href="namespacelibrary_1_1core_1_1metadatafetcher.html">metadatafetcher</a></li><li class="navelem"><a href="classlibrary_1_1core_1_1metadatafetcher_1_1_metadata_fetcher.html">MetadataFetcher</a></li>
+    <li class="footer">Généré par <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

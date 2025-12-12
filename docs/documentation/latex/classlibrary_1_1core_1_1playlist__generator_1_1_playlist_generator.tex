@@ -1,0 +1,157 @@
+\doxysection{Référence de la classe library.\+core.\+playlist\+\_\+generator.\+Playlist\+Generator}
+\hypertarget{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator}{}\label{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator}\index{library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}}
+\doxysubsubsection*{Fonctions membres publiques}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_af68b8f7c85695567f51830117e0e5c64}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, Path \mbox{\hyperlink{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a7f196763b409f06a0347d9fcab127c2d}{dossier}}, str \mbox{\hyperlink{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a5a56d4cd183b407d0b9fe54893069626}{fichier\+\_\+sortie}}="{}playlist.\+xspf"{})
+\item 
+str \mbox{\hyperlink{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_af4b904675bf5e8b50eec13e710990cbc}{balise}} (self, str nom)
+\item 
+None \mbox{\hyperlink{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_ad4db9f2d90042c8077d5306ccbdaf1e2}{indenter\+\_\+xml}} (self, ET.\+Element elem, int niveau=0)
+\item 
+\mbox{\hyperlink{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_ab78a84043e127d16e9285d9b03a862d1}{charger\+\_\+audio\+\_\+files}} (self)
+\item 
+None \mbox{\hyperlink{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a4fffd0c53008cd57276662d0573ca3f6}{set\+\_\+audio\+\_\+files}} (self, Iterable\mbox{[}\mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file}{Audio\+File}}\mbox{]} \mbox{\hyperlink{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_aeb6b205f56f7324b30a0fe86dba9090d}{audio\+\_\+files}})
+\item 
+str \mbox{\hyperlink{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_ae45eb2aafc0b4797e32edd99c69dfecb}{chemin\+\_\+vers\+\_\+uri\+\_\+fichier}} (self, Path p)
+\item 
+\mbox{\hyperlink{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_adc36d6372075e63479d2ceeb5ee68d91}{construire\+\_\+piste}} (self)
+\item 
+Path \mbox{\hyperlink{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a8f724b7174dbd6cc1e9893d347fdc39b}{ecrire\+\_\+xspf}} (self, str\texorpdfstring{$\vert$}{|}Path \mbox{\hyperlink{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a5a56d4cd183b407d0b9fe54893069626}{fichier\+\_\+sortie}}=None, str titre="{}Ma Playlist"{}, str createur="{}Moi"{}, str\texorpdfstring{$\vert$}{|}None info=None)
+\item 
+Path \mbox{\hyperlink{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a4adea6cb7e4bf996fb636a17ad81ee16}{generer\+\_\+playlist}} (self, str\texorpdfstring{$\vert$}{|}Path\texorpdfstring{$\vert$}{|}None \mbox{\hyperlink{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a5a56d4cd183b407d0b9fe54893069626}{fichier\+\_\+sortie}}=None)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Attributs publics}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a7f196763b409f06a0347d9fcab127c2d}{dossier}} = Path(dossier)
+\item 
+\mbox{\hyperlink{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a5a56d4cd183b407d0b9fe54893069626}{fichier\+\_\+sortie}} = fichier\+\_\+sortie
+\item 
+\mbox{\hyperlink{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a7e3e431c856211983918c6a53f9a95de}{explorer}} = \mbox{\hyperlink{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer}{File\+Explorer}}()
+\item 
+list \mbox{\hyperlink{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_aeb6b205f56f7324b30a0fe86dba9090d}{audio\+\_\+files}} = \mbox{[}$\,$\mbox{]}
+\item 
+list \mbox{\hyperlink{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a0041d7b08bb01cef6fa5569374ea00e9}{tracks}} = \mbox{[}$\,$\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Description détaillée}
+\begin{DoxyVerb}Gère la création de playlists XSPF.
+\end{DoxyVerb}
+ 
+
+\label{doc-constructors}
+\Hypertarget{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_doc-constructors}
+\doxysubsection{Documentation des constructeurs et destructeur}
+\Hypertarget{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_af68b8f7c85695567f51830117e0e5c64}\index{library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_af68b8f7c85695567f51830117e0e5c64} 
+library.\+core.\+playlist\+\_\+generator.\+Playlist\+Generator.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{Path}]{dossier}{, }\item[{str }]{fichier\+\_\+sortie}{ = {\ttfamily "{}playlist.xspf"{}}}\end{DoxyParamCaption})}
+
+
+
+\label{doc-func-members}
+\Hypertarget{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_doc-func-members}
+\doxysubsection{Documentation des fonctions membres}
+\Hypertarget{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_af4b904675bf5e8b50eec13e710990cbc}\index{library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}!balise@{balise}}
+\index{balise@{balise}!library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}}
+\doxysubsubsection{\texorpdfstring{balise()}{balise()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_af4b904675bf5e8b50eec13e710990cbc} 
+ str library.\+core.\+playlist\+\_\+generator.\+Playlist\+Generator.\+balise (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{str}]{nom}{}\end{DoxyParamCaption})}
+
+\Hypertarget{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_ab78a84043e127d16e9285d9b03a862d1}\index{library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}!charger\_audio\_files@{charger\_audio\_files}}
+\index{charger\_audio\_files@{charger\_audio\_files}!library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}}
+\doxysubsubsection{\texorpdfstring{charger\_audio\_files()}{charger\_audio\_files()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_ab78a84043e127d16e9285d9b03a862d1} 
+library.\+core.\+playlist\+\_\+generator.\+Playlist\+Generator.\+charger\+\_\+audio\+\_\+files (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Explore le dossier et charge les fichiers audio valides.
+\end{DoxyVerb}
+ \Hypertarget{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_ae45eb2aafc0b4797e32edd99c69dfecb}\index{library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}!chemin\_vers\_uri\_fichier@{chemin\_vers\_uri\_fichier}}
+\index{chemin\_vers\_uri\_fichier@{chemin\_vers\_uri\_fichier}!library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}}
+\doxysubsubsection{\texorpdfstring{chemin\_vers\_uri\_fichier()}{chemin\_vers\_uri\_fichier()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_ae45eb2aafc0b4797e32edd99c69dfecb} 
+ str library.\+core.\+playlist\+\_\+generator.\+Playlist\+Generator.\+chemin\+\_\+vers\+\_\+uri\+\_\+fichier (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{Path}]{p}{}\end{DoxyParamCaption})}
+
+\Hypertarget{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_adc36d6372075e63479d2ceeb5ee68d91}\index{library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}!construire\_piste@{construire\_piste}}
+\index{construire\_piste@{construire\_piste}!library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}}
+\doxysubsubsection{\texorpdfstring{construire\_piste()}{construire\_piste()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_adc36d6372075e63479d2ceeb5ee68d91} 
+library.\+core.\+playlist\+\_\+generator.\+Playlist\+Generator.\+construire\+\_\+piste (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Construit les balises <track> pour chaque fichier audio, avec métadonnées.
+\end{DoxyVerb}
+ \Hypertarget{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a8f724b7174dbd6cc1e9893d347fdc39b}\index{library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}!ecrire\_xspf@{ecrire\_xspf}}
+\index{ecrire\_xspf@{ecrire\_xspf}!library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}}
+\doxysubsubsection{\texorpdfstring{ecrire\_xspf()}{ecrire\_xspf()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a8f724b7174dbd6cc1e9893d347fdc39b} 
+ Path library.\+core.\+playlist\+\_\+generator.\+Playlist\+Generator.\+ecrire\+\_\+xspf (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{str \texorpdfstring{$\vert$}{|} Path }]{fichier\+\_\+sortie}{ = {\ttfamily None}, }\item[{str }]{titre}{ = {\ttfamily "{}Ma~Playlist"{}}, }\item[{str }]{createur}{ = {\ttfamily "{}Moi"{}}, }\item[{str \texorpdfstring{$\vert$}{|} None }]{info}{ = {\ttfamily None}}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Écrit la playlist XSPF sur disque.
+\end{DoxyVerb}
+ \Hypertarget{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a4adea6cb7e4bf996fb636a17ad81ee16}\index{library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}!generer\_playlist@{generer\_playlist}}
+\index{generer\_playlist@{generer\_playlist}!library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}}
+\doxysubsubsection{\texorpdfstring{generer\_playlist()}{generer\_playlist()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a4adea6cb7e4bf996fb636a17ad81ee16} 
+ Path library.\+core.\+playlist\+\_\+generator.\+Playlist\+Generator.\+generer\+\_\+playlist (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{str \texorpdfstring{$\vert$}{|} Path \texorpdfstring{$\vert$}{|} None }]{fichier\+\_\+sortie}{ = {\ttfamily None}}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}1. Explore le dossier
+2. Construit les <track>
+3. Écrit le fichier XSPF
+\end{DoxyVerb}
+ \Hypertarget{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_ad4db9f2d90042c8077d5306ccbdaf1e2}\index{library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}!indenter\_xml@{indenter\_xml}}
+\index{indenter\_xml@{indenter\_xml}!library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}}
+\doxysubsubsection{\texorpdfstring{indenter\_xml()}{indenter\_xml()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_ad4db9f2d90042c8077d5306ccbdaf1e2} 
+ None library.\+core.\+playlist\+\_\+generator.\+Playlist\+Generator.\+indenter\+\_\+xml (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{ET.\+Element}]{elem}{, }\item[{int }]{niveau}{ = {\ttfamily 0}}\end{DoxyParamCaption})}
+
+\Hypertarget{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a4fffd0c53008cd57276662d0573ca3f6}\index{library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}!set\_audio\_files@{set\_audio\_files}}
+\index{set\_audio\_files@{set\_audio\_files}!library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}}
+\doxysubsubsection{\texorpdfstring{set\_audio\_files()}{set\_audio\_files()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a4fffd0c53008cd57276662d0573ca3f6} 
+ None library.\+core.\+playlist\+\_\+generator.\+Playlist\+Generator.\+set\+\_\+audio\+\_\+files (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{Iterable\mbox{[}\mbox{\hyperlink{classlibrary_1_1models_1_1audio__file_1_1_audio_file}{Audio\+File}}\mbox{]}}]{audio\+\_\+files}{}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Permet d'injecter une liste d'AudioFile (utile pour la GUI).
+\end{DoxyVerb}
+ 
+
+\label{doc-variable-members}
+\Hypertarget{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_doc-variable-members}
+\doxysubsection{Documentation des données membres}
+\Hypertarget{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_aeb6b205f56f7324b30a0fe86dba9090d}\index{library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}!audio\_files@{audio\_files}}
+\index{audio\_files@{audio\_files}!library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}}
+\doxysubsubsection{\texorpdfstring{audio\_files}{audio\_files}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_aeb6b205f56f7324b30a0fe86dba9090d} 
+list library.\+core.\+playlist\+\_\+generator.\+Playlist\+Generator.\+audio\+\_\+files = \mbox{[}$\,$\mbox{]}}
+
+\Hypertarget{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a7f196763b409f06a0347d9fcab127c2d}\index{library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}!dossier@{dossier}}
+\index{dossier@{dossier}!library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}}
+\doxysubsubsection{\texorpdfstring{dossier}{dossier}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a7f196763b409f06a0347d9fcab127c2d} 
+library.\+core.\+playlist\+\_\+generator.\+Playlist\+Generator.\+dossier = Path(dossier)}
+
+\Hypertarget{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a7e3e431c856211983918c6a53f9a95de}\index{library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}!explorer@{explorer}}
+\index{explorer@{explorer}!library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}}
+\doxysubsubsection{\texorpdfstring{explorer}{explorer}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a7e3e431c856211983918c6a53f9a95de} 
+library.\+core.\+playlist\+\_\+generator.\+Playlist\+Generator.\+explorer = \mbox{\hyperlink{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer}{File\+Explorer}}()}
+
+\Hypertarget{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a5a56d4cd183b407d0b9fe54893069626}\index{library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}!fichier\_sortie@{fichier\_sortie}}
+\index{fichier\_sortie@{fichier\_sortie}!library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}}
+\doxysubsubsection{\texorpdfstring{fichier\_sortie}{fichier\_sortie}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a5a56d4cd183b407d0b9fe54893069626} 
+library.\+core.\+playlist\+\_\+generator.\+Playlist\+Generator.\+fichier\+\_\+sortie = fichier\+\_\+sortie}
+
+\Hypertarget{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a0041d7b08bb01cef6fa5569374ea00e9}\index{library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}!tracks@{tracks}}
+\index{tracks@{tracks}!library.core.playlist\_generator.PlaylistGenerator@{library.core.playlist\_generator.PlaylistGenerator}}
+\doxysubsubsection{\texorpdfstring{tracks}{tracks}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1playlist__generator_1_1_playlist_generator_a0041d7b08bb01cef6fa5569374ea00e9} 
+list library.\+core.\+playlist\+\_\+generator.\+Playlist\+Generator.\+tracks = \mbox{[}$\,$\mbox{]}}
+
+
+
+La documentation de cette classe a été générée à partir du fichier suivant \+:\begin{DoxyCompactItemize}
+\item 
+library/core/\mbox{\hyperlink{playlist__generator_8py}{playlist\+\_\+generator.\+py}}\end{DoxyCompactItemize}

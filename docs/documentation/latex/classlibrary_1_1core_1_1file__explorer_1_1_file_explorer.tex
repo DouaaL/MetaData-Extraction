@@ -1,0 +1,90 @@
+\doxysection{Référence de la classe library.\+core.\+file\+\_\+explorer.\+File\+Explorer}
+\hypertarget{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer}{}\label{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer}\index{library.core.file\_explorer.FileExplorer@{library.core.file\_explorer.FileExplorer}}
+\doxysubsubsection*{Fonctions membres publiques}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer_ad611f6ffc216e8fefaf199adb688fd98}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self)
+\item 
+List\mbox{[}Path\mbox{]} \mbox{\hyperlink{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer_a87f231a709b7dd6962499cec1ae25d5b}{explore\+\_\+directory}} (self, Path directory, bool recursive=True)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Attributs publics statiques}
+\begin{DoxyCompactItemize}
+\item 
+dict \mbox{\hyperlink{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer_a45a818ffcf09302a6161de199615e1d0}{SUPPORTED\+\_\+\+EXTENSIONS}} = \{"{}.mp3"{}, "{}.flac"{}\}
+\item 
+dict \mbox{\hyperlink{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer_a7c5659a21ea1fb7f1e17f86387da61f0}{SUPPORTED\+\_\+\+MIMETYPES}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Fonctions membres protégées}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer_a1347d9aab839dc849251305e61f202e0}{\+\_\+is\+\_\+valid\+\_\+audio\+\_\+file}} (self, Path filepath)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Description détaillée}
+\begin{DoxyVerb}Classe responsable du parcours récursif des dossiers.
+
+Principe : découverte et filtrage des fichiers audio.
+\end{DoxyVerb}
+ 
+
+\label{doc-constructors}
+\Hypertarget{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer_doc-constructors}
+\doxysubsection{Documentation des constructeurs et destructeur}
+\Hypertarget{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer_ad611f6ffc216e8fefaf199adb688fd98}\index{library.core.file\_explorer.FileExplorer@{library.core.file\_explorer.FileExplorer}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!library.core.file\_explorer.FileExplorer@{library.core.file\_explorer.FileExplorer}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer_ad611f6ffc216e8fefaf199adb688fd98} 
+library.\+core.\+file\+\_\+explorer.\+File\+Explorer.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-func-members}
+\Hypertarget{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer_doc-func-members}
+\doxysubsection{Documentation des fonctions membres}
+\Hypertarget{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer_a1347d9aab839dc849251305e61f202e0}\index{library.core.file\_explorer.FileExplorer@{library.core.file\_explorer.FileExplorer}!\_is\_valid\_audio\_file@{\_is\_valid\_audio\_file}}
+\index{\_is\_valid\_audio\_file@{\_is\_valid\_audio\_file}!library.core.file\_explorer.FileExplorer@{library.core.file\_explorer.FileExplorer}}
+\doxysubsubsection{\texorpdfstring{\_is\_valid\_audio\_file()}{\_is\_valid\_audio\_file()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer_a1347d9aab839dc849251305e61f202e0} 
+ bool library.\+core.\+file\+\_\+explorer.\+File\+Explorer.\+\_\+is\+\_\+valid\+\_\+audio\+\_\+file (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{Path}]{filepath}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer_a87f231a709b7dd6962499cec1ae25d5b}\index{library.core.file\_explorer.FileExplorer@{library.core.file\_explorer.FileExplorer}!explore\_directory@{explore\_directory}}
+\index{explore\_directory@{explore\_directory}!library.core.file\_explorer.FileExplorer@{library.core.file\_explorer.FileExplorer}}
+\doxysubsubsection{\texorpdfstring{explore\_directory()}{explore\_directory()}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer_a87f231a709b7dd6962499cec1ae25d5b} 
+ List\mbox{[}Path\mbox{]} library.\+core.\+file\+\_\+explorer.\+File\+Explorer.\+explore\+\_\+directory (\begin{DoxyParamCaption}\item[{}]{self}{, }\item[{Path}]{directory}{, }\item[{bool }]{recursive}{ = {\ttfamily True}}\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Explore un répertoire et retourne tous les fichiers audio valides.
+\end{DoxyVerb}
+ 
+
+\label{doc-variable-members}
+\Hypertarget{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer_doc-variable-members}
+\doxysubsection{Documentation des données membres}
+\Hypertarget{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer_a45a818ffcf09302a6161de199615e1d0}\index{library.core.file\_explorer.FileExplorer@{library.core.file\_explorer.FileExplorer}!SUPPORTED\_EXTENSIONS@{SUPPORTED\_EXTENSIONS}}
+\index{SUPPORTED\_EXTENSIONS@{SUPPORTED\_EXTENSIONS}!library.core.file\_explorer.FileExplorer@{library.core.file\_explorer.FileExplorer}}
+\doxysubsubsection{\texorpdfstring{SUPPORTED\_EXTENSIONS}{SUPPORTED\_EXTENSIONS}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer_a45a818ffcf09302a6161de199615e1d0} 
+dict library.\+core.\+file\+\_\+explorer.\+File\+Explorer.\+SUPPORTED\+\_\+\+EXTENSIONS = \{"{}.mp3"{}, "{}.flac"{}\}\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer_a7c5659a21ea1fb7f1e17f86387da61f0}\index{library.core.file\_explorer.FileExplorer@{library.core.file\_explorer.FileExplorer}!SUPPORTED\_MIMETYPES@{SUPPORTED\_MIMETYPES}}
+\index{SUPPORTED\_MIMETYPES@{SUPPORTED\_MIMETYPES}!library.core.file\_explorer.FileExplorer@{library.core.file\_explorer.FileExplorer}}
+\doxysubsubsection{\texorpdfstring{SUPPORTED\_MIMETYPES}{SUPPORTED\_MIMETYPES}}
+{\footnotesize\ttfamily \label{classlibrary_1_1core_1_1file__explorer_1_1_file_explorer_a7c5659a21ea1fb7f1e17f86387da61f0} 
+dict library.\+core.\+file\+\_\+explorer.\+File\+Explorer.\+SUPPORTED\+\_\+\+MIMETYPES\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Valeur initiale \+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}audio/mpeg"{}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}audio/mp3"{}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}audio/flac"{}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}audio/x-\/flac"{}},}
+\DoxyCodeLine{\ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+La documentation de cette classe a été générée à partir du fichier suivant \+:\begin{DoxyCompactItemize}
+\item 
+library/core/\mbox{\hyperlink{file__explorer_8py}{file\+\_\+explorer.\+py}}\end{DoxyCompactItemize}
