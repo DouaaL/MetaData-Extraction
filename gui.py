@@ -1956,76 +1956,149 @@ class MusicLibraryGUI(TkinterDnD.Tk if HAS_DND else tk.Tk):
             self.lbl_mini_cover.config(image="", width=0, bg=self.colors["player"])
 
     def _update_cover(self, audio: AudioFile, force_validation: bool = False):
-        if not HAS_PIL:
-            return
+            if not HAS_PIL:
+                return
 
-        pil_image = None
-        source_is_file = False
-        cover_path = None
+            final_image = None
+            source_is_file = False
+            cover_path = None
 
-        # --- 1. RECHERCHE DE L'IMAGE (Disque ou Tags) ---
-        
-        # A. Vérifier sur le disque (API/Cache)
-        try:
-            if hasattr(self.metadata_fetcher, "ensure_cover_image"):
-                cover_path = self.metadata_fetcher.ensure_cover_image(audio)
-                if cover_path and cover_path.exists():
-                    pil_image = Image.open(cover_path)
-                    source_is_file = True
-        except Exception as e:
-            print(f"Erreur cover disque: {e}")
-
-        # B. Si pas d'image disque, vérifier les tags internes (MP3/FLAC)
-        if pil_image is None:
-            data = audio.get_cover_art()
-            if data:
-                try:
-                    pil_image = Image.open(BytesIO(data))
-                except Exception as e:
-                    print(f"Erreur cover interne: {e}")
-
-        # --- 2. AFFICHAGE (Commun à tous les cas) ---
-        if pil_image:
+            # --- ÉTAPE 1 : TENTATIVE CHARGEMENT DISQUE ---
             try:
-                # -- A. Grande Cover (320x320) --
-                # On fait une copie pour ne pas modifier l'original
-                img_big = pil_image.copy()
-                img_big.thumbnail((320, 320))
-                photo_big = ImageTk.PhotoImage(img_big)
-                
-                self.cover_label.config(image=photo_big)
-                self.cover_image_ref = photo_big  # Garder la ref pour éviter le garbage collector
-
-                # -- B. Mini Cover (60x60) --
-                img_mini = pil_image.copy()
-                img_mini.thumbnail((60, 60))
-                photo_mini = ImageTk.PhotoImage(img_mini)
-                
-                # Note: Si vous avez mis la Frame, le .config marche sur le label à l'intérieur
-                self.lbl_mini_cover.config(image=photo_mini, width=60, height=60)
-                self.mini_cover_ref = photo_mini
-
-                self.cover_label.update_idletasks()
-
-                # -- C. Validation (Seulement si nouvelle image disque) --
-                if source_is_file and force_validation:
-                    titre = self.var_title.get() or audio.filepath.stem
-                    ok = messagebox.askyesno(
-                        "Nouvelle pochette trouvée",
-                        f"Une image a été téléchargée pour :\n{titre}\n\nVoulez-vous utiliser cette image ?"
-                    )
-                    if not ok:
-                        # Refus : on supprime et on recharge (ça retombera sur les tags internes ou rien)
+                if hasattr(self.metadata_fetcher, "ensure_cover_image"):
+                    cover_path = self.metadata_fetcher.ensure_cover_image(audio)
+                    if cover_path and cover_path.exists():
+                        # On charge en mémoire et on ferme immédiatement le fichier
                         try:
-                            if cover_path: cover_path.unlink()
-                        except: pass
-                        self._update_cover(audio, force_validation=False)
+                            with Image.open(cover_path) as opened_img:
+                                opened_img.load() 
+                                # On stocke une copie pour l'interface
+                                disk_image = opened_img.copy()
+                            source_is_file = True
+                        except Exception as e:
+                            print(f"Erreur lecture image disque: {e}")
+                            disk_image = None
+                    else:
+                        disk_image = None
             except Exception as e:
-                print(f"Erreur affichage images: {e}")
+                print(f"Erreur cover disque: {e}")
+                disk_image = None
 
-        else:
-            # --- 3. RIEN TROUVÉ : On nettoie tout ---
-            self._clear_cover()
+            # --- ÉTAPE 2 : VALIDATION (Si nécessaire) ---
+            # Si on a trouvé une image disque ET qu'on est en mode validation (API)
+            if source_is_file and force_validation and disk_image:
+                
+                # Fenêtre de prévisualisation
+                preview_window = tk.Toplevel(self)
+                preview_window.title("Validation")
+                preview_window.geometry("400x480")
+                preview_window.transient(self)
+                preview_window.grab_set()
+                
+                c = self.colors
+                preview_window.config(bg=c["bg"])
+
+                tk.Label(preview_window, text="Nouvelle pochette trouvée :", bg=c["bg"], fg=c["text"], font=("Segoe UI", 11, "bold")).pack(pady=15)
+
+                # Image Preview
+                preview_img = disk_image.copy()
+                preview_img.thumbnail((300, 300))
+                photo_preview = ImageTk.PhotoImage(preview_img)
+                
+                lbl_preview = tk.Label(preview_window, image=photo_preview, bg=c["bg"])
+                lbl_preview.pack(pady=5)
+                # On garde une ref locale pour que l'image s'affiche
+                lbl_preview.image = photo_preview 
+
+                tk.Label(preview_window, text="Voulez-vous l'utiliser ?", bg=c["bg"], fg=c["text"]).pack(pady=10)
+
+                user_response = tk.BooleanVar(value=False)
+
+                def on_yes():
+                    user_response.set(True)
+                    preview_window.destroy()
+
+                def on_no():
+                    user_response.set(False)
+                    preview_window.destroy()
+
+                btn_frame = tk.Frame(preview_window, bg=c["bg"])
+                btn_frame.pack(pady=10)
+
+                tk.Button(btn_frame, text="Non, supprimer", command=on_no, width=15).pack(side=tk.LEFT, padx=10)
+                tk.Button(btn_frame, text="Oui, garder", command=on_yes, width=15, bg=c["accent"], fg="white").pack(side=tk.LEFT, padx=10)
+
+                self.wait_window(preview_window)
+
+                # --- LOGIQUE DE DÉCISION ---
+                if user_response.get():
+                    # L'utilisateur a dit OUI : on garde l'image du disque
+                    final_image = disk_image
+                else:
+                    # L'utilisateur a dit NON : 
+                    print("Cover rejetée. Tentative de suppression...")
+                    
+                    # 1. On oublie l'image disque dans nos variables
+                    final_image = None
+                    disk_image = None
+                    
+                    # 2. On nettoie les objets graphiques pour libérer le verrou
+                    del photo_preview
+                    del preview_img
+                    
+                    # 3. Petit délai pour laisser Windows respirer (nécessaire parfois)
+                    self.update_idletasks()
+                    time.sleep(0.1)
+
+                    # 4. Suppression du fichier
+                    try:
+                        if cover_path and cover_path.exists():
+                            os.remove(cover_path)
+                            print("Fichier supprimé avec succès.")
+                    except Exception as e:
+                        # Si ça échoue, on prévient l'utilisateur mais on continue sans planter
+                        print(f"Échec suppression fichier : {e}")
+                        messagebox.showwarning("Info", f"L'image n'a pas pu être supprimée du disque (verrouillée).\nMais elle ne sera pas utilisée pour l'instant.")
+
+            else:
+                # Pas de validation demandée : on prend l'image disque si elle existe
+                final_image = disk_image
+
+            # --- ÉTAPE 3 : FALLBACK (Tags Internes) ---
+            # Si après tout ça, on n'a pas d'image (soit pas trouvée, soit rejetée par l'utilisateur)
+            # On va chercher dans les tags internes du fichier audio (MP3/FLAC)
+            if final_image is None:
+                data = audio.get_cover_art()
+                if data:
+                    try:
+                        final_image = Image.open(BytesIO(data))
+                    except Exception as e:
+                        print(f"Erreur cover interne: {e}")
+
+            # --- ÉTAPE 4 : AFFICHAGE ---
+            if final_image:
+                try:
+                    # Grande Cover
+                    img_big = final_image.copy()
+                    img_big.thumbnail((320, 320))
+                    photo_big = ImageTk.PhotoImage(img_big)
+                    
+                    self.cover_label.config(image=photo_big)
+                    self.cover_image_ref = photo_big
+
+                    # Mini Cover
+                    if hasattr(self, 'lbl_mini_cover'):
+                        img_mini = final_image.copy()
+                        img_mini.thumbnail((60, 60))
+                        photo_mini = ImageTk.PhotoImage(img_mini)
+                        self.lbl_mini_cover.config(image=photo_mini, width=60, height=60)
+                        self.mini_cover_ref = photo_mini
+                    
+                    self.cover_label.update_idletasks()
+                except Exception as e:
+                    print(f"Erreur affichage: {e}")
+            else:
+                self._clear_cover()
 
     def _set_lyrics_text(self, text: str):
         self.lyrics_text.config(state=tk.NORMAL)
