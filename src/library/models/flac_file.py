@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Dict, Optional
 from mutagen import File as MutagenFile
 from mutagen.flac import FLAC
-from src.library.models.audio_file import AudioFile
+from library.models.audio_file import AudioFile
 
 class FLACFile(AudioFile):
     """

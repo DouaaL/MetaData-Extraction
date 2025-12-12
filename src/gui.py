@@ -10,6 +10,7 @@ from urllib.parse import unquote, urlparse
 import os
 import time
 
+
 # Pour afficher les covers
 try:
     from PIL import Image, ImageTk, ImageDraw, ImageFont
@@ -43,34 +44,33 @@ except ImportError:
     
 # Accès à src/
 BASE_DIR = Path(__file__).resolve().parent
-SRC_DIR = BASE_DIR / "src"
-sys.path.append(str(SRC_DIR))
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
 
-# Importations ou Classes Dummy
-try:
-    from library.models.music_library import MusicLibrary
-    from library.models.audio_file import AudioFile
-    from library.models.mp3_file import MP3File
-    from library.models.flac_file import FLACFile
-    from library.core.playlist_generator import PlaylistGenerator
-    from library.core.metadatafetcher import MetadataFetcher
-except ImportError:
-    print("Attention: Modules library non trouvés. Mode interface seule.")
-    
-    class MusicLibrary:
-        def __init__(self): self.files = []
-        def load_directory(self, p): pass
-    
-    class AudioFile:
-        def __init__(self, p): self.filepath = p; self.metadata = {}
-        def extract_metadata(self): return {}
-        def get_duration(self): return 0
-        def get_cover_art(self): return None
-        def save_metadata(self): pass
+from library.models.music_library import MusicLibrary
+from library.models.audio_file import AudioFile
+from library.models.mp3_file import MP3File
+from library.models.flac_file import FLACFile
+from library.core.playlist_generator import PlaylistGenerator
+from library.core.file_explorer import FileExplorer
+from library.core.metadatafetcher import MetadataFetcher
+from library.core.lyricsresolver import LyricsResolver
 
-    class MetadataFetcher:
-        def fetch_lyrics_for_audio(self, a): return "Paroles démo..."
-        def update_audio_file_metadata(self, a): return False
+    
+class MusicLibrary:
+    def __init__(self): self.files = []
+    def load_directory(self, p): pass
+    
+class AudioFile:
+    def __init__(self, p): self.filepath = p; self.metadata = {}
+    def extract_metadata(self): return {}
+    def get_duration(self): return 0
+    def get_cover_art(self): return None
+    def save_metadata(self): pass
+
+class MetadataFetcher:
+    def fetch_lyrics_for_audio(self, a): return "Paroles démo..."
+    def update_audio_file_metadata(self, a): return False
 
 
 # --------- Tooltip simple pour IHM (guidage) ----------
