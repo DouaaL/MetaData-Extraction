@@ -33,8 +33,6 @@ class MetadataFetcher:
     def __init__(self):
 
         # Spotify Credentials
-        CLIENT_ID = "446cb6cddd38445fb33fa44babbab96f"
-        CLIENT_SECRET = "375898f045794e4f845283e9b8d4da9a"
 
         env_id = os.environ.get("SPOTIFY_CLIENT_ID")
         env_secret = os.environ.get("SPOTIFY_CLIENT_SECRET")
