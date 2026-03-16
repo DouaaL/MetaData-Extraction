@@ -1,7 +1,7 @@
 # Projet Python – Gestion et Lecture de Fichiers Audio (CLI + GUI)
 
 ## 1. Informations générales
-- Nom : Yacine Brahimi  | Soumeya Dahmen | Lekhal Douaa
+- Nom : Yacine Brahimi  | Soumeya Dahmen | Lakehal Douaa
 - UE : Mineure Python: un langage Multipass 
 - Projet : Application de gestion et lecture de fichiers audio  
 - Formation : L3 Informatique  
